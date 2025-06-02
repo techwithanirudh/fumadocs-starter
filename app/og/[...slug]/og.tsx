@@ -84,12 +84,11 @@ export function generate({
         <p
           style={{
             fontWeight: 600,
-            fontSize: '26px',
-            textTransform: 'uppercase',
+            fontSize: '26px'
           }}
         >
           {/* {props.tag.replace(/-/g, ' ')} */}
-          Poems
+          @anirudh
         </p>
         <p
           style={{

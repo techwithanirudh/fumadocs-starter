@@ -4,7 +4,7 @@ import Logo from "@/public/logo.svg";
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 
-export const title = 'Starter Kit';
+export const title = 'Annu\'s Poems';
 
 export const logo = (
   <>
