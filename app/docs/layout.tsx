@@ -41,14 +41,6 @@ export default function Layout({ children }: { children: ReactNode }) {
       }}
       nav={{
         ...baseOptions.nav,
-        title: (
-          <>
-            {logo}
-            <span className='font-medium max-md:hidden [.uwu_&]:hidden'>
-              Fumadocs
-            </span>
-          </>
-        ),
         children: (
           <AISearchTrigger
             className={cn(

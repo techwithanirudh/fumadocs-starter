@@ -43,5 +43,6 @@ export function Mermaid({ chart }: { chart: string }) {
     void renderChart();
   }, [chart, id, resolvedTheme]);
 
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: mermaid rendering requires this
   return <div ref={containerRef} dangerouslySetInnerHTML={{ __html: svg }} />;
 }

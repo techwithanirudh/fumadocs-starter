@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/nursery/noNestedComponentDefinitions: new Components aren't defined, we're just passing props */
 import * as path from 'node:path';
 import Link from 'fumadocs-core/link';
 import { getPageTreePeers } from 'fumadocs-core/server';

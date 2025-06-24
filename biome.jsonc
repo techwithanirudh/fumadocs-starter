@@ -58,6 +58,9 @@
           "options": {
             "functions": ["cn"]
           }
+        },
+        "useUniqueElementIds": {
+          "level": "warn"
         }
       }
     }

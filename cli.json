@@ -1,6 +1,6 @@
 {
   "aliases": {
-    "cn": "./lib/fumadocs/cn.ts",
+    "cn": "./lib/cn.ts",
     "componentsDir": "./components/fumadocs",
     "uiDir": "./components/fumadocs/ui",
     "libDir": "./lib/fumadocs"
