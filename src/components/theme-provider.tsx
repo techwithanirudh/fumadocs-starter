@@ -1,5 +1,6 @@
-import { applyThemeToElement } from '@/lib/apply-theme'
+import { applyThemeToElement } from '@/lib/theme/apply'
 import { useThemeStore } from '@/lib/theme/store'
+import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
 type ThemeProviderProps = {
@@ -8,6 +9,7 @@ type ThemeProviderProps = {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const { themeState } = useThemeStore()
+  const { resolvedTheme: mode } = useTheme();
   const [isClient, setIsClient] = useState(false)
 
   // Handle hydration and initialize CSS transitions
@@ -21,7 +23,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const root = document.documentElement
     if (!root) return
 
-    applyThemeToElement(themeState, root)
+    applyThemeToElement(themeState, mode, root)
   }, [themeState, isClient])
 
   return <>{children}</>

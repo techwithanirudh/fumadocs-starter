@@ -11,6 +11,7 @@ type ThemeState = {
 
 export function applyThemeToElement(
   themeState: ThemeState,
+  mode: string,
   element: HTMLElement
 ) {
   if (!element) return
@@ -19,7 +20,7 @@ export function applyThemeToElement(
     element.style.setProperty(`--${key}`, value)
   })
 
-  const modeVars = themeState.cssVars[themeState.currentMode]
+  const modeVars = themeState.cssVars[mode]
   Object.entries(modeVars).forEach(([key, value]) => {
     if (key in themeState.cssVars.theme) {
       return
@@ -27,14 +28,4 @@ export function applyThemeToElement(
 
     element.style.setProperty(`--${key}`, value)
   })
-
-  element.setAttribute('data-theme', themeState.currentMode)
-
-  if (themeState.currentMode === 'dark') {
-    element.classList.add('dark')
-    element.classList.remove('light')
-  } else {
-    element.classList.add('light')
-    element.classList.remove('dark')
-  }
 }
