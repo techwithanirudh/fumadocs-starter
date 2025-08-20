@@ -9,10 +9,10 @@ type ThemeProviderProps = {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const { themeState } = useThemeStore()
-  const { resolvedTheme: mode } = useTheme();
+  const { resolvedTheme: mode } = useTheme()
   const [isClient, setIsClient] = useState(false)
 
-  // Handle hydration and initialize CSS transitions
+  // Hydration guard
   useEffect(() => {
     setIsClient(true)
   }, [])
@@ -23,8 +23,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const root = document.documentElement
     if (!root) return
 
-    applyThemeToElement(themeState, mode, root)
-  }, [themeState, isClient])
+    // applyThemeToElement will update a single <style> tag and set [data-theme]
+    applyThemeToElement(themeState as any, (mode as 'dark' | 'light') ?? 'light', root)
+  }, [themeState, isClient, mode])
 
   return <>{children}</>
 }

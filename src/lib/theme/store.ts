@@ -9,11 +9,14 @@ type ThemeState = {
     light: Record<string, string>
     dark: Record<string, string>
   }
+  // optional arbitrary CSS string that will be appended to the generated stylesheet
+  customCss?: string
 }
 
 type ThemeStore = {
   themeState: ThemeState
   setThemeState: (themeState: ThemeState) => void
+  setCustomCss: (css?: string) => void
 }
 
 const DEFAULT_THEME = {
@@ -160,6 +163,8 @@ export const useThemeStore = create<ThemeStore>()(
     (set) => ({
       themeState: DEFAULT_THEME.themeState,
       setThemeState: (themeState) => set({ themeState }),
+      setCustomCss: (css) =>
+        set((s) => ({ themeState: { ...s.themeState, customCss: css } })),
     }),
     {
       name: THEME_STORE_KEY,

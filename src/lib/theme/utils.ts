@@ -49,7 +49,7 @@ export function getThemeName(themeData: any, url: string): string {
   if (themeData.name) {
     return themeData.name
       .replace(/[-_]/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase())
+      .replace(/\b\w/g, (l: string) => l.toUpperCase())
   }
 
   return 'Custom Theme'

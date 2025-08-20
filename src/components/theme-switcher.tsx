@@ -107,7 +107,8 @@ function ThemeButton({
 export function ThemeSwitcher() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
 
-  const { resolvedTheme: currentMode } = useTheme()
+  const { resolvedTheme } = useTheme()
+  const currentMode = resolvedTheme === 'dark' ? 'dark' : 'light'
   const {
     searchQuery,
     setSearchQuery,
