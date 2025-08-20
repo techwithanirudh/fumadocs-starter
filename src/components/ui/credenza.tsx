@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import * as React from "react"
+import * as React from 'react'
 
-import { cn } from "@/lib/cn"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { cn } from '@/lib/cn'
+import { useIsMobile } from '@/hooks/use-mobile'
 import {
   Dialog,
   DialogClose,
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog'
 import {
   Drawer,
   DrawerClose,
@@ -23,7 +23,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+} from '@/components/ui/drawer'
 
 interface BaseProps {
   children: React.ReactNode
@@ -47,7 +47,7 @@ const useCredenzaContext = () => {
   const context = React.useContext(CredenzaContext)
   if (!context) {
     throw new Error(
-      "Credenza components cannot be rendered outside the Credenza Context"
+      'Credenza components cannot be rendered outside the Credenza Context'
     )
   }
   return context
@@ -138,7 +138,7 @@ const CredenzaTitle = ({ className, children, ...props }: CredenzaProps) => {
 
 const CredenzaBody = ({ className, children, ...props }: CredenzaProps) => {
   return (
-    <div className={cn("px-4 md:px-0", className)} {...props}>
+    <div className={cn('px-4 md:px-0', className)} {...props}>
       {children}
     </div>
   )

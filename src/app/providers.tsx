@@ -4,6 +4,7 @@ import { RootProvider } from 'fumadocs-ui/provider'
 import type { ReactNode } from 'react'
 import SearchDialog from '@/components/search'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Toaster } from '@/components/ui/sonner'
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
@@ -23,7 +24,10 @@ export function Providers({ children }: { children: ReactNode }) {
         startOnLoad
         shallowRouting
       >
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          {children}
+          <Toaster />
+        </TooltipProvider>
       </ProgressProvider>
     </RootProvider>
   )
