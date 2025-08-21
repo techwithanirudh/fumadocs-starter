@@ -6,6 +6,7 @@ import type { ReactNode } from 'react'
 import { Body } from './layout.client'
 import { Providers } from './providers'
 import 'katex/dist/katex.css'
+import { ThemeScript } from '@/components/theme-script'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,6 +35,10 @@ export default function Layout({ children }: { children: ReactNode }) {
       className={`${inter.className} dark`}
       suppressHydrationWarning
     >
+      <head>
+        <ThemeScript />
+
+      </head>
       <Body>
         <Providers>{children}</Providers>
       </Body>
