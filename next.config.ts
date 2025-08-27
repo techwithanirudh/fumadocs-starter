@@ -51,15 +51,28 @@ const nextConfig: NextConfig = {
         source: '/docs/:path*.mdx',
         destination: '/llms.mdx/:path*',
       },
+      {
+        source: '/:path*',
+        destination: '/docs/:path*',
+      },
+      {
+        source: '/',
+        destination: '/docs',
+      },
     ]
   },
   async redirects() {
     return [
-      // {
-      //   source: '/docs/ui/changelog',
-      //   destination: '/docs/changelog',
-      //   permanent: true,
-      // },
+      {
+        source: '/docs/:path',
+        destination: '/:path',
+        permanent: true,
+      },
+      {
+        source: '/docs',
+        destination: '/',
+        permanent: true,
+      },
     ]
   },
 }

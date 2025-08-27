@@ -179,7 +179,7 @@ export async function generateMetadata(
     title: page.data.title,
     description,
     openGraph: {
-      url: `/docs/${page.slugs.join('/')}`,
+      url: `/${page.slugs.join('/')}`,
       images: [image],
     },
     twitter: {

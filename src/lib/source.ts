@@ -6,7 +6,7 @@ import { createElement } from 'react'
 import { docs } from '@/.source'
 
 export const source = loader({
-  baseUrl: '/docs',
+  baseUrl: '/',
   icon(icon) {
     if (icon && icon in icons)
       return createElement(icons[icon as keyof typeof icons])
