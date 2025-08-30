@@ -13,7 +13,7 @@ export const logo = (
       sizes='100px'
       width={28}
       height={28}
-      className='in-[header]:size-7 size-6'
+      className='size-6'
       aria-label={title}
     />
   </>
@@ -46,7 +46,7 @@ export function baseOptions(): BaseLayoutProps {
       title: (
         <>
           {logo}
-          <span className='font-medium in-[header]:text-[15px]'>{title}</span>
+          <span className='font-medium [header_&]:text-[15px]'>{title}</span>
         </>
       ),
       transparentMode: 'top',

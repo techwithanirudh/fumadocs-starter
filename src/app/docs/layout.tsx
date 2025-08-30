@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react'
 import { AISearchTrigger } from '@/components/fumadocs/ai'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
-import { baseOptions, linkItems } from '@/lib/layout.shared'
+import { baseOptions, linkItems, logo } from '@/lib/layout.shared'
 import { source } from '@/lib/source'
 import 'katex/dist/katex.min.css'
 import type { CSSProperties } from 'react'
@@ -68,6 +68,12 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
       nav={{
         ...base.nav,
         mode: 'top',
+        title: (
+          <>
+            {logo}
+            <span className='font-medium max-md:hidden'>Starter Kit</span>
+          </>
+        ),
         children: (
           <AISearchTrigger
             className={cn(
