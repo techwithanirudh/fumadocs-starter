@@ -10,7 +10,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
       links={linkItems}
       style={
         {
-          '--spacing-fd-container': '1400px',
+          '--spacing-fd-container': '1300px',
         } as object
       }
       className='dark:bg-neutral-950 dark:[--color-fd-background:var(--color-neutral-950)]'
