@@ -38,7 +38,7 @@ export function ThemeToggle({
   }, [])
 
   const container = cn(
-    'relative inline-flex items-center rounded-full p-1 ring-1 ring-border',
+    'relative isolate inline-flex items-center rounded-full p-1 ring-1 ring-border',
     className
   )
 
