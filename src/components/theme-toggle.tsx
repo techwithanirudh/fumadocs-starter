@@ -2,7 +2,7 @@
 import { Airplay, Moon, Sun } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useTheme } from 'next-themes'
-import { type HTMLAttributes, useLayoutEffect, useState } from 'react'
+import { type HTMLAttributes, useId, useLayoutEffect, useState } from 'react'
 import { cn } from '@/lib/cn'
 
 const themes = [
@@ -32,6 +32,7 @@ export function ThemeToggle({
 }) {
   const { setTheme, theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const id = useId()
 
   useLayoutEffect(() => {
     setMounted(true)
@@ -64,12 +65,10 @@ export function ThemeToggle({
               <div key={key} className='relative size-6.5 rounded-full p-1.5'>
                 {isActive && (
                   <motion.div
-                    layoutId='activeTheme'
+                    layoutId={`activeTheme-${id}`}
                     className='absolute inset-0 rounded-full bg-accent'
-                    transition={{
-                      type: 'spring',
-                      duration: 0.4,
-                    }}
+                    transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
+                    initial={false}
                   />
                 )}
                 <Icon
@@ -105,12 +104,10 @@ export function ThemeToggle({
           >
             {isActive && (
               <motion.div
-                layoutId='activeTheme'
+                layoutId={`activeTheme-${id}`}
                 className='absolute inset-0 rounded-full bg-accent'
-                transition={{
-                  type: 'spring',
-                  duration: 0.4,
-                }}
+                transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
+                initial={false}
               />
             )}
             <Icon
