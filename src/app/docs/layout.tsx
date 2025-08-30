@@ -24,8 +24,10 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
             const meta = source.getNodeMeta(node)
             if (!meta || !node.icon) return option
 
-            const color = `var(--${meta.path.split('/')[0]}-color, var(--color-fd-foreground))`
+            const segments = meta.path.split('/')
+            const segment = serializeSegment(segments[0])
 
+            const color = `var(--${segment}-color, var(--color-fd-foreground))`
             return {
               ...option,
               icon: (
@@ -95,4 +97,18 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
       <DocsBackground />
     </DocsLayout>
   )
+}
+
+function serializeSegment(segment: string | undefined): string {
+  const raw = (segment ?? '').trim()
+
+  // Prefer a readable kebab-case style for CSS variables
+  // Convert spaces/underscores to hyphens, remove invalid chars
+  const kebab = raw
+    .toLowerCase()
+    .replace(/[_\s]+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
+  return kebab || 'fd'
 }
