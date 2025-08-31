@@ -27,7 +27,7 @@ Open the `meta.json` file located in the `content/docs` directory. Add your new 
 ```json
 {
   "pages": [
-    "app",
+    "(index)",
     "api-reference",
     "changelog",
     "cli" // [!code ++]
@@ -44,24 +44,21 @@ Open `page.tsx` in the `app/(home)` directory and add a new `DocumentationItem`:
   <DocumentationItem
     title="Documentation"
     description="Get started with the Fumadocs framework."
-    icon={BookIcon}
-    id="app"
-    href="/docs/app"
+    icon={{ icon: BookIcon, id: '(index)' }}
+    href="/docs"
   />
 
   <DocumentationItem
     title="API Reference"
     description="Explore Fumadocs's API reference."
-    icon={RocketIcon}
-    id="api-reference"
+    icon={{ icon: RocketIcon, id: 'api-reference' }}
     href="/docs/api-reference"
   />
 
   <DocumentationItem
     title="CLI" {/* [!code ++] */}
     description="Learn how to use Fumadocs's CLI." {/* [!code ++] */}
-    icon={ChevronRightIcon} {/* [!code ++] */}
-    id="cli" {/* [!code ++] */}
+    icon={{ icon: ChevronRightIcon, id: 'cli' }} {/* [!code ++] */}
     href="/docs/cli" {/* [!code ++] */}
   /> {/* [!code ++] */}
 </div>

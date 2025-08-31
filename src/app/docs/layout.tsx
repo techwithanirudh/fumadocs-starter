@@ -57,7 +57,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
                     variant: 'outline',
                     size: 'icon',
                     className:
-                      'bg-fd-secondary/50 text-fd-muted-foreground shadow-none dark:bg-fd-secondary/50',
+                      'rounded-xl bg-fd-secondary/50 text-fd-muted-foreground shadow-none dark:bg-fd-secondary/50',
                   })
                 )}
               >

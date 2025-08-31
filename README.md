@@ -81,7 +81,7 @@ bun start
 
 * **MCP Server**: If you plan to extend workflows with MCP, install and configure your MCP server, then wire it in your app code or an API route as documented in your chosen server.
 
-## What’s Inside
+## What's Inside
 
 * 🧩 **Fumadocs** - Fast, flexible documentation powered by MDX.
 * 📘 **Orama** - Built-in search integration.

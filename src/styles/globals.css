@@ -122,3 +122,7 @@
   @apply border-e;
   background-color: var(--color-background);
 }
+
+[data-search-full] {
+  @apply rounded-xl;
+}
