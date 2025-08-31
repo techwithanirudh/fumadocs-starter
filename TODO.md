@@ -2,3 +2,4 @@
 - [] Disable OpenAPI by default and give ability to add it through ShadCN cli, same with obsidian support, and changelog
 - [] Add a documentation to customize the fumadocs layout, like notebook and docs.
 - [] Ask fuma for the HeroUI theme
+- [] Add the shadcn registry and remove openapi, and notebook layout, etc. Make it a base template, but when you want to add features use the shadcn registry in the ./registry directory and add stuff. Easy to maintain because it is in that directory, make a new branch called registry to convert to registry json, or even use the shadcn alpine template

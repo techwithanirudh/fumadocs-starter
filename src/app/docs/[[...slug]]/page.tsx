@@ -2,7 +2,6 @@
 import * as path from 'node:path'
 import Link from 'fumadocs-core/link'
 import { getPageTreePeers } from 'fumadocs-core/server'
-import { APIPage } from 'fumadocs-openapi/ui'
 import * as Twoslash from 'fumadocs-twoslash/ui'
 import { createGenerator } from 'fumadocs-typescript'
 import { AutoTypeTable } from 'fumadocs-typescript/ui'
@@ -39,7 +38,6 @@ import {
 } from '@/components/ui/hover-card'
 import { owner, repo } from '@/lib/github'
 import { createMetadata } from '@/lib/metadata'
-import { openapi } from '@/lib/openapi'
 import { source } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
 
@@ -126,9 +124,6 @@ export default async function Page(
               blockquote: Callout as unknown as FC<
                 ComponentProps<'blockquote'>
               >,
-              APIPage: (props) => (
-                <APIPage {...openapi.getAPIPageProps(props)} />
-              ),
               DocsCategory: ({ url }) => <DocsCategory url={url ?? page.url} />,
             })}
           />
