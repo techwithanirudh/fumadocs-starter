@@ -13,6 +13,7 @@ import {
   Copy,
   ExternalLinkIcon,
   MessageCircleIcon,
+  Loader2,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/cn'
@@ -63,7 +64,7 @@ export function LLMCopyButton({
       )}
       onClick={onClick}
     >
-      {checked ? <Check /> : <Copy />}
+      {isLoading ? <Loader2 className='size-3.5 animate-spin' /> : checked ? <Check /> : <Copy />}
       Copy Markdown
     </button>
   )
