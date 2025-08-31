@@ -18,7 +18,9 @@ import { buttonVariants } from './ui/button'
 
 const Empty = () => (
   <div className='flex flex-col items-center justify-between gap-2 px-2 py-12 text-center text-sm'>
-    <I18nLabel label='searchNoResult' />
+    <p className='text-fd-muted-foreground text-sm'>
+      <I18nLabel label='searchNoResult' />
+    </p>
     <AISearchTrigger
       className={buttonVariants({
         variant: 'ghost',
