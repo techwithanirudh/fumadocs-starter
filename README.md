@@ -83,11 +83,11 @@ bun start
 
 ## What's Inside
 
-* 🧩 **Fumadocs** - Fast, flexible documentation powered by MDX.
-* 📘 **Orama** - Built-in search integration.
-* 🧠 **AI SDK** - Supports the Vercel AI SDK for advanced AI chat features.
-* 🧱 **MCP-Ready** - Easily extend with an optional MCP Server for more advanced workflows.
-* ⚡️ **Twoslash** - Embed live, type-checked code examples with rich editor features such as errors, completions, and hovers.
+* **Fumadocs** - Fast, flexible documentation powered by MDX.
+* **OpenAPI** - OpenAPI support for API Documentation
+* **AI SDK** - Supports the Vercel AI SDK for advanced AI chat features.
+* **MCP-Ready** - Easily extend with an optional MCP Server for more advanced workflows.
+* **Twoslash** - Embed live, type-checked code examples with rich editor features such as errors, completions, and hovers.
 
 ## Learn More
 
