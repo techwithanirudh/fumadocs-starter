@@ -123,6 +123,6 @@
   background-color: var(--color-background);
 }
 
-[data-search-full] {
+/* header &[data-search-full] {
   @apply rounded-xl;
-}
+} */

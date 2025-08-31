@@ -22,10 +22,10 @@ export function Body({
   )
 }
 
-export function useMode(tree: PageTree.Root): string {
+export function useMode(tree: PageTree.Root): string | undefined {
   const pathname = usePathname()
   const page = findPage(tree, pathname)
 
-  const id = page?.$id ?? '(index)'
-  return id.split('/')[0] ?? '(index)'
+  const id = page?.$id ?? ''
+  return id.split('/')[0]
 }
