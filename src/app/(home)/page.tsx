@@ -1,4 +1,4 @@
-import { BookIcon, type LucideIcon, RocketIcon } from 'lucide-react'
+import { BookIcon, type LucideIcon, WebhookIcon } from 'lucide-react'
 import type { LinkProps } from 'next/link'
 import Link from 'next/link'
 import type { ReactElement, ReactNode } from 'react'
@@ -25,7 +25,7 @@ export default function DocsPage(): ReactElement {
         <DocumentationItem
           title='API Reference'
           description="Get started with Fumadocs's API reference feature."
-          icon={{ icon: RocketIcon, id: 'api-reference' }}
+          icon={{ icon: WebhookIcon, id: 'api-reference' }}
           href='/docs/api-reference'
         />
       </div>
