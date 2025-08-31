@@ -51,6 +51,7 @@
     "bprogress",
     "contentlayer",
     "basehub",
-    "segs"
+    "segs",
+    "shadcn"
   ]
 }
