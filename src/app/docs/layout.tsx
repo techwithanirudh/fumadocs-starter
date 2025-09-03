@@ -57,7 +57,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
                     variant: 'outline',
                     size: 'icon',
                     className:
-                      'rounded-xl bg-fd-secondary/50 text-fd-muted-foreground shadow-none dark:bg-fd-secondary/50',
+                      'rounded-md bg-fd-secondary/50 text-fd-muted-foreground shadow-none dark:bg-fd-secondary/50',
                   })
                 )}
               >
@@ -83,7 +83,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
                 variant: 'secondary',
                 size: 'sm',
                 className:
-                  '-translate-1/2 absolute top-1/2 left-1/2 gap-2 rounded-full bg-fd-secondary/50 text-fd-muted-foreground md:hidden dark:bg-fd-secondary/50',
+                  '-translate-1/2 absolute top-1/2 left-1/2 gap-2 rounded-md bg-fd-secondary/50 text-fd-muted-foreground md:hidden dark:bg-fd-secondary/50',
               })
             )}
           >
