@@ -47,7 +47,6 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
           lg: (
             <div className='flex gap-1.5 max-md:hidden'>
               <LargeSearchToggle className='flex-1' />
-              <AISearchTrigger aria-label='Ask AI' />
             </div>
           ),
         },

@@ -15,6 +15,4 @@ export const { GET } = createSearchAPI('advanced', {
       }
     })
   ),
-  // https://docs.orama.com/open-source/supported-languages
-  language: 'english',
 })
