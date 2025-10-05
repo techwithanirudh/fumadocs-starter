@@ -46,6 +46,6 @@ export function generateStaticParams(): {
 }[] {
   return source.generateParams().map((page) => ({
     ...page,
-    slug: [...page.slug, 'image.png'],
+    slug: [...page.slug, 'image.webp'],
   }))
 }
