@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { notFound } from 'next/navigation'
-import { generateOGImage } from '@/app/og/[...slug]/og'
+import { generateOGImage } from '@/app/og/[...slug]/generate'
 import { source } from '@/lib/source'
 
 const font = readFileSync('./src/app/og/[...slug]/fonts/Inter-Regular.ttf')
@@ -18,7 +18,6 @@ export async function GET(
   if (!page) notFound()
 
   return generateOGImage({
-    primaryTextColor: 'rgb(240,240,240)',
     title: page.data.title,
     description: page.data.description,
     tag: page.slugs[0] ?? '',

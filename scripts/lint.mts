@@ -1,109 +1,71 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- rehype plugins */
+import {
+  type FileObject,
+  printErrors,
+  scanURLs,
+  validateFiles,
+} from 'next-validate-link';
+import { InferPageType } from 'fumadocs-core/source';
+import { source } from '@/lib/source';
 
-import fs from 'node:fs/promises'
-import path from 'node:path'
-import { remarkHeading } from 'fumadocs-core/mdx-plugins'
-import type { TOCItemType } from 'fumadocs-core/server'
-import { createGetUrl, getSlugs, parseFilePath } from 'fumadocs-core/source'
-import { remarkInclude } from 'fumadocs-mdx/config'
-import matter from 'gray-matter'
-import { printErrors, scanURLs, validateFiles } from 'next-validate-link'
-import { remark } from 'remark'
-import remarkMdx from 'remark-mdx'
-import { glob } from 'tinyglobby'
-import { visit } from 'unist-util-visit'
-
-async function readFromPath(file: string) {
-  const content = await fs
-    .readFile(path.resolve(file))
-    .then((res) => res.toString())
-  const parsed = matter(content)
-
-  return {
-    path: file,
-    data: parsed.data,
-    content: parsed.content,
-  }
-}
-
-function remarkIncludeId() {
-  // biome-ignore lint/suspicious/noExplicitAny: this is a remark plugin
-  return (tree: any, file: any) => {
-    file.data.ids ??= []
-    visit(tree, 'mdxJsxFlowElement', (element) => {
-      if (!element.name || !element.attributes) return
-
-      const attributes = element.attributes as Record<string, unknown>[]
-      const idAttr = attributes.find(
-        (attr) => attr.type === 'mdxJsxAttribute' && attr.name === 'id'
-      )
-
-      if (idAttr) {
-        file.data.ids.push(idAttr.value)
-      }
-    })
-  }
-}
-
-const processor = remark()
-  .use(remarkMdx)
-  .use(remarkInclude)
-  .use(remarkIncludeId)
-  .use(remarkHeading)
-
-async function getHeadings(path: string, content: string) {
-  const ids: string[] = []
-  const result = await processor.process({
-    path,
-    value: content,
-  })
-
-  if ('toc' in result.data)
-    ids.push(
-      ...(result.data.toc as TOCItemType[]).map((item) => item.url.slice(1))
-    )
-
-  if ('ids' in result.data) ids.push(...(result.data.ids as string[]))
-
-  return ids
-}
+type AnySource = typeof source;
 
 async function checkLinks() {
-  const docsFiles = await Promise.all(
-    await glob('content/docs/**/*.mdx').then((files) => files.map(readFromPath))
-  )
-
-  const docs = docsFiles.map(async (file) => {
-    const info = parseFilePath(path.relative('content/docs', file.path))
-
-    return {
-      value: getSlugs(info),
-      hashes: await getHeadings(file.path, file.content),
-    }
-  })
-
   const scanned = await scanURLs({
     populate: {
-      'docs/[...slug]': await Promise.all(docs),
+      'docs/[...slug]': source.getPages().map((page) => {
+        return {
+          value: {
+            slug: page.slugs,
+          },
+          hashes: getHeadings(page),
+        };
+      }),
     },
-  })
+  });
 
   console.log(
-    `collected ${scanned.urls.size} URLs, ${scanned.fallbackUrls.length} fallbacks`
-  )
+    `collected ${scanned.urls.size} URLs, ${scanned.fallbackUrls.length} fallbacks`,
+  );
 
-  const getUrl = createGetUrl('/docs')
   printErrors(
-    await validateFiles([...docsFiles], {
-      scanned,
-
-      pathToUrl(value) {
-        const info = parseFilePath(path.relative('content/docs', value))
-        return getUrl(getSlugs(info))
+    await validateFiles(
+      [...(await getFiles(source))],
+      {
+        scanned,
+        markdown: {
+          components: {
+            Card: { attributes: ['href'] },
+          },
+        },
+        checkRelativePaths: 'as-url', 
       },
-    }),
-    true
-  )
+    ),
+    true,
+  );
 }
 
-void checkLinks()
+function getHeadings({ data }: InferPageType<AnySource>) {
+  const headings = data.toc.map((item) => item.url.slice(1));
+  const elementIds = data._exports?.elementIds;
+  if (Array.isArray(elementIds)) {
+    headings.push(...elementIds);
+  }
+
+  return headings;
+}
+
+async function getFiles(source: AnySource) {
+  const files: FileObject[] = [];
+  for (const page of source.getPages()) {
+    files.push({
+      data: page.data,
+      url: page.url,
+      path: page.absolutePath,
+      content: await page.data.getText('raw'),
+    });
+  }
+
+  return files;
+}
+
+void checkLinks();

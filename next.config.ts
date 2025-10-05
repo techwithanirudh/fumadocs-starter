@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
     'twoslash',
     'twoslash-protocol',
     'shiki',
+    '@takumi-rs/core'
   ],
   images: {
     unoptimized: true,
