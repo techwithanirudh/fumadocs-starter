@@ -6,9 +6,7 @@ pre-commit:
       run: bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
       stage_fixed: true
     typecheck:
-      glob: "*.{ts,tsx,d.cts,d.mts}"
-      run: bun typecheck {staged_files}
-      stage_fixed: true
+      run: bun typecheck
     spelling:
       run: bun check:spelling {staged_files}
       stage_fixed: true

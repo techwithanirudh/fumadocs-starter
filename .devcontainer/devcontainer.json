@@ -59,7 +59,7 @@
         "scm.defaultViewMode": "tree",
         "diffEditor.diffAlgorithm": "advanced",
         "diffEditor.experimental.showMoves": true,
-        "diffEditor.renderSideBySide": false,
+        "diffEditor.renderSideBySide": true,
         "files.watcherExclude": {
           "**/node_modules/**": true
         },
