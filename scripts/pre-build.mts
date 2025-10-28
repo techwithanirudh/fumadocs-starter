@@ -1,8 +1,6 @@
-import { generateDocs } from './generate-docs.mjs'
-
 async function main() {
-  // comment the below to disable openapi generation
-  await Promise.all([generateDocs()])
+  // todo: add content
+  // await Promise.all([])
 }
 
 await main().catch((e) => {

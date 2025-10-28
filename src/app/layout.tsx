@@ -5,7 +5,9 @@ import { Inter } from 'next/font/google'
 import { Body } from './layout.client'
 import { Providers } from './providers'
 import 'katex/dist/katex.css'
-import { source } from '@/lib/source'
+import { TreeContextProvider } from 'fumadocs-ui/contexts/tree';
+import { source } from '@/lib/source';
+import { NextProvider } from 'fumadocs-core/framework/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -35,7 +37,11 @@ export default function Layout({ children }: LayoutProps<'/'>) {
       suppressHydrationWarning
     >
       <Body tree={source.pageTree}>
-        <Providers>{children}</Providers>
+        <NextProvider>
+          <TreeContextProvider tree={source.pageTree}>
+            <Providers>{children}</Providers>
+          </TreeContextProvider>
+        </NextProvider>
       </Body>
     </html>
   )

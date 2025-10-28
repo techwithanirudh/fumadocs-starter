@@ -4,7 +4,7 @@ env.loadEnvConfig(process.cwd())
 
 async function main() {
   // todo: add content
-  // await Promise.all([updateSearchIndexes(), updateOramaAi()]);
+  // await Promise.all([]);
 }
 
 await main().catch((e) => {

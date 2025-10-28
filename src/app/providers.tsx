@@ -1,6 +1,7 @@
 'use client'
+
 import { ProgressProvider } from '@bprogress/next/app'
-import { RootProvider } from 'fumadocs-ui/provider'
+import { RootProvider } from 'fumadocs-ui/provider/base';
 import type { ReactNode } from 'react'
 import SearchDialog from '@/components/search'
 import { TooltipProvider } from '@/components/ui/tooltip'

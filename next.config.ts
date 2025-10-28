@@ -17,10 +17,6 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
-  eslint: {
-    // Replaced by root workspace command
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -31,6 +27,7 @@ const nextConfig: NextConfig = {
     'twoslash',
     'twoslash-protocol',
     'shiki',
+    '@takumi-rs/core',
   ],
   images: {
     unoptimized: true,
@@ -49,7 +46,7 @@ const nextConfig: NextConfig = {
         destination: '/llms.mdx/:path*',
       },
     ]
-  },
+  }
 }
 
 const bundleAnalyzerPlugin = bundleAnalyzer({

@@ -1,52 +1,34 @@
-import { readFileSync } from 'node:fs'
-import { notFound } from 'next/navigation'
-import { generateOGImage } from '@/app/og/[...slug]/og'
-import { source } from '@/lib/source'
+import { source } from '@/lib/source';
+import { notFound } from 'next/navigation';
+import { generate as MetadataImage, getImageResponseOptions } from './generate';
+import { ImageResponse } from '@takumi-rs/image-response';
 
-const font = readFileSync('./src/app/og/[...slug]/fonts/Inter-Regular.ttf')
-const fontSemiBold = readFileSync(
-  './src/app/og/[...slug]/fonts/Inter-SemiBold.ttf'
-)
-const fontBold = readFileSync('./src/app/og/[...slug]/fonts/Inter-Bold.ttf')
+export const revalidate = false;
 
 export async function GET(
   _req: Request,
-  { params }: RouteContext<'/og/[...slug]'>
+  { params }: RouteContext<'/og/[...slug]'>,
 ) {
-  const slug = (await params).slug
-  const page = source.getPage(slug.slice(0, -1) ?? [])
-  if (!page) notFound()
+  const { slug } = await params;
+  const page = source.getPage(slug.slice(0, -1));
+  if (!page) notFound();
 
-  return generateOGImage({
-    primaryTextColor: 'rgb(240,240,240)',
-    title: page.data.title,
-    description: page.data.description,
-    tag: page.slugs[0] ?? '',
-    fonts: [
-      {
-        name: 'Inter',
-        data: font,
-        weight: 400,
-      },
-      {
-        name: 'Inter',
-        data: fontSemiBold,
-        weight: 600,
-      },
-      {
-        name: 'Inter',
-        data: fontBold,
-        weight: 700,
-      },
-    ],
-  })
+  return new ImageResponse(
+    (
+      <MetadataImage
+        title={page.data.title}
+        description={page.data.description}
+      />
+    ),
+    await getImageResponseOptions(),
+  );
 }
 
 export function generateStaticParams(): {
-  slug: string[]
+  slug: string[];
 }[] {
   return source.generateParams().map((page) => ({
     ...page,
-    slug: [...page.slug, 'image.png'],
-  }))
+    slug: [...page.slug, 'image.webp'],
+  }));
 }
