@@ -1,59 +1,81 @@
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { baseOptions, linkItems, logo } from '@/lib/layout.shared';
-import { source } from '@/lib/source';
-import { AISearchTrigger } from '@/components/fumadocs/ai/search';
-import 'katex/dist/katex.min.css';
+import { LargeSearchToggle } from 'fumadocs-ui/components/layout/search-toggle'
+import { DocsLayout } from 'fumadocs-ui/layouts/notebook'
+import { AISearchTrigger } from '@/components/fumadocs/ai/search'
+import { baseOptions, linkItems, logo } from '@/lib/layout.shared'
+import { source } from '@/lib/source'
+import 'katex/dist/katex.min.css'
+import type { CSSProperties } from 'react'
+import DocsBackground from '@/components/docs-background'
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
-  const base = baseOptions();
+  const base = baseOptions()
 
   return (
     <DocsLayout
       {...base}
-      tree={source.pageTree}
-      // just icon items
       links={linkItems.filter((item) => item.type === 'icon')}
-      nav={{
-        ...base.nav,
-        title: (
-          <>
-            {logo}
-            <span className="font-medium [.uwu_&]:hidden max-md:hidden">
-              Fumadocs
-            </span>
-          </>
-        ),
-      }}
+      tree={source.pageTree}
       sidebar={{
+        collapsible: false,
         tabs: {
           transform(option, node) {
-            const meta = source.getNodeMeta(node);
-            if (!meta || !node.icon) return option;
+            const meta = source.getNodeMeta(node)
+            if (!meta || !node.icon) return option
 
-            const color = `var(--${meta.path.split('/')[0]}-color, var(--color-fd-foreground))`;
+            const segments = meta.path.split('/')
+            const segment = serializeSegment(segments[0])
 
+            const color = `var(--${segment}-color, var(--color-fd-foreground))`
             return {
               ...option,
               icon: (
                 <div
-                  className="[&_svg]:size-full rounded-lg size-full text-(--tab-color) max-md:bg-(--tab-color)/10 max-md:border max-md:p-1.5"
-                  style={
-                    {
-                      '--tab-color': color,
-                    } as object
-                  }
+                  className='size-full text-(--tab-color) max-md:border max-md:bg-(--tab-color)/10 max-md:p-1.5 [&_svg]:size-full'
+                  style={{ '--tab-color': color } as CSSProperties}
                 >
                   {node.icon}
                 </div>
               ),
-            };
+            }
           },
         },
       }}
+      tabMode='navbar'
+      searchToggle={{
+        components: {
+          lg: (
+            <div className='flex gap-1.5 max-md:hidden'>
+              <LargeSearchToggle className='flex-1' />
+            </div>
+          ),
+        },
+      }}
+      nav={{
+        ...base.nav,
+        mode: 'top',
+        title: (
+          <>
+            {logo}
+            <span className='font-medium max-md:hidden'>Starter Kit</span>
+          </>
+        ),
+      }}
     >
       {children}
-
+      {/* <DocsBackground /> */}
       <AISearchTrigger />
     </DocsLayout>
-  );
+  )
+}
+
+function serializeSegment(segment: string | undefined): string {
+  const raw = (segment ?? '').trim()
+
+  const kebab = raw
+    .toLowerCase()
+    .replace(/[_\s]+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
+  return kebab || 'fd'
 }
