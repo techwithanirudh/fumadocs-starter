@@ -13,7 +13,7 @@ export const source = loader(
   multiple({
     docs: docs.toFumadocsSource(),
     openapi: await openapiSource(openapi, {
-      baseDir: 'content/docs/api-reference/(generated)',
+      baseDir: 'api-reference/(generated)',
     }),
   }),
   {
