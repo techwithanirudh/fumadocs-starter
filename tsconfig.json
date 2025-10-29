@@ -26,6 +26,9 @@
       ],
       "@/.source": [
         "./.source/index.ts"
+      ],
+      "@public/*": [
+        "./public/*"
       ]
     },
     "plugins": [

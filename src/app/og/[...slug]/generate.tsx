@@ -1,11 +1,12 @@
 import { type ImageResponseOptions } from '@takumi-rs/image-response';
 import type { ReactNode } from 'react';
-import fs from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
+import { title as siteName } from '@/lib/layout.shared'
 
 export interface GenerateProps {
   title: ReactNode;
   description?: ReactNode;
+  tag?: string;
 }
 
 
@@ -20,6 +21,12 @@ export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
     format: 'webp',
     width: 1200,
     height: 630,
+    persistentImages: [
+      {
+        src: "logo.svg",
+        data: readFileSync('./public/logo.svg'),
+      },
+    ],
     fonts: [
       {
         name: 'Inter',
@@ -40,34 +47,9 @@ export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
   };
 }
 
-export function generate({ title, description }: GenerateProps) {
-  const siteName = 'Fumadocs';
+export function generate({ title, description, tag }: GenerateProps) {
   const primaryTextColor = 'rgb(240,240,240)';
-  const logo = (
-    <svg
-      width="60"
-      height="60"
-      viewBox="0 0 180 180"
-      filter="url(#logo-shadow)"
-    >
-      <circle cx="90" cy="90" r="86" fill="url(#logo-iconGradient)" />
-      <defs>
-        <filter id="logo-shadow" colorInterpolationFilters="sRGB">
-          <feDropShadow
-            dx="0"
-            dy="0"
-            stdDeviation="4"
-            floodColor="white"
-            floodOpacity="1"
-          />
-        </filter>
-        <linearGradient id="logo-iconGradient" gradientTransform="rotate(45)">
-          <stop offset="45%" stopColor="black" />
-          <stop offset="100%" stopColor="white" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
+  const primaryColor = 'rgb(123, 111, 111)';
 
   return (
     <div
@@ -77,7 +59,8 @@ export function generate({ title, description }: GenerateProps) {
         width: '100%',
         height: '100%',
         color: 'white',
-        backgroundColor: 'rgb(10,10,10)',
+        backgroundColor: "#0c0c0c",
+        backgroundImage: `linear-gradient(to top right, ${primaryColor}, transparent), noise-v1(opacity(0.3) frequency(1.0) octaves(4))`,
       }}
     >
       <div
@@ -89,6 +72,35 @@ export function generate({ title, description }: GenerateProps) {
           padding: '4rem',
         }}
       >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: '24px',
+            marginBottom: 'auto',
+            color: primaryTextColor,
+          }}
+        >
+          <img src="logo.svg" alt={siteName} style={{ width: 60, height: 60 }} />
+          <span
+            style={{
+              fontSize: '46px',
+              fontWeight: 600,
+            }}
+          >
+            {siteName}
+          </span>
+        </div>
+        <p
+          style={{
+            fontWeight: 600,
+            fontSize: '26px',
+            textTransform: 'uppercase'
+          }}
+        >
+          {tag?.replace(/-/g, ' ')}
+        </p>
         <span
           style={{
             fontWeight: 600,
@@ -105,26 +117,6 @@ export function generate({ title, description }: GenerateProps) {
         >
           {description}
         </p>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '24px',
-            marginTop: 'auto',
-            color: primaryTextColor,
-          }}
-        >
-          {logo}
-          <span
-            style={{
-              fontSize: '46px',
-              fontWeight: 600,
-            }}
-          >
-            {siteName}
-          </span>
-        </div>
       </div>
     </div>
   );

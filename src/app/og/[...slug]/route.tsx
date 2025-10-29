@@ -18,6 +18,7 @@ export async function GET(
       <MetadataImage
         title={page.data.title}
         description={page.data.description}
+        tag={page.slugs[0] ?? ''}
       />
     ),
     await getImageResponseOptions(),
