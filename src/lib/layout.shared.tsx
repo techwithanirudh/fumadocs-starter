@@ -52,7 +52,11 @@ export function baseOptions(): BaseLayoutProps {
       transparentMode: 'top',
     },
     themeSwitch: {
-      component: <ThemeToggle mode='light-dark-system' className='' />,
+      component: (
+        <div className='flex w-full items-center justify-end'>
+          <ThemeToggle mode='light-dark-system' />
+        </div>
+      ),
     },
   }
 }
