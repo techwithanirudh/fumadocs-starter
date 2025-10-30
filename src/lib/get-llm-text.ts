@@ -8,8 +8,6 @@ export const categoryMap: Record<string, string> = {
 }
 
 export async function getLLMText(page: Page) {
-  if (page.data.type === 'openapi') return ''
-
   const category = categoryMap[page.slugs[0]] ?? page.slugs[0]
 
   const processed = await page.data.getText('processed')

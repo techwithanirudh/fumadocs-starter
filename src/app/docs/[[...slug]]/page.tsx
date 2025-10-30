@@ -1,23 +1,19 @@
 import Link from 'fumadocs-core/link'
 import { getPageTreePeers } from 'fumadocs-core/page-tree'
 import { PathUtils } from 'fumadocs-core/source'
-import { APIPage } from 'fumadocs-openapi/ui'
 import * as Twoslash from 'fumadocs-twoslash/ui'
 import { createGenerator } from 'fumadocs-typescript'
 import { AutoTypeTable } from 'fumadocs-typescript/ui'
-import { Banner } from 'fumadocs-ui/components/banner'
-import { Callout } from 'fumadocs-ui/components/callout'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
-import { DocsBody, DocsPage } from 'fumadocs-ui/page'
+import { DocsPage } from 'fumadocs-ui/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import type { ComponentProps, FC, ReactElement } from 'react'
+import type { ReactElement } from 'react'
 import {
   LLMCopyButton,
   ViewOptions,
 } from '@/components/fumadocs/ai/page-actions'
-import { Mermaid } from '@/components/mdx/mermaid'
 import {
   HoverCard,
   HoverCardContent,
@@ -39,18 +35,6 @@ export default async function Page(
   const page = source.getPage(params.slug)
 
   if (!page) return notFound()
-
-  if (page.data.type === 'openapi') {
-    return (
-      <DocsPage>
-        <h1 className='font-semibold text-[1.75em]'>{page.data.title}</h1>
-        <p className='mb-6 text-fd-muted-foreground'>{page.data.description}</p>
-        <DocsBody>
-          <APIPage {...page.data.getAPIPageProps()} />
-        </DocsBody>
-      </DocsPage>
-    )
-  }
 
   const { body: Mdx, toc, lastModified } = page.data
 
@@ -105,13 +89,10 @@ export default async function Page(
                 </HoverCard>
               )
             },
-            Banner,
-            Mermaid,
             TypeTable,
             AutoTypeTable: (props) => (
               <AutoTypeTable generator={generator} {...props} />
             ),
-            blockquote: Callout as unknown as FC<ComponentProps<'blockquote'>>,
             DocsCategory: ({ url }) => {
               return <DocsCategory url={url ?? page.url} />
             },

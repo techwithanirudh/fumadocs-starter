@@ -42,7 +42,6 @@ async function checkLinks() {
 }
 
 function getHeadings({ data }: InferPageType<AnySource>): string[] {
-  if ('type' in data && data.type === 'openapi') return []
   const headings = data.toc.map((item) => item.url.slice(1))
   const elementIds = data._exports?.elementIds
   if (Array.isArray(elementIds)) {
@@ -55,8 +54,6 @@ function getHeadings({ data }: InferPageType<AnySource>): string[] {
 async function getFiles(source: AnySource) {
   const files: FileObject[] = []
   for (const page of source.getPages()) {
-    if ('type' in page.data && page.data.type === 'openapi') continue
-
     files.push({
       data: page.data,
       url: page.url,

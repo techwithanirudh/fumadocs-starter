@@ -40,11 +40,11 @@ function Header() {
         <p className='text-fd-muted-foreground text-xs'>
           Powered by{' '}
           <a
-            href='https://inkeep.com'
+            href='https://ai-sdk.dev'
             target='_blank'
             rel='noreferrer noopener'
           >
-            Inkeep AI
+            AI SDK
           </a>
         </p>
       </div>

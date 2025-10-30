@@ -8,6 +8,10 @@ import * as icons from 'lucide-react'
 import type { MDXComponents } from 'mdx/types'
 import { Update, Updates } from '@/components/fumadocs/updates'
 import { Mermaid } from '@/components/mdx/mermaid'
+import { ComponentProps, FC } from 'react'
+import { APIPage } from 'fumadocs-openapi/ui'
+import { openapi } from '@/lib/openapi'
+import { Banner } from 'fumadocs-ui/components/banner'
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
@@ -22,6 +26,11 @@ export function getMDXComponents(components?: MDXComponents) {
     Mermaid,
     TypeTable,
     Callout,
+    blockquote: Callout as unknown as FC<ComponentProps<'blockquote'>>,
+    APIPage: (props) => (
+      <APIPage {...openapi.getAPIPageProps(props)} />
+    ),
+    Banner,
     ...components,
   } satisfies MDXComponents
 }

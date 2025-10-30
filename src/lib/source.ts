@@ -5,17 +5,11 @@ import {
   multiple,
 } from 'fumadocs-core/source'
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
-import { openapiPlugin, openapiSource } from 'fumadocs-openapi/server'
+import { openapiPlugin } from 'fumadocs-openapi/server'
 import { docs } from '@/.source'
-import { openapi } from '@/lib/openapi'
 
 export const source = loader(
-  multiple({
-    docs: docs.toFumadocsSource(),
-    openapi: await openapiSource(openapi, {
-      baseDir: 'api-reference/(generated)',
-    }),
-  }),
+  docs.toFumadocsSource(),
   {
     baseUrl: '/docs',
     plugins: [lucideIconsPlugin(), openapiPlugin()],

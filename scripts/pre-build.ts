@@ -1,6 +1,8 @@
+import { generateDocs } from './generate-docs.js'
+
 async function main() {
   // todo: add content
-  // await Promise.all([])
+  await Promise.all([generateDocs()])
 }
 
 await main().catch((e) => {
