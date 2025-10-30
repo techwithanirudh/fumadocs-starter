@@ -1,7 +1,7 @@
+import type { Item, Root } from 'fumadocs-core/page-tree'
 import { flattenTree, getPageTreeRoots } from 'fumadocs-core/page-tree'
-import type { Root, Item } from 'fumadocs-core/page-tree';
 
-export { getPageTreeRoots, flattenTree } from 'fumadocs-core/page-tree'
+export { flattenTree, getPageTreeRoots } from 'fumadocs-core/page-tree'
 
 /**
  * normalize url

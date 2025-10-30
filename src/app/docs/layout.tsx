@@ -5,7 +5,6 @@ import { baseOptions, linkItems, logo } from '@/lib/layout.shared'
 import { source } from '@/lib/source'
 import 'katex/dist/katex.min.css'
 import type { CSSProperties } from 'react'
-import DocsBackground from '@/components/docs-background'
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
   const base = baseOptions()

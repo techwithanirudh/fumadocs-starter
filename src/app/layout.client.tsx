@@ -6,13 +6,7 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 import { findPage } from '@/lib/page-tree'
 
-export function Body({
-  children,
-  tree,
-}: {
-  children: ReactNode
-  tree: Root
-}) {
+export function Body({ children, tree }: { children: ReactNode; tree: Root }) {
   const mode = useMode(tree)
 
   return (

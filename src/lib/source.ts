@@ -3,11 +3,11 @@ import {
   type InferPageType,
   loader,
   multiple,
-} from 'fumadocs-core/source';
-import { openapiPlugin, openapiSource } from 'fumadocs-openapi/server';
-import { docs } from '@/.source';
-import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
-import { openapi } from '@/lib/openapi';
+} from 'fumadocs-core/source'
+import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
+import { openapiPlugin, openapiSource } from 'fumadocs-openapi/server'
+import { docs } from '@/.source'
+import { openapi } from '@/lib/openapi'
 
 export const source = loader(
   multiple({
@@ -19,8 +19,8 @@ export const source = loader(
   {
     baseUrl: '/docs',
     plugins: [lucideIconsPlugin(), openapiPlugin()],
-  },
-);
+  }
+)
 
-export type Page = InferPageType<typeof source>;
-export type Meta = InferMetaType<typeof source>;
+export type Page = InferPageType<typeof source>
+export type Meta = InferMetaType<typeof source>

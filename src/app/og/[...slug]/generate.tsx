@@ -1,14 +1,13 @@
-import { type ImageResponseOptions } from '@takumi-rs/image-response';
-import type { ReactNode } from 'react';
-import { readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs'
+import type { ImageResponseOptions } from '@takumi-rs/image-response'
+import type { ReactNode } from 'react'
 import { title as siteName } from '@/lib/layout.shared'
 
 export interface GenerateProps {
-  title: ReactNode;
-  description?: ReactNode;
-  tag?: string;
+  title: ReactNode
+  description?: ReactNode
+  tag?: string
 }
-
 
 const font = readFileSync('./src/app/og/[...slug]/fonts/Inter-Regular.ttf')
 const fontSemiBold = readFileSync(
@@ -23,7 +22,7 @@ export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
     height: 630,
     persistentImages: [
       {
-        src: "logo.svg",
+        src: 'logo.svg',
         data: readFileSync('./public/logo.svg'),
       },
     ],
@@ -44,12 +43,12 @@ export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
         weight: 700,
       },
     ],
-  };
+  }
 }
 
 export function generate({ title, description, tag }: GenerateProps) {
-  const primaryTextColor = 'rgb(240,240,240)';
-  const primaryColor = 'rgb(123, 111, 111)';
+  const primaryTextColor = 'rgb(240,240,240)'
+  const primaryColor = 'rgb(123, 111, 111)'
 
   return (
     <div
@@ -59,7 +58,7 @@ export function generate({ title, description, tag }: GenerateProps) {
         width: '100%',
         height: '100%',
         color: 'white',
-        backgroundColor: "#0c0c0c",
+        backgroundColor: '#0c0c0c',
         backgroundImage: `linear-gradient(to top right, ${primaryColor}, transparent), noise-v1(opacity(0.3) frequency(1.0) octaves(4))`,
       }}
     >
@@ -82,7 +81,11 @@ export function generate({ title, description, tag }: GenerateProps) {
             color: primaryTextColor,
           }}
         >
-          <img src="logo.svg" alt={siteName} style={{ width: 60, height: 60 }} />
+          <img
+            src='logo.svg'
+            alt={siteName}
+            style={{ width: 60, height: 60 }}
+          />
           <span
             style={{
               fontSize: '46px',
@@ -96,7 +99,7 @@ export function generate({ title, description, tag }: GenerateProps) {
           style={{
             fontWeight: 600,
             fontSize: '26px',
-            textTransform: 'uppercase'
+            textTransform: 'uppercase',
           }}
         >
           {tag?.replace(/-/g, ' ')}
@@ -119,5 +122,5 @@ export function generate({ title, description, tag }: GenerateProps) {
         </p>
       </div>
     </div>
-  );
+  )
 }

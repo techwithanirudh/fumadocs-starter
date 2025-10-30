@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { isMarkdownPreferred, rewritePath } from 'fumadocs-core/negotiation';
+import { isMarkdownPreferred, rewritePath } from 'fumadocs-core/negotiation'
+import { type NextRequest, NextResponse } from 'next/server'
 
-const { rewrite: rewriteLLM } = rewritePath('/docs/*path', '/llms.mdx/*path');
+const { rewrite: rewriteLLM } = rewritePath('/docs/*path', '/llms.mdx/*path')
 
 export default function proxy(request: NextRequest) {
   if (isMarkdownPreferred(request)) {
-    const result = rewriteLLM(request.nextUrl.pathname);
+    const result = rewriteLLM(request.nextUrl.pathname)
 
     if (result) {
-      return NextResponse.rewrite(new URL(result, request.nextUrl));
+      return NextResponse.rewrite(new URL(result, request.nextUrl))
     }
   }
 
-  return NextResponse.next();
+  return NextResponse.next()
 }

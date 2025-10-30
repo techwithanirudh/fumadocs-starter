@@ -46,7 +46,7 @@ const nextConfig: NextConfig = {
         destination: '/llms.mdx/:path*',
       },
     ]
-  }
+  },
 }
 
 const bundleAnalyzerPlugin = bundleAnalyzer({

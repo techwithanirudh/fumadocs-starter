@@ -9,3 +9,7 @@
 - [] Verify Page Tree
 -[] Update Docs for new ways
 - search is broken
+- verify if llms.txt and middleware work
+- think about llms.txt for index page
+- add back searchwith ai in empty search area
+- fix search tags

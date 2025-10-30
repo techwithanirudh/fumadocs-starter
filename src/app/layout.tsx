@@ -5,9 +5,9 @@ import { Inter } from 'next/font/google'
 import { Body } from './layout.client'
 import { Providers } from './providers'
 import 'katex/dist/katex.css'
-import { TreeContextProvider } from 'fumadocs-ui/contexts/tree';
-import { source } from '@/lib/source';
-import { NextProvider } from 'fumadocs-core/framework/next';
+import { NextProvider } from 'fumadocs-core/framework/next'
+import { TreeContextProvider } from 'fumadocs-ui/contexts/tree'
+import { source } from '@/lib/source'
 
 const inter = Inter({
   subsets: ['latin'],
