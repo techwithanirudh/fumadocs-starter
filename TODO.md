@@ -4,12 +4,12 @@
 - [] Ask fuma for the HeroUI theme
 
 - [] Verify OG Image generation
-- [] Verify OpenaPAI
+- [] Verify OpenAPI
 - [] Verify Lint Script
 - [] Verify Page Tree
 -[] Update Docs for new ways
 - search is broken
 - verify if llms.txt and middleware work
 - think about llms.txt for index page
-- add back searchwith ai in empty search area
+- add back search with ai in empty search area
 - fix search tags

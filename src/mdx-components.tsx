@@ -1,4 +1,6 @@
+import { APIPage } from 'fumadocs-openapi/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
+import { Banner } from 'fumadocs-ui/components/banner'
 import { Callout } from 'fumadocs-ui/components/callout'
 import * as FilesComponents from 'fumadocs-ui/components/files'
 import * as TabsComponents from 'fumadocs-ui/components/tabs'
@@ -6,12 +8,10 @@ import { TypeTable } from 'fumadocs-ui/components/type-table'
 import defaultMdxComponents from 'fumadocs-ui/mdx'
 import * as icons from 'lucide-react'
 import type { MDXComponents } from 'mdx/types'
+import type { ComponentProps, FC } from 'react'
 import { Update, Updates } from '@/components/fumadocs/updates'
 import { Mermaid } from '@/components/mdx/mermaid'
-import { ComponentProps, FC } from 'react'
-import { APIPage } from 'fumadocs-openapi/ui'
 import { openapi } from '@/lib/openapi'
-import { Banner } from 'fumadocs-ui/components/banner'
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
@@ -27,9 +27,7 @@ export function getMDXComponents(components?: MDXComponents) {
     TypeTable,
     Callout,
     blockquote: Callout as unknown as FC<ComponentProps<'blockquote'>>,
-    APIPage: (props) => (
-      <APIPage {...openapi.getAPIPageProps(props)} />
-    ),
+    APIPage: (props) => <APIPage {...openapi.getAPIPageProps(props)} />,
     Banner,
     ...components,
   } satisfies MDXComponents

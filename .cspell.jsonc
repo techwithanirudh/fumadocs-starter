@@ -52,6 +52,9 @@
     "contentlayer",
     "basehub",
     "segs",
-    "shadcn"
+    "shadcn",
+    "fuma",
+    "takumi",
+    "customise"
   ]
 }

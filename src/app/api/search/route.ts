@@ -1,5 +1,5 @@
-import { source } from '@/lib/source';
-import { createSearchAPI } from 'fumadocs-core/search/server';
+import { createSearchAPI } from 'fumadocs-core/search/server'
+import { source } from '@/lib/source'
 
 export const { GET } = createSearchAPI('advanced', {
   language: 'english',
@@ -10,4 +10,4 @@ export const { GET } = createSearchAPI('advanced', {
     id: page.url,
     structuredData: page.data.structuredData ?? undefined,
   })),
-});
+})
