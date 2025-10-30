@@ -18,10 +18,10 @@ Fumadocs provides ready-to-use layouts. Let's go through them.
 
 ### 1.1. Docs Layout
 
+![Docs Layout](/docs/docs.png)
+
 The **Docs Layout** is the default option.  
 It's a clean, simple layout optimized for technical documentation.
-
-![Docs Layout](https://fumadocs.dev/_next/static/media/main.e7ce885e.png)
 
 To use this layout, update your `layout.tsx` file in `src/docs/layout.tsx`:
 
@@ -36,11 +36,11 @@ import { DocsLayout } from 'fumadocs-ui/layouts/docs'
 The **Notebook Layout** is a more compact variation of the Docs Layout.
 It supports three different design modes:
 
-> **Note:** Nav Mode (1.2.3) is enabled in this template.
+> **Note:** [Nav Mode (1.2.3)](#123-nav-mode) + Solar Theme is enabled in this template.
 
 #### 1.2.1. Default Design
 
-![Notebook Layout](https://fumadocs.dev/_next/static/media/notebook.71f6ca16.png)
+![Notebook Layout](/docs/notebook.png)
 
 * The context switcher is integrated directly into the sidebar.
 * You can switch between contexts (e.g., framework docs, API reference) without leaving the navigation area.
@@ -63,7 +63,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 #### 1.2.2. Tab Mode
 
-![Notebook Layout](https://fumadocs.dev/_next/static/media/notebook-tab-mode.48be7f0c.png)
+![Tab Mode](/docs/notebook-tab-mode.png)
 
 * The context switcher appears as horizontal tabs at the top of the documentation page.
 * Each tab represents a different context (e.g., *Framework, Core, MDX, CLI, OpenAPI Example*).
@@ -90,7 +90,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 #### 1.2.3. Nav Mode
 
-![Notebook Layout](https://fumadocs.dev/_next/static/media/notebook-nav-mode.6fdd6fb4.png)
+![Nav Mode](/docs/notebook-nav-mode.png)
 
 * Both the search bar and context switcher move into a global navigation area above the sidebar and main content.
 * This creates a header-like navigation where search and context switching are the primary controls.

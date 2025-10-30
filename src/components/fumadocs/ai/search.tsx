@@ -4,7 +4,7 @@ import { Presence } from '@radix-ui/react-presence'
 import { DefaultChatTransport } from 'ai'
 import Link from 'fumadocs-core/link'
 import { buttonVariants } from 'fumadocs-ui/components/ui/button'
-import { Loader2, RefreshCw, SearchIcon, Send, X } from 'lucide-react'
+import { Loader2, MessageCircleIcon, RefreshCw, Send, X } from 'lucide-react'
 import {
   type ComponentProps,
   createContext,
@@ -15,7 +15,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { RemoveScroll } from 'react-remove-scroll'
 import type { z } from 'zod'
 import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
 import { cn } from '@/lib/cn'
@@ -29,6 +28,33 @@ const Context = createContext<{
 
 function useChatContext() {
   return use(Context)!.chat
+}
+
+function Header() {
+  const { setOpen } = use(Context)!
+
+  return (
+    <div className='sticky top-0 flex items-start gap-2'>
+      <div className='flex-1 rounded-xl border bg-fd-card p-3 text-fd-card-foreground'>
+        <p className='font-medium text-sm'>Ask AI</p>
+      </div>
+      <button
+        type='button'
+        aria-label='Close'
+        tabIndex={-1}
+        className={cn(
+          buttonVariants({
+            size: 'icon-sm',
+            color: 'secondary',
+            className: 'rounded-full',
+          })
+        )}
+        onClick={() => setOpen(false)}
+      >
+        <X />
+      </button>
+    </div>
+  )
 }
 
 function SearchAIActions() {
@@ -72,15 +98,20 @@ function SearchAIActions() {
   )
 }
 
+const StorageKeyInput = '__ai_search_input'
 function SearchAIInput(props: ComponentProps<'form'>) {
   const { status, sendMessage, stop } = useChatContext()
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(
+    () => localStorage.getItem(StorageKeyInput) ?? ''
+  )
   const isLoading = status === 'streaming' || status === 'submitted'
   const onStart = (e?: SyntheticEvent) => {
     e?.preventDefault()
     void sendMessage({ text: input })
     setInput('')
   }
+
+  localStorage.setItem(StorageKeyInput, input)
 
   useEffect(() => {
     if (isLoading) document.getElementById('nd-ai-input')?.focus()
@@ -94,9 +125,9 @@ function SearchAIInput(props: ComponentProps<'form'>) {
     >
       <Input
         value={input}
-        placeholder={isLoading ? 'AI is answering...' : 'Ask AI'}
+        placeholder={isLoading ? 'AI is answering...' : 'Ask a question'}
         autoFocus
-        className='p-4'
+        className='p-3'
         disabled={status === 'streaming' || status === 'submitted'}
         onChange={(e) => {
           setInput(e.target.value)
@@ -241,7 +272,7 @@ function Message({
       <div className='prose text-sm'>
         <Markdown text={markdown} />
       </div>
-      {links && links.length > 0 ? (
+      {links && links.length > 0 && (
         <div className='mt-2 flex flex-row flex-wrap items-center gap-1'>
           {links.map((item, i) => (
             <Link
@@ -254,7 +285,7 @@ function Message({
             </Link>
           ))}
         </div>
-      ) : null}
+      )}
     </div>
   )
 }
@@ -290,100 +321,66 @@ export function AISearchTrigger() {
 
   return (
     <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>
-      <RemoveScroll enabled={open}>
-        <Presence present={open}>
-          {/* biome-ignore lint/a11y/noStaticElementInteractions: FIXME */}
-          {/* biome-ignore lint/a11y/useKeyWithClickEvents: FIXME */}
-          <div
-            className={cn(
-              'fixed inset-0 right-(--removed-body-scroll-bar-size,0) z-50 flex flex-col items-center bg-fd-background/80 p-2 pb-[8.375rem] backdrop-blur-sm',
-              open ? 'animate-fd-fade-in' : 'animate-fd-fade-out'
-            )}
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setOpen(false)
-                e.preventDefault()
-              }
-            }}
-          >
-            <div className='sticky top-0 flex w-full max-w-[600px] items-center gap-2 py-2'>
-              <p className='flex-1 text-fd-muted-foreground text-xs'>
-                AI can be inaccurate, please verify the information.
-              </p>
-              <button
-                aria-label='Close'
-                tabIndex={-1}
-                type='button'
-                className={cn(
-                  buttonVariants({
-                    size: 'icon-sm',
-                    color: 'secondary',
-                    className: 'rounded-full',
-                  })
-                )}
-                onClick={() => setOpen(false)}
-              >
-                <X />
-              </button>
-            </div>
-            <List
-              className='w-full max-w-[600px] overscroll-contain py-10 pr-2'
-              style={{
-                maskImage:
-                  'linear-gradient(to bottom, transparent, white 4rem, white calc(100% - 2rem), transparent 100%)',
-              }}
-            >
-              <div className='flex flex-col gap-4'>
-                {chat.messages
-                  .filter((msg) => msg.role !== 'system')
-                  .map((item) => (
-                    <Message key={item.id} message={item} />
-                  ))}
-              </div>
-            </List>
-          </div>
-        </Presence>
+      <style>
+        {`
+        @keyframes ask-ai-open {
+          from {
+            translate: 100% 0;
+          }
+        }
+        
+        @keyframes ask-ai-close {
+          to {
+            translate: 100% 0;
+            opacity: 0;
+          }
+        }`}
+      </style>
+      <Presence present={open}>
         <div
           className={cn(
-            '-translate-x-1/2 fixed bottom-2 z-50 overflow-hidden rounded-2xl border shadow-xl transition-[width,height] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+            'fixed inset-y-2 z-30 flex flex-col rounded-2xl border bg-fd-popover p-2 text-fd-popover-foreground shadow-lg max-sm:inset-x-2 sm:end-2 sm:w-[460px]',
             open
-              ? 'h-32 w-[min(600px,90vw)] bg-fd-popover'
-              : 'h-10 w-40 bg-fd-secondary text-fd-secondary-foreground shadow-fd-background'
+              ? 'animate-[ask-ai-open_300ms]'
+              : 'animate-[ask-ai-close_300ms]'
           )}
-          style={{
-            left: 'calc(50% - var(--removed-body-scroll-bar-size,0px)/2)',
-          }}
         >
-          <Presence present={!open}>
-            <button
-              className={cn(
-                'absolute inset-0 p-2 text-center text-fd-muted-foreground text-sm transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground',
-                !open
-                  ? 'animate-fd-fade-in'
-                  : 'animate-fd-fade-out bg-fd-accent'
-              )}
-              type='button'
-              onClick={() => setOpen(true)}
-            >
-              <SearchIcon className='-translate-y-1/2 absolute top-1/2 size-4.5' />
-              Ask AI
-            </button>
-          </Presence>
-          <Presence present={open}>
-            <div
-              className={cn(
-                'absolute inset-0 flex flex-col',
-                open ? 'animate-fd-fade-in' : 'animate-fd-fade-out'
-              )}
-            >
-              <SearchAIInput className='flex-1' />
-              <div className='flex items-center gap-1.5 p-1 empty:hidden'>
-                <SearchAIActions />
-              </div>
+          <Header />
+          <List
+            className='flex-1 overscroll-contain px-3 py-4'
+            style={{
+              maskImage:
+                'linear-gradient(to bottom, transparent, white 1rem, white calc(100% - 1rem), transparent 100%)',
+            }}
+          >
+            <div className='flex flex-col gap-4'>
+              {chat.messages
+                .filter((msg) => msg.role !== 'system')
+                .map((item) => (
+                  <Message key={item.id} message={item} />
+                ))}
             </div>
-          </Presence>
+          </List>
+          <div className='rounded-xl border bg-fd-card text-fd-card-foreground has-focus-visible:ring-2 has-focus-visible:ring-fd-ring'>
+            <SearchAIInput />
+            <div className='flex items-center gap-1.5 p-1 empty:hidden'>
+              <SearchAIActions />
+            </div>
+          </div>
         </div>
-      </RemoveScroll>
+      </Presence>
+      <button
+        className={cn(
+          'fixed bottom-4 z-20 flex h-10 w-24 items-center gap-2 gap-3 rounded-2xl border bg-fd-secondary px-2 font-medium text-fd-muted-foreground text-sm shadow-lg transition-[translate,opacity]',
+          'end-[calc(var(--removed-body-scroll-bar-size,0px)+var(--fd-layout-offset)+1rem)]',
+          open && 'translate-y-10 opacity-0'
+        )}
+        onClick={() => setOpen(true)}
+        type='button'
+      >
+        <MessageCircleIcon className='size-4.5' />
+        Ask AI
+      </button>
     </Context>
   )
 }

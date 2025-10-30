@@ -52,6 +52,7 @@ export function LLMCopyButton({
 
   return (
     <button
+      type='button'
       disabled={isLoading}
       className={cn(
         buttonVariants({
@@ -61,7 +62,6 @@ export function LLMCopyButton({
         })
       )}
       onClick={onClick}
-      type='button'
     >
       {checked ? <Check /> : <Copy />}
       Copy Markdown
@@ -228,7 +228,7 @@ export function ViewOptions({
         Open
         <ChevronDown className='size-3.5 text-fd-muted-foreground' />
       </PopoverTrigger>
-      <PopoverContent className='flex flex-col overflow-auto'>
+      <PopoverContent className='flex flex-col'>
         {items.map((item) => (
           <a
             key={item.href}

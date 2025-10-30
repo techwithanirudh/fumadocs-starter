@@ -1,4 +1,15 @@
 - [] Setup Custom Themes with TweakCN
 - [] Disable OpenAPI by default and give ability to add it through ShadCN cli, same with obsidian support, and changelog
 - [] Add a documentation to customize the fumadocs layout, like notebook and docs.
-- [] Ask fuma for the HeroUI theme
+- [x] Ask fuma for the HeroUI theme
+
+- [x] Verify OG Image generation
+- [x] Verify OpenAPI
+- [x] Verify Lint Script
+- [] Verify Page Tree
+- [] Update Docs for new ways
+- search is broken
+- verify if llms.txt and middleware work
+- think about llms.txt for index page
+- add back search with ai in empty search area
+- fix search tags

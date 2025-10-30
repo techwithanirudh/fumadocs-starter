@@ -22,31 +22,27 @@ The official OpenAPI integration supports:
 
 The `generate-docs` script uses the OpenAPI schema to generate the documentation. You can change the OpenAPI schema by modifying the `openapi.json` file in `content/docs/api-reference` of your project.
 
-```ts twoslash title="scripts/generate-docs.mts"
-import * as OpenAPI from 'fumadocs-openapi';
-import { rimraf } from 'rimraf';
+```ts title="scripts/generate-docs.ts"
+import * as OpenAPI from 'fumadocs-openapi'
+import { rimraf } from 'rimraf'
+import { openapi } from './lib/openapi' // [!code highlight]
+
+const out = './content/docs/api-reference/(generated)'
 
 export async function generateDocs() {
-  await rimraf('./content/docs/api-reference', {
+  await rimraf(out, {
     filter(v) {
-      return (
-        !v.endsWith('index.mdx') &&
-        !v.endsWith('openapi.json') &&
-        !v.endsWith('openapi.yml') &&
-        !v.endsWith('meta.json')
-      );
+      return !v.endsWith('meta.json')
     },
-  });
+  })
 
-  await Promise.all([
-    OpenAPI.generateFiles({
-      input: ['./content/docs/api-reference/openapi.yml'], // [!code highlight]
-      output: './content/docs/api-reference',
-      per: 'operation',
-      includeDescription: true,
-      groupBy: 'tag',
-    }),
-  ]);
+  await OpenAPI.generateFiles({
+    input: openapi, // [!code highlight]
+    output: out,
+    per: 'operation',
+    includeDescription: true,
+    groupBy: 'tag',
+  })
 }
 ```
 
@@ -59,16 +55,6 @@ bun run build:pre
 ```
 
 ## Removing the OpenAPI Integration
-
-
-<Accordions type="single" defaultValue="automatic">
-<Accordion title="Automatic" id="automatic">
-  To remove the OpenAPI integration automatically, you can use the `remove-openapi` script.
-  ```bash
-  bun run remove-openapi
-  ```
-</Accordion>
-  <Accordion title="Manual" id="manual">
 
 Follow these steps to completely remove the OpenAPI integration from your project.
 
@@ -96,7 +82,7 @@ export const source = loader({
 
 Delete the `lib/openapi.ts` file:
 
-```tsx twoslash title="- lib/openapi.ts"
+```ts twoslash title="lib/openapi.ts"
 import { createOpenAPI } from 'fumadocs-openapi/server' /* [!code --] */
 
 export const openapi = createOpenAPI({ /* [!code --] */
@@ -148,11 +134,11 @@ rm -rf content/docs/api-reference
 
 ### 4. Clean up build scripts
 
-#### `scripts/generate-docs.mts`
+#### `scripts/generate-docs.ts`
 
 Remove the OpenAPI generation logic:
 
-```tsx title="scripts/generate-docs.mts"
+```tsx title="scripts/generate-docs.ts"
 import * as OpenAPI from 'fumadocs-openapi' /* [!code --] */
 import { rimraf } from 'rimraf' /* [!code --] */
 import { openapi } from '@/lib/openapi' /* [!code --] */
@@ -172,11 +158,11 @@ export async function generateDocs() { /* [!code --] */
 } /* [!code --] */
 ```
 
-#### `scripts/pre-build.mts`
+#### `scripts/pre-build.ts`
 
 Remove the reference to `generateDocs`:
 
-```tsx title="scripts/pre-build.mts"
+```tsx title="scripts/pre-build.ts"
 import { generateDocs } from './generate-docs.mjs' /* [!code --] */
 
 async function main() {
@@ -256,6 +242,3 @@ bun remove fumadocs-openapi
 ```
 
 After completing these steps, all OpenAPI functionality will be removed from your Fumadocs setup.
-
-</Accordion>
-</Accordions>

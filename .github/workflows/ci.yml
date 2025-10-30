@@ -35,6 +35,19 @@ jobs:
       - name: Run Biome
         run: bun check
 
+  links:
+    name: Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Run links check
+        run: bun ./scripts/lint.ts
+
   spelling:
     name: Spelling
     runs-on: ubuntu-latest

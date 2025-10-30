@@ -1,4 +1,4 @@
-import { generateDocs } from './generate-docs.mjs'
+import { generateDocs } from './generate-docs.js'
 
 async function main() {
   // comment the below to disable openapi generation

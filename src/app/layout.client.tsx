@@ -1,18 +1,12 @@
 'use client'
 
-import type { PageTree } from 'fumadocs-core/server'
+import type { Root } from 'fumadocs-core/page-tree'
 import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 import { findPage } from '@/lib/page-tree'
 
-export function Body({
-  children,
-  tree,
-}: {
-  children: ReactNode
-  tree: PageTree.Root
-}) {
+export function Body({ children, tree }: { children: ReactNode; tree: Root }) {
   const mode = useMode(tree)
 
   return (
@@ -22,7 +16,7 @@ export function Body({
   )
 }
 
-export function useMode(tree: PageTree.Root): string | undefined {
+export function useMode(tree: Root): string | undefined {
   const pathname = usePathname()
   const page = findPage(tree, pathname)
 

@@ -8,6 +8,7 @@ import {
   frontmatterSchema,
   metaSchema,
 } from 'fumadocs-mdx/config'
+import jsonSchema from 'fumadocs-mdx/plugins/json-schema'
 import { transformerTwoslash } from 'fumadocs-twoslash'
 import { createFileSystemTypesCache } from 'fumadocs-twoslash/cache-fs'
 import { remarkAutoTypeTable } from 'fumadocs-typescript'
@@ -18,15 +19,16 @@ import { z } from 'zod'
 
 export const docs = defineDocs({
   docs: {
-    async: true,
     schema: frontmatterSchema.extend({
-      preview: z.string().optional(),
       index: z.boolean().default(false),
       /**
        * API routes only
        */
       method: z.string().optional(),
     }),
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
   },
   meta: {
     schema: metaSchema.extend({
@@ -37,10 +39,14 @@ export const docs = defineDocs({
 
 export default defineConfig({
   lastModifiedTime: 'git',
+  plugins: [
+    jsonSchema({
+      insert: true,
+    }),
+  ],
   mdxOptions: {
     rehypeCodeOptions: {
       lazy: true,
-      experimentalJSEngine: true,
       langs: ['ts', 'js', 'html', 'tsx', 'mdx'],
       inline: 'tailing-curly-colon',
       themes: {
@@ -74,7 +80,6 @@ export default defineConfig({
     remarkCodeTabOptions: {
       parseMdx: true,
     },
-
     remarkNpmOptions: {
       persist: {
         id: 'package-manager',

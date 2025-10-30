@@ -1,20 +1,15 @@
-import type { InferMetaType, InferPageType } from 'fumadocs-core/source'
-import { loader } from 'fumadocs-core/source'
-import { transformerOpenAPI } from 'fumadocs-openapi/server'
-import { icons } from 'lucide-react'
-import { createElement } from 'react'
+import {
+  type InferMetaType,
+  type InferPageType,
+  loader,
+} from 'fumadocs-core/source'
+import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
+import { openapiPlugin } from 'fumadocs-openapi/server'
 import { docs } from '@/.source'
 
-export const source = loader({
+export const source = loader(docs.toFumadocsSource(), {
   baseUrl: '/docs',
-  icon(icon) {
-    if (icon && icon in icons)
-      return createElement(icons[icon as keyof typeof icons])
-  },
-  source: docs.toFumadocsSource(),
-  pageTree: {
-    transformers: [transformerOpenAPI()],
-  },
+  plugins: [lucideIconsPlugin(), openapiPlugin()],
 })
 
 export type Page = InferPageType<typeof source>

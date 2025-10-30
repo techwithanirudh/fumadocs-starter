@@ -5,7 +5,6 @@ import { baseOptions, linkItems, logo } from '@/lib/layout.shared'
 import { source } from '@/lib/source'
 import 'katex/dist/katex.min.css'
 import type { CSSProperties } from 'react'
-import DocsBackground from '@/components/docs-background'
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
   const base = baseOptions()
@@ -13,6 +12,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
   return (
     <DocsLayout
       {...base}
+      links={linkItems.filter((item) => item.type === 'icon')}
       tree={source.pageTree}
       sidebar={{
         collapsible: false,
@@ -40,13 +40,11 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
         },
       }}
       tabMode='navbar'
-      // just icon items
-      links={linkItems.filter((item) => item.type === 'icon')}
       searchToggle={{
         components: {
           lg: (
             <div className='flex gap-1.5 max-md:hidden'>
-              <LargeSearchToggle className='flex-1' />
+              <LargeSearchToggle className='flex-1 rounded-xl' />
             </div>
           ),
         },
@@ -63,7 +61,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
       }}
     >
       {children}
-      <DocsBackground />
+      {/* <DocsBackground /> */}
       <AISearchTrigger />
     </DocsLayout>
   )
@@ -72,8 +70,6 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
 function serializeSegment(segment: string | undefined): string {
   const raw = (segment ?? '').trim()
 
-  // Prefer a readable kebab-case style for CSS variables
-  // Convert spaces/underscores to hyphens, remove invalid chars
   const kebab = raw
     .toLowerCase()
     .replace(/[_\s]+/g, '-')
