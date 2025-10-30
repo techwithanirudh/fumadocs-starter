@@ -3,8 +3,12 @@
 import { ProgressProvider } from '@bprogress/next/app'
 import { RootProvider } from 'fumadocs-ui/provider/base'
 import type { ReactNode } from 'react'
-import SearchDialog from '@/components/search'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import dynamic from 'next/dynamic'
+
+const SearchDialog = dynamic(() => import('@/components/search'), {
+  ssr: false,
+});
 
 export function Providers({ children }: { children: ReactNode }) {
   return (

@@ -1,7 +1,7 @@
 import { baseUrl, createMetadata } from '@/lib/metadata'
 import '@/styles/globals.css'
 import type { Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Geist_Mono, Geist } from 'next/font/google'
 import { Body } from './layout.client'
 import { Providers } from './providers'
 import 'katex/dist/katex.css'
@@ -9,9 +9,16 @@ import { NextProvider } from 'fumadocs-core/framework/next'
 import { TreeContextProvider } from 'fumadocs-ui/contexts/tree'
 import { source } from '@/lib/source'
 
-const inter = Inter({
+
+const geist = Geist({
+  variable: '--font-sans',
   subsets: ['latin'],
-})
+});
+
+const mono = Geist_Mono({
+  variable: '--font-mono',
+  subsets: ['latin'],
+});
 
 export const metadata = createMetadata({
   title: {
@@ -33,7 +40,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
   return (
     <html
       lang='en'
-      className={`${inter.className} dark`}
+      className={`${geist.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <Body tree={source.pageTree}>

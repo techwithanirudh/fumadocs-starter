@@ -52,7 +52,7 @@ export default async function Page(
     )
   }
 
-  const { body: Mdx, toc, lastModified, preview } = page.data
+  const { body: Mdx, toc, lastModified } = page.data
 
   return (
     <DocsPage
