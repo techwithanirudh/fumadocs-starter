@@ -2,13 +2,14 @@ import { owner, repo } from '@/lib/github'
 import type { Page } from '@/lib/source'
 
 export const categoryMap: Record<string, string> = {
-  '': 'Home',
+  '(index)': 'Home',
   'api-reference': 'API Reference',
   changelog: 'Changelog',
 }
 
 export async function getLLMText(page: Page) {
-  const category = categoryMap[page.slugs[0]] ?? page.slugs[0]
+  const slugs = page.path.split('/')
+  const category = categoryMap[slugs[0]] ?? slugs[0]
 
   const processed = await page.data.getText('processed')
   const path = `content/docs/${page.path}`
