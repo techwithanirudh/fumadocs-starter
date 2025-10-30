@@ -44,7 +44,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
         components: {
           lg: (
             <div className='flex gap-1.5 max-md:hidden'>
-              <LargeSearchToggle className='flex-1' />
+              <LargeSearchToggle className='flex-1 rounded-xl' />
             </div>
           ),
         },

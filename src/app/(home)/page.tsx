@@ -88,7 +88,7 @@ function Item(
     <Link
       {...rest}
       className={cn(
-        'rounded-lg border border-border bg-fd-accent/30 p-6 shadow-xs transition-all hover:bg-fd-accent',
+        'rounded-2xl border border-border bg-fd-accent/30 p-6 shadow-lg backdrop-blur-lg transition-all hover:bg-fd-accent',
         className
       )}
     >

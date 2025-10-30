@@ -31,7 +31,7 @@ The Fumadocs template should now be initialized. You can start development!
 
 ### Start the development server
 
-Run the app in development mode and open [http://localhost:3000/docs/app](http://localhost:3000/docs/app) in your browser.
+Run the app in development mode and open [http://localhost:3000/docs](http://localhost:3000/docs) in your browser.
 
 <Tabs groupId="package-manager" persist items={['npm', 'pnpm', 'yarn', 'bun']}>
     ```bash tab="npm"
@@ -66,11 +66,13 @@ title: Hello World
 ## Yo, what's up?
 ```
 
-The app organizes content by concerns, e.g., `content/docs/api-reference`, `content/docs/app`, `content/docs/changelog`, etc.
+The app organizes content by concerns, e.g., `content/docs/api-reference`, `content/docs/(index)`, `content/docs/changelog`, etc.
 
 ## Deploy your changes
 
-This template works out-of-the-box with Vercel or Netlify. You can deploy your documentation site with a single click.
+This template works out-of-the-box with Vercel. You can deploy your documentation site with a single click.
+
+You might need to make some changes, to deploy fully statically.
 
 ### Docker Deployment
 
