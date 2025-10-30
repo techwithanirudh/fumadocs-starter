@@ -35,7 +35,7 @@ jobs:
       - name: Run Biome
         run: bun check
 
-  lint:
+  links:
     name: Links
     runs-on: ubuntu-latest
     steps:
