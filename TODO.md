@@ -7,7 +7,7 @@
 - [] Verify OpenAPI
 - [] Verify Lint Script
 - [] Verify Page Tree
--[] Update Docs for new ways
+- [] Update Docs for new ways
 - search is broken
 - verify if llms.txt and middleware work
 - think about llms.txt for index page
