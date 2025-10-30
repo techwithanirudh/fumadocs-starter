@@ -36,17 +36,7 @@ function Header() {
   return (
     <div className='sticky top-0 flex items-start gap-2'>
       <div className='flex-1 rounded-xl border bg-fd-card p-3 text-fd-card-foreground'>
-        <p className='mb-2 font-medium text-sm'>Ask AI</p>
-        <p className='text-fd-muted-foreground text-xs'>
-          Powered by{' '}
-          <a
-            href='https://ai-sdk.dev'
-            target='_blank'
-            rel='noreferrer noopener'
-          >
-            AI SDK
-          </a>
-        </p>
+        <p className='font-medium text-sm'>Ask AI</p>
       </div>
       <button
         type='button'

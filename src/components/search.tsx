@@ -162,13 +162,6 @@ export default function CustomSearchDialog(props: SharedProps) {
               })}
             </PopoverContent>
           </Popover>
-          <a
-            href='https://orama.com'
-            rel='noreferrer noopener'
-            className='text-nowrap text-fd-muted-foreground text-xs'
-          >
-            Powered by Orama
-          </a>
         </SearchDialogFooter>
       </SearchDialogContent>
     </SearchDialog>
