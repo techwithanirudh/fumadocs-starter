@@ -12,7 +12,7 @@ type AnySource = typeof source
 async function checkLinks() {
   const scanned = await scanURLs({
     populate: {
-      'docs/[...slug]': source.getPages().map((page) => {
+      'docs/[[...slug]]': source.getPages().map((page) => {
         return {
           value: {
             slug: page.slugs,
