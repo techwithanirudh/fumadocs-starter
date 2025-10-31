@@ -2,7 +2,6 @@
 import { type UIMessage, type UseChatHelpers, useChat } from '@ai-sdk/react'
 import { Presence } from '@radix-ui/react-presence'
 import { DefaultChatTransport } from 'ai'
-import Link from 'fumadocs-core/link'
 import { buttonVariants } from 'fumadocs-ui/components/ui/button'
 import { Loader2, MessageCircleIcon, RefreshCw, Send, X } from 'lucide-react'
 import {
@@ -18,7 +17,12 @@ import {
 import type { z } from 'zod'
 import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
 import { cn } from '@/lib/cn'
-import { Markdown } from './markdown'
+import { Markdown } from '../markdown'
+import { GetPageContentVisualizer } from './tools/get-page-content'
+import { ProvideLinksVisualizer } from './tools/provide-links'
+import { SearchDocsVisualizer } from './tools/search-docs'
+import { WebSearchVisualizer } from './tools/web-search'
+import { Tool, ToolContent, ToolHeader, ToolOutput } from '@/components/ai-elements/tool'
 
 const Context = createContext<{
   open: boolean
@@ -241,6 +245,66 @@ const roleName: Record<string, string> = {
   assistant: 'assistant',
 }
 
+function ToolRenderer({
+  part,
+}: {
+  part: UIMessage['parts'][number] & { type: string; toolCallId?: string; state?: string }
+}) {
+  if (!part.type.startsWith('tool-') || !('input' in part)) {
+    return null
+  }
+
+  const { toolCallId, state } = part
+  const toolName = part.type.replace('tool-', '')
+  const input = part.input as any
+  const output = part.output as any
+
+  const renderVisualizer = () => {
+    switch (toolName) {
+      case 'searchDocs':
+        return (
+          <SearchDocsVisualizer
+            state={state}
+            input={input}
+            output={output}
+          />
+        )
+      case 'webSearch':
+        return (
+          <WebSearchVisualizer
+            state={state}
+            input={input}
+            output={output}
+          />
+        )
+      case 'getPageContent':
+        return (
+          <GetPageContentVisualizer
+            state={state}
+            input={input}
+            output={output}
+          />
+        )
+      default:
+        return null
+    }
+  }
+
+  return (
+    <Tool key={toolCallId}>
+      <ToolHeader state={state} type={part.type} />
+      <ToolContent>
+        {(state === 'input-streaming' || state === 'input-available' || state === 'output-available') && (
+          renderVisualizer()
+        )}
+        {state === 'output-error' && (
+          <ToolOutput errorText={part.errorText} />
+        )}
+      </ToolContent>
+    </Tool>
+  )
+}
+
 function Message({
   message,
   ...props
@@ -269,34 +333,20 @@ function Message({
       >
         {roleName[message.role] ?? 'unknown'}
       </p>
-      <div className='prose text-sm'>
-        {message.parts.map((part) => {
+      <div className='prose text-sm space-y-3'>
+        {message.parts.map((part, idx) => {
           if (part.type.startsWith('tool-') && 'input' in part) {
-            return (
-              <div key={`tool-${part.toolCallId}`}>
-                <p className='font-medium text-fd-muted-foreground text-sm'>{part.type}</p>
-                <pre className='text-xs'>{JSON.stringify(part.input, null, 2)}</pre>
-                <pre className='text-xs'>{JSON.stringify(part.output, null, 2)}</pre>
-              </div>
-            )
+            return <ToolRenderer key={`tool-${part.toolCallId ?? idx}`} part={part} />
           }
           return null
         })}
-        <Markdown text={markdown} />
+        {markdown && <Markdown text={markdown} />}
       </div>
       {links && links.length > 0 && (
-        <div className='mt-2 flex flex-row flex-wrap items-center gap-1'>
-          {links.map((item, i) => (
-            <Link
-              key={i}
-              href={item.url}
-              className='block rounded-lg border p-3 text-xs hover:bg-fd-accent hover:text-fd-accent-foreground'
-            >
-              <p className='font-medium'>{item.title}</p>
-              <p className='text-fd-muted-foreground'>Reference {item.label}</p>
-            </Link>
-          ))}
-        </div>
+        <ProvideLinksVisualizer
+          input={{ links }}
+          output={{ links }}
+        />
       )}
     </div>
   )
@@ -396,3 +446,4 @@ export function AISearchTrigger() {
     </Context>
   )
 }
+
