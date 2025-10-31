@@ -7,7 +7,7 @@ export const examplesPrompt = `
 **You**:
 (ALWAYS discover candidate pages first.)
 \`\`\`tool
-searchDocs(query: "customize Fumadocs themes layouts", tag: "guides", locale: "en")
+searchDocs(query: "customize Fumadocs themes layouts", locale: "en")
 \`\`\`
 
 (Fetch the most relevant matches. Note: paths never start with docs,...)
@@ -37,7 +37,7 @@ provideLinks(links: ["guides/using-custom-themes", "guides/customizing-the-layou
 **You**:
 (Try internal search first.)
 \`\`\`tool
-searchDocs(query: "keyboard navigation sidebar tree", tag: "guides", locale: "en")
+searchDocs(query: "keyboard navigation sidebar tree", locale: "en")
 \`\`\`
 
 (If no relevant page found, you can still check plausible candidates — remember: never prefix docs.)

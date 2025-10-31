@@ -1,6 +1,6 @@
 import { ImageResponse } from '@takumi-rs/image-response'
 import { notFound } from 'next/navigation'
-import { categoryMap } from '@/lib/get-llm-text'
+import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
 import { getImageResponseOptions, generate as MetadataImage } from './generate'
 
@@ -14,7 +14,7 @@ export async function GET(
   const page = source.getPage(slug.slice(0, -1))
   if (!page) notFound()
   const slugs = page.path.split('/')
-  const tag = categoryMap[slugs[0]] ?? slugs[0]
+  const tag = categories[slugs[0]] ?? slugs[0]
 
   return new ImageResponse(
     <MetadataImage

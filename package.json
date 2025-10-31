@@ -22,7 +22,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.56",
+    "@ai-sdk/openai": "^2.0.59",
     "@ai-sdk/react": "^2.0.81",
     "@bprogress/next": "^3.2.12",
     "@fumadocs/mdx-remote": "^1.4.3",
@@ -39,7 +39,7 @@
     "@takumi-rs/core": "^0.40.1",
     "@takumi-rs/helpers": "^0.40.1",
     "@takumi-rs/image-response": "^0.40.1",
-    "ai": "^5.0.81",
+    "ai": "^5.0.85",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "fumadocs-core": "^16.0.5",

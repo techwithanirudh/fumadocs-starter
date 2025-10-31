@@ -13,8 +13,10 @@ import { provider } from '@/lib/ai/providers'
 import { getPageContent } from '@/lib/ai/tools/get-page-content'
 import { provideLinks } from '@/lib/ai/tools/provide-links'
 import { webSearch } from '@/lib/ai/tools/web-search'
-import { categoryMap } from '@/lib/get-llm-text'
+import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
+import { searchDocs } from '@/lib/ai/tools/search-docs'
+import type { OpenAIResponsesProviderOptions } from '@ai-sdk/openai'
 
 export const runtime = 'edge'
 
@@ -31,7 +33,7 @@ function getLLMsTxt() {
   }
 
   for (const [key, value] of map) {
-    scanned.push(`## ${categoryMap[key]}`)
+    scanned.push(`## ${categories[key]}`)
     scanned.push(value.join('\n'))
   }
 
@@ -51,6 +53,7 @@ export async function POST(request: Request) {
     tools: {
       provideLinks,
       webSearch,
+      searchDocs,
       getPageContent,
     },
     messages: convertToModelMessages(messages, {
@@ -66,6 +69,12 @@ export async function POST(request: Request) {
       if (env.NODE_ENV !== 'production') {
         console.log(`Step Results: ${JSON.stringify(toolResults, null, 2)}`)
       }
+    },
+    providerOptions: {
+      openai: {
+        store: false,
+        include: ['reasoning.encrypted_content'],
+      } satisfies OpenAIResponsesProviderOptions,
     },
   })
 

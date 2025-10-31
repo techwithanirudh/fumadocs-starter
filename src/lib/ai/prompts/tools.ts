@@ -7,12 +7,12 @@ You have access to these tools. Use them exactly as shown below.
 **Usage:** Use this first to find relevant pages, then fetch them using \`getPageContent\`.  
 **Inputs:**
 - query: the search phrase (required)
-- tag: section filter (optional, e.g. "guides")
+- tag: section filter (optional, e.g. "all", "(index)", "api-reference", "changelog")
 - locale: language filter (optional)
 
 **Example:**
 \`\`\`tool
-searchDocs(query: "Fumadocs themes and layouts", tag: "guides", locale: "en")
+searchDocs(query: "Fumadocs themes and layouts", locale: "en")
 \`\`\`
 
 ### 2) getPageContent
