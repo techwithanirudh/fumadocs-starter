@@ -270,6 +270,18 @@ function Message({
         {roleName[message.role] ?? 'unknown'}
       </p>
       <div className='prose text-sm'>
+        {message.parts.map((part) => {
+          if (part.type.startsWith('tool-') && 'input' in part) {
+            return (
+              <div key={part.type}>
+                <p className='font-medium text-fd-muted-foreground text-sm'>{part.type}</p>
+                <pre className='text-xs'>{JSON.stringify(part.input, null, 2)}</pre>
+                <pre className='text-xs'>{JSON.stringify(part.output, null, 2)}</pre>
+              </div>
+            )
+          }
+          return null
+        })}
         <Markdown text={markdown} />
       </div>
       {links && links.length > 0 && (
