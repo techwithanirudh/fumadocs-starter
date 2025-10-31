@@ -4,19 +4,42 @@ import {
   InvalidToolInputError,
   NoSuchToolError,
   smoothStream,
+  stepCountIs,
   streamText,
   tool,
   type UIMessage,
 } from 'ai'
 import { env } from '@/env'
 import { systemPrompt } from '@/lib/ai/prompts'
-import { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
+import { GetPageContentToolSchema, ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
+import { categoryMap } from '@/lib/get-llm-text'
+import { source } from '@/lib/source'
 
 export const runtime = 'edge'
 
 const openai = createOpenAI({
   apiKey: env.OPENAI_API_KEY,
 })
+
+function getLLMsTxt() {
+  const scanned: string[] = []
+  scanned.push('# Docs')
+  const map = new Map<string, string[]>()
+
+  for (const page of source.getPages()) {
+    const dir = page.path.split('/')[0]
+    const list = map.get(dir) ?? []
+    list.push(`- [${page.data.title}](${page.url}): ${page.data.description}`)
+    map.set(dir, list)
+  }
+
+  for (const [key, value] of map) {
+    scanned.push(`## ${categoryMap[key]}`)
+    scanned.push(value.join('\n'))
+  }
+
+  return scanned.join('\n\n')
+}
 
 export async function POST(request: Request) {
   const {
@@ -26,8 +49,8 @@ export async function POST(request: Request) {
   } = await request.json()
 
   const result = streamText({
-    model: openai.responses('gpt-4.1-mini'),
-    system: systemPrompt,
+    model: openai('gpt-5-nano'),
+    system: systemPrompt({ llms: getLLMsTxt() }),
     tools: {
       provideLinks: tool({
         description:
@@ -37,8 +60,29 @@ export async function POST(request: Request) {
           links,
         }),
       }),
-      webSearch: openai.tools.webSearchPreview({
+      webSearch: openai.tools.webSearch({
         searchContextSize: 'medium',
+      }),
+      getPageContent: tool({
+        description:
+          'Get the list of pages in the documentation.',
+        inputSchema: GetPageContentToolSchema,
+        execute: async ({ path }) => {
+          const slugs = path.split('/')
+          const page = source.getPage(slugs)
+
+          if (!page) {
+            return {
+              success: false,
+              data: 'Page not found',
+            }
+          }
+
+          return {
+            success: true,
+            data: await page.data.getText('processed'),
+          }
+        },
       }),
     },
     messages: convertToModelMessages(messages, {
@@ -49,6 +93,7 @@ export async function POST(request: Request) {
       delayInMs: 20,
       chunking: 'line',
     }),
+    stopWhen: stepCountIs(10),
     onStepFinish: async ({ toolResults }) => {
       if (env.NODE_ENV !== 'production') {
         console.log(`Step Results: ${JSON.stringify(toolResults, null, 2)}`)

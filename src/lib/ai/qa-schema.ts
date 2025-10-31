@@ -48,3 +48,7 @@ const AIAnnotationsToolSchema = z.looseObject({
 export const ProvideAIAnnotationsToolSchema = z.object({
   aiAnnotations: AIAnnotationsToolSchema,
 })
+
+export const GetPageContentToolSchema = z.object({
+  path: z.string().describe('the path of the page to get the content of. e.g.: "quickstart"'),
+})
