@@ -46,11 +46,22 @@ export default async function Page(
         style: 'clerk',
       }}
     >
-      <h1 className='font-semibold text-[1.75em]'>{page.data.title}</h1>
+
+      <div className='flex flex-col sm:flex-row items-start sm:items-center relative gap-2'>
+        <h1 className='font-semibold text-[1.75em] break-all'>{page.data.title}</h1>
+
+        <div className='flex flex-row items-center gap-2 items-center shrink-0 justify-end ml-auto sm:flex hidden'>
+          <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
+          <ViewOptions
+            markdownUrl={`${page.url}.mdx`}
+            githubUrl={`https://github.com/${owner}/${repo}/blob/main/content/docs/${page.path}`}
+          />
+        </div>
+      </div>
       <p className='mb-2 text-fd-muted-foreground text-lg'>
         {page.data.description}
       </p>
-      <div className='flex flex-row items-center gap-2 border-b pb-6'>
+      <div className='flex items-center gap-2 pb-6 sm:hidden'>
         <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
         <ViewOptions
           markdownUrl={`${page.url}.mdx`}
@@ -100,7 +111,7 @@ export default async function Page(
         />
         {page.data.index ? <DocsCategory url={page.url} /> : null}
       </div>
-    </DocsPage>
+    </DocsPage >
   )
 }
 
