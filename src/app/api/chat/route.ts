@@ -12,19 +12,11 @@ import { systemPrompt } from '@/lib/ai/prompts'
 import { provider } from '@/lib/ai/providers'
 import { getPageContent } from '@/lib/ai/tools/get-page-content'
 import { provideLinks } from '@/lib/ai/tools/provide-links'
-import { web_search } from '@/lib/ai/tools/web-search'
 import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
 import { searchDocs } from '@/lib/ai/tools/search-docs'
-import {
-  firecrawlScrape,
-  firecrawlMap,
-  firecrawlSearch,
-  firecrawlCrawl,
-  firecrawlCheckCrawlStatus,
-  firecrawlExtract,
-} from '@/lib/ai/tools/firecrawl'
-import type { OpenAIResponsesProviderOptions } from '@ai-sdk/openai'
+import { scrape } from '@/lib/ai/tools/scrape'
+import { search } from '@/lib/ai/tools/search'
 
 export const runtime = 'edge'
 
@@ -60,15 +52,10 @@ export async function POST(request: Request) {
     system: systemPrompt({ llms: getLLMsTxt() }),
     tools: {
       provideLinks,
-      web_search,
       searchDocs,
       getPageContent,
-      firecrawlScrape,
-      firecrawlMap,
-      firecrawlSearch,
-      firecrawlCrawl,
-      firecrawlCheckCrawlStatus,
-      firecrawlExtract,
+      scrape,
+      search,
     },
     messages: convertToModelMessages(messages, {
       ignoreIncompleteToolCalls: true,
@@ -83,12 +70,6 @@ export async function POST(request: Request) {
       if (env.NODE_ENV !== 'production') {
         console.log(`Step Results: ${JSON.stringify(toolResults, null, 2)}`)
       }
-    },
-    providerOptions: {
-      openai: {
-        store: false,
-        include: ['reasoning.encrypted_content'],
-      } satisfies OpenAIResponsesProviderOptions,
     },
   })
 

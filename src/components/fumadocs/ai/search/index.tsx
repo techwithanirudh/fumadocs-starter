@@ -1,7 +1,7 @@
 'use client'
 import { type UIMessage, type UseChatHelpers, useChat } from '@ai-sdk/react'
 import { Presence } from '@radix-ui/react-presence'
-import { DefaultChatTransport } from 'ai'
+import { DefaultChatTransport, tool } from 'ai'
 import { buttonVariants } from 'fumadocs-ui/components/ui/button'
 import { Loader2, MessageCircleIcon, RefreshCw, Send, X } from 'lucide-react'
 import {
@@ -14,17 +14,26 @@ import {
   useRef,
   useState,
 } from 'react'
-import { FileText, Globe, Search } from 'lucide-react'
+import { FileText, Globe, Search, Download, Globe2 } from 'lucide-react'
 import type { z } from 'zod'
 import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
 import { cn } from '@/lib/cn'
 import { Markdown } from '../markdown'
-import { Tool, ToolContent, ToolHeader, ToolOutput } from '@/components/ai-elements/tool'
+import {
+  Tool,
+  ToolContent,
+  ToolHeader,
+  ToolOutput,
+} from '@/components/ai-elements/tool'
 import { GetPageContentVisualizer } from './tools/get-page-content'
 import { ProvideLinksVisualizer } from './tools/provide-links'
 import { SearchDocsVisualizer } from './tools/search-docs'
+import { ScrapeVisualizer } from './tools/scrape'
+import { SearchVisualizer } from './tools/search'
 import type { GetPageContentOutput } from './tools/get-page-content'
 import type { SearchDocsOutput } from './tools/search-docs'
+import type { ScrapeOutput } from './tools/scrape'
+import type { SearchOutput } from './tools/search'
 
 const Context = createContext<{
   open: boolean
@@ -194,7 +203,10 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
       const isNearBottom = scrollTop + clientHeight >= currentHeight - 100
       const heightIncreased = currentHeight > stateRef.current.lastHeight
 
-      if (heightIncreased && (isNearBottom || !stateRef.current.isUserScrolled)) {
+      if (
+        heightIncreased &&
+        (isNearBottom || !stateRef.current.isUserScrolled)
+      ) {
         container.scrollTo({ top: container.scrollHeight, behavior: 'instant' })
       }
 
@@ -206,7 +218,8 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
       const scrollTop = container.scrollTop
       const clientHeight = container.clientHeight
       const scrollHeight = container.scrollHeight
-      stateRef.current.isUserScrolled = scrollTop + clientHeight < scrollHeight - 100
+      stateRef.current.isUserScrolled =
+        scrollTop + clientHeight < scrollHeight - 100
     }
 
     const observer = new ResizeObserver(handleResize)
@@ -263,20 +276,40 @@ const roleName: Record<string, string> = {
 
 function ToolRenderer({
   part,
+  isLoading,
 }: {
-  part: UIMessage['parts'][number] & { type: string; toolCallId?: string; state?: string }
+  part: UIMessage['parts'][number] & {
+    type: string
+    toolCallId?: string
+    state?: string
+  }
+  isLoading: boolean
 }) {
   if (!part.type.startsWith('tool-') || !('input' in part)) {
     return null
   }
 
+  const [hasBeenStreaming, setHasBeenStreaming] = useState(isLoading)
+
+  useEffect(() => {
+    if (isLoading) {
+      setHasBeenStreaming(true)
+    }
+  }, [isLoading])
+
   const { toolCallId, state } = part
   const toolName = part.type.replace('tool-', '')
   const input = part.input as unknown
   const output = part.output as unknown
-  const errorText = 'errorText' in part ? (part.errorText as string | undefined) : undefined
+  const errorText =
+    'errorText' in part ? (part.errorText as string | undefined) : undefined
 
-  const toolState = (state as 'input-streaming' | 'input-available' | 'output-available' | 'output-error') ?? 'input-available'
+  const toolState =
+    (state as
+      | 'input-streaming'
+      | 'input-available'
+      | 'output-available'
+      | 'output-error') ?? 'input-available'
 
   const getToolIcon = () => {
     switch (toolName) {
@@ -286,6 +319,10 @@ function ToolRenderer({
         return <Globe className='size-4 text-muted-foreground' />
       case 'getPageContent':
         return <FileText className='size-4 text-muted-foreground' />
+      case 'scrape':
+        return <Download className='size-4 text-muted-foreground' />
+      case 'search':
+        return <Globe2 className='size-4 text-muted-foreground' />
       default:
         return undefined
     }
@@ -309,24 +346,54 @@ function ToolRenderer({
             output={output as GetPageContentOutput | undefined}
           />
         )
+      case 'scrape':
+        return (
+          <ScrapeVisualizer
+            state={toolState}
+            input={
+              input as {
+                url?: string
+                formats?: string[]
+                maxAge?: number
+                onlyMainContent?: boolean
+              }
+            }
+            output={output as ScrapeOutput | undefined}
+          />
+        )
+      case 'search':
+        return (
+          <SearchVisualizer
+            state={toolState}
+            input={
+              input as {
+                query?: string
+                limit?: number
+                sources?: Array<{ type: 'web' | 'images' | 'news' }>
+              }
+            }
+            output={output as SearchOutput | undefined}
+          />
+        )
       default:
         return null
     }
   }
 
-  if (part.type === 'tool-provideLinks') return null;
+  if (part.type === 'tool-provideLinks') return null
 
   return (
-    <Tool key={toolCallId} defaultOpen>
-      <ToolHeader 
-        state={toolState} 
-        type={part.type as `tool-${string}`} 
-        icon={getToolIcon()} 
+    <Tool key={toolCallId} defaultOpen={hasBeenStreaming}>
+      <ToolHeader
+        state={toolState}
+        type={part.type as `tool-${string}`}
+        icon={getToolIcon()}
       />
       <ToolContent>
-        {(toolState === 'input-streaming' || toolState === 'input-available' || toolState === 'output-available') && (
-          renderVisualizer()
-        )}
+        {(toolState === 'input-streaming' ||
+          toolState === 'input-available' ||
+          toolState === 'output-available') &&
+          renderVisualizer()}
         {toolState === 'output-error' && (
           <ToolOutput errorText={errorText} output={undefined} />
         )}
@@ -337,8 +404,9 @@ function ToolRenderer({
 
 function Message({
   message,
+  isLoading,
   ...props
-}: { message: UIMessage } & ComponentProps<'div'>) {
+}: { message: UIMessage; isLoading: boolean } & ComponentProps<'div'>) {
   let markdown = ''
   let links: z.infer<typeof ProvideLinksToolSchema>['links'] = []
 
@@ -366,17 +434,20 @@ function Message({
       <div className='prose text-sm space-y-3'>
         {message.parts.map((part, idx) => {
           if (part.type.startsWith('tool-') && 'input' in part) {
-            return <ToolRenderer key={`tool-${part.toolCallId ?? idx}`} part={part} />
+            return (
+              <ToolRenderer
+                key={`tool-${part.toolCallId ?? idx}`}
+                part={part}
+                isLoading={isLoading}
+              />
+            )
           }
           return null
         })}
         {markdown && <Markdown text={markdown} />}
       </div>
       {links && links.length > 0 && (
-        <ProvideLinksVisualizer
-          input={{ links }}
-          output={{ links }}
-        />
+        <ProvideLinksVisualizer input={{ links }} output={{ links }} />
       )}
     </div>
   )
@@ -446,8 +517,15 @@ export function AISearchTrigger() {
             <div className='flex flex-col gap-4'>
               {chat.messages
                 .filter((msg) => msg.role !== 'system')
-                .map((item) => (
-                  <Message key={item.id} message={item} />
+                .map((item, idx) => (
+                  <Message
+                    key={item.id}
+                    message={item}
+                    isLoading={
+                      chat.status === 'streaming' &&
+                      chat.messages.length - 1 === idx
+                    }
+                  />
                 ))}
             </div>
           </List>
@@ -474,4 +552,3 @@ export function AISearchTrigger() {
     </Context>
   )
 }
-

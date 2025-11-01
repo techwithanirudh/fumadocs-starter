@@ -1,6 +1,6 @@
 import { tool } from 'ai'
 import { z } from 'zod'
-import { getClient, removeEmptyTopLevel, ORIGIN } from './client'
+import { getClient, removeEmptyTopLevel, ORIGIN } from './firecrawl/client'
 
 const scrapeParamsSchema = z.object({
   formats: z
@@ -24,7 +24,9 @@ const scrapeParamsSchema = z.object({
           type: z.literal('screenshot'),
           fullPage: z.boolean().optional(),
           quality: z.number().optional(),
-          viewport: z.object({ width: z.number(), height: z.number() }).optional(),
+          viewport: z
+            .object({ width: z.number(), height: z.number() })
+            .optional(),
         }),
       ])
     )
@@ -57,7 +59,7 @@ const scrapeParamsSchema = z.object({
   maxAge: z.number().optional(),
 })
 
-export const firecrawlSearch = tool({
+export const search = tool({
   description: `Search the web and optionally extract content from search results. This is the most powerful web search tool available, and if available you should always default to using this tool for any web search needs.
 
 The query also supports search operators:
@@ -68,8 +70,8 @@ The query also supports search operators:
 - intitle:keyword - Only returns results that include a word in the title
 
 Best for: Finding specific information across multiple websites, when you don't know which website has the information; when you need the most relevant content for a query.
-Not recommended for: When you already know which website to scrape (use scrape); when you need comprehensive coverage of a single website (use map or crawl).
-Optimal Workflow: Search first using firecrawl_search without formats, then after fetching the results, use the scrape tool to get the content of the relevant page(s) that you want to scrape.
+Not recommended for: When you already know which website to scrape (use scrape).
+Optimal Workflow: Search first without formats, then after fetching the results, use the scrape tool to get the content of the relevant page(s) that you want to scrape.
 Returns: Array of search results (with optional scraped content).`,
   inputSchema: z.object({
     query: z.string().min(1).describe('The search query'),
@@ -96,9 +98,9 @@ Returns: Array of search results (with optional scraped content).`,
       return res
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
       }
     }
   },
 })
-

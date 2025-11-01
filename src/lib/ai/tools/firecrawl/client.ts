@@ -35,7 +35,11 @@ function removeEmptyTopLevel<T extends Record<string, unknown>>(
     if (v == null) continue
     if (typeof v === 'string' && v.trim() === '') continue
     if (Array.isArray(v) && v.length === 0) continue
-    if (typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0)
+    if (
+      typeof v === 'object' &&
+      !Array.isArray(v) &&
+      Object.keys(v).length === 0
+    )
       continue
     // @ts-expect-error dynamic assignment
     out[k] = v
@@ -44,4 +48,3 @@ function removeEmptyTopLevel<T extends Record<string, unknown>>(
 }
 
 export { getClient, removeEmptyTopLevel, ORIGIN }
-

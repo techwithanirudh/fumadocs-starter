@@ -1,6 +1,7 @@
 import Link from 'fumadocs-core/link'
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/cn'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type SearchDocsInput = {
   query: string
@@ -24,7 +25,11 @@ export type SearchDocsOutput = {
   }>
 }
 
-type ToolState = 'input-streaming' | 'input-available' | 'output-available' | 'output-error'
+type ToolState =
+  | 'input-streaming'
+  | 'input-available'
+  | 'output-available'
+  | 'output-error'
 
 export function SearchDocsVisualizer({
   state,
@@ -40,14 +45,17 @@ export function SearchDocsVisualizer({
 
   if (isSkeleton) {
     return (
-      <div {...props} className={cn('rounded-xl bg-fd-card p-3', props.className)}>
+      <div
+        {...props}
+        className={cn('rounded-xl bg-fd-card p-3', props.className)}
+      >
         <div className='space-y-2'>
-          <div className='h-4 w-24 animate-pulse rounded bg-fd-muted' />
+          <Skeleton className='h-4 w-24' />
           <div className='space-y-2'>
             {[1, 2, 3].map((i) => (
               <div key={i} className='rounded border p-2'>
-                <div className='mb-1 h-4 w-3/4 animate-pulse rounded bg-fd-muted' />
-                <div className='h-3 w-full animate-pulse rounded bg-fd-muted' />
+                <Skeleton className='mb-1 h-4 w-3/4' />
+                <Skeleton className='h-3 w-full' />
               </div>
             ))}
           </div>
@@ -59,7 +67,10 @@ export function SearchDocsVisualizer({
   if (!input) return null
 
   return (
-    <div {...props} className={cn('rounded-xl bg-fd-card p-3', props.className)}>
+    <div
+      {...props}
+      className={cn('rounded-xl bg-fd-card p-3', props.className)}
+    >
       <div className='mb-3 space-y-1'>
         {input.query && (
           <div className='text-xs text-fd-muted-foreground'>
@@ -80,7 +91,8 @@ export function SearchDocsVisualizer({
       {output?.success && output.data && output.data.length > 0 && (
         <div className='space-y-2'>
           <div className='text-xs font-medium text-fd-muted-foreground'>
-            Found {output.data.length} result{output.data.length !== 1 ? 's' : ''}
+            Found {output.data.length} result
+            {output.data.length !== 1 ? 's' : ''}
           </div>
           <div className='space-y-2 max-h-48 overflow-y-auto'>
             {output.data.slice(0, 5).map((result, i) => (
@@ -89,9 +101,13 @@ export function SearchDocsVisualizer({
                 href={result.url}
                 className='block rounded border p-2 text-xs hover:bg-fd-accent transition-colors'
               >
-                <div className='font-medium text-fd-card-foreground'>{result.title || result.id}</div>
+                <div className='font-medium text-fd-card-foreground'>
+                  {result.title || result.id}
+                </div>
                 {result.description && (
-                  <div className='mt-1 text-fd-muted-foreground line-clamp-2'>{result.description}</div>
+                  <div className='mt-1 text-fd-muted-foreground line-clamp-2'>
+                    {result.description}
+                  </div>
                 )}
               </Link>
             ))}
@@ -104,4 +120,3 @@ export function SearchDocsVisualizer({
     </div>
   )
 }
-

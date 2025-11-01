@@ -36,10 +36,10 @@ Example:
 webSearch(query: "shadcn UI theming Tailwind CSS")
 \`\`\`
 
-### 4) firecrawlScrape
+### 4) scrape
 Purpose: Scrape content from a single URL with advanced options. This is the most powerful, fastest and most reliable scraper tool.  
 Best for: Single page content extraction, when you know exactly which page contains the information.  
-Not recommended for: Multiple pages (use firecrawlCrawl), unknown page (use firecrawlSearch), structured data (use firecrawlExtract).  
+Not recommended for: Unknown page (use search).  
 Performance: Add maxAge parameter for 500% faster scrapes using cached data.
 
 Inputs:
@@ -50,29 +50,14 @@ Inputs:
 
 Example:
 \`\`\`tool
-firecrawlScrape(url: "https://example.com/page", formats: ["markdown"], maxAge: 172800000)
+scrape(url: "https://example.com/page", formats: ["markdown"], maxAge: 172800000)
 \`\`\`
 
-### 5) firecrawlMap
-Purpose: Map a website to discover all indexed URLs on the site.  
-Best for: Discovering URLs on a website before deciding what to scrape.  
-Not recommended for: When you already know which specific URL you need (use firecrawlScrape).
-
-Inputs:
-- url: the URL to map (required)
-- limit: maximum number of URLs to return (optional)
-- sitemap: how to handle sitemap (optional: "include", "skip", "only")
-
-Example:
-\`\`\`tool
-firecrawlMap(url: "https://example.com", limit: 50)
-\`\`\`
-
-### 6) firecrawlSearch
+### 5) search
 Purpose: Search the web and optionally extract content from search results. This is the most powerful web search tool available.  
 Best for: Finding specific information across multiple websites, when you don't know which website has the information.  
-Not recommended for: When you already know which website to scrape (use firecrawlScrape).  
-Optimal Workflow: Search first without formats, then use firecrawlScrape to get content of relevant pages.
+Not recommended for: When you already know which website to scrape (use scrape).  
+Optimal Workflow: Search first without formats, then use scrape to get content of relevant pages.
 
 Inputs:
 - query: the search query (required, supports search operators like site:, intitle:, etc.)
@@ -82,57 +67,10 @@ Inputs:
 
 Example:
 \`\`\`tool
-firecrawlSearch(query: "latest AI research papers 2023", limit: 5, sources: [{type: "web"}])
+search(query: "latest AI research papers 2023", limit: 5, sources: [{type: "web"}])
 \`\`\`
 
-### 7) firecrawlCrawl
-Purpose: Starts a crawl job on a website and extracts content from all pages.  
-Best for: Extracting content from multiple related pages, when you need comprehensive coverage.  
-Not recommended for: Single page (use firecrawlScrape); when token limits are a concern (use firecrawlMap + firecrawlScrape).  
-Warning: Crawl responses can be very large. Limit the crawl depth and number of pages.  
-Returns: Operation ID for status checking; use firecrawlCheckCrawlStatus to check progress.
-
-Inputs:
-- url: the URL to crawl (required)
-- limit: maximum number of pages to crawl (optional)
-- maxDiscoveryDepth: maximum depth to crawl (optional)
-- scrapeOptions: options for scraping pages (optional)
-
-Example:
-\`\`\`tool
-firecrawlCrawl(url: "https://example.com/blog", limit: 20, maxDiscoveryDepth: 2)
-\`\`\`
-
-### 8) firecrawlCheckCrawlStatus
-Purpose: Check the status of a crawl job.  
-Returns: Status and progress of the crawl job, including results if available.
-
-Inputs:
-- id: the crawl job ID to check (required)
-
-Example:
-\`\`\`tool
-firecrawlCheckCrawlStatus(id: "550e8400-e29b-41d4-a716-446655440000")
-\`\`\`
-
-### 9) firecrawlExtract
-Purpose: Extract structured information from web pages using LLM capabilities.  
-Best for: Extracting specific structured data like prices, names, details from web pages.  
-Not recommended for: When you need the full content of a page (use firecrawlScrape).
-
-Inputs:
-- urls: array of URLs to extract from (required)
-- prompt: custom prompt for extraction (optional)
-- schema: JSON schema for structured data (optional)
-- allowExternalLinks: allow extraction from external links (optional)
-- enableWebSearch: enable web search for additional context (optional)
-
-Example:
-\`\`\`tool
-firecrawlExtract(urls: ["https://example.com/product"], prompt: "Extract product name, price, and description", schema: {"type": "object", "properties": {"name": {"type": "string"}, "price": {"type": "number"}}})
-\`\`\`
-
-### 10) provideLinks
+### 6) provideLinks
 Purpose: Return the exact URLs or internal paths cited in your answer.  
 Always call this after you run \`webSearch\` or when citing internal pages.
 
@@ -151,4 +89,4 @@ provideLinks(links: [
 ])
 \`\`\`
 </tools>
-`.trim();
+`.trim()

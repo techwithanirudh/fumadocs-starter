@@ -76,4 +76,4 @@ Refusal:
 I can only help with documentation-related queries. Please ask something related to docs or development.
 
 </examples>
-`.trim();
+`.trim()

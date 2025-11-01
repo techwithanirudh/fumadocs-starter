@@ -10,7 +10,11 @@ type ProvideLinksOutput = {
   links?: ProvideLinksInput['links']
 }
 
-type ToolState = 'input-streaming' | 'input-available' | 'output-available' | 'output-error'
+type ToolState =
+  | 'input-streaming'
+  | 'input-available'
+  | 'output-available'
+  | 'output-error'
 
 export function ProvideLinksVisualizer({
   state,
@@ -27,10 +31,18 @@ export function ProvideLinksVisualizer({
   if (!links || links.length === 0) return null
 
   return (
-    <div {...props} className={cn('flex flex-row flex-wrap items-center gap-1', props.className)}>
+    <div
+      {...props}
+      className={cn(
+        'flex flex-row flex-wrap items-center gap-1',
+        props.className
+      )}
+    >
       {links.map((item, i) => {
         if (!item?.url) return null
-        const href = item.url.startsWith('http') ? item.url : `/docs/${item.url}`
+        const href = item.url.startsWith('http')
+          ? item.url
+          : `/docs/${item.url}`
         return (
           <Link
             key={i}
@@ -52,4 +64,3 @@ export function ProvideLinksVisualizer({
     </div>
   )
 }
-
