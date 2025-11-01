@@ -23,6 +23,7 @@ import {
   use,
   useEffect,
   useId,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -127,7 +128,6 @@ function SearchAIInput(props: ComponentProps<'form'>) {
   const [input, setInput] = useState(
     () => localStorage.getItem(StorageKeyInput) ?? ''
   )
-  const inputRef = useRef<HTMLTextAreaElement>(null)
   const isLoading = status === 'streaming' || status === 'submitted'
   const onStart = (e?: SyntheticEvent) => {
     e?.preventDefault()
@@ -138,9 +138,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
   localStorage.setItem(StorageKeyInput, input)
 
   useEffect(() => {
-    if (isLoading) {
-      inputRef.current?.focus()
-    }
+    if (isLoading) document.getElementById('nd-ai-input')?.focus()
   }, [isLoading])
 
   return (
@@ -150,7 +148,6 @@ function SearchAIInput(props: ComponentProps<'form'>) {
       onSubmit={onStart}
     >
       <Input
-        ref={inputRef}
         value={input}
         placeholder={isLoading ? 'AI is answering...' : 'Ask a question'}
         autoFocus
@@ -260,31 +257,27 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
   )
 }
 
-const Input = forwardRef<HTMLTextAreaElement, ComponentProps<'textarea'>>(
-  (props, ref) => {
-    const divRef = useRef<HTMLDivElement>(null)
-    const id = useId()
-    const shared = cn('col-start-1 row-start-1', props.className)
+function Input(props: ComponentProps<'textarea'>) {
+  const ref = useRef<HTMLDivElement>(null)
+  const id = useId()
+  const shared = cn('col-start-1 row-start-1', props.className)
 
-    return (
-      <div className='grid flex-1'>
-        <textarea
-          ref={ref}
-          id={id}
-          {...props}
-          className={cn(
-            'resize-none bg-transparent placeholder:text-fd-muted-foreground focus-visible:outline-none',
-            shared
-          )}
-        />
-        <div ref={divRef} className={cn(shared, 'invisible break-all')}>
-          {`${props.value?.toString() ?? ''}\n`}
-        </div>
+  return (
+    <div className='grid flex-1'>
+      <textarea
+        id={id}
+        {...props}
+        className={cn(
+          'resize-none bg-transparent placeholder:text-fd-muted-foreground focus-visible:outline-none',
+          shared
+        )}
+      />
+      <div ref={ref} className={cn(shared, 'invisible break-all')}>
+        {`${props.value?.toString() ?? ''}\n`}
       </div>
-    )
-  }
-)
-Input.displayName = 'Input'
+    </div>
+  )
+}
 
 const roleName: Record<string, string> = {
   user: 'you',
