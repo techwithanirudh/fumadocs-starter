@@ -55,7 +55,7 @@ export function SearchDocsVisualizer({
           <Skeleton className='h-4 w-24' />
           <div className='space-y-2'>
             {[1, 2, 3].map((i) => (
-              <div key={i} className='rounded border p-2'>
+              <div key={i} className='rounded-lg border p-2'>
                 <Skeleton className='mb-1 h-4 w-3/4' />
                 <Skeleton className='h-3 w-full' />
               </div>
@@ -93,17 +93,19 @@ export function SearchDocsVisualizer({
       {output?.success && output.data && output.data.length > 0 && (
         <div className='space-y-2'>
           <div className='font-medium text-fd-muted-foreground text-xs'>
-            Found {output.data.length} result{output.data.length !== 1 ? 's' : ''}
-            {output.total !== undefined && output.total > output.data.length && (
-              <span> of {output.total} total</span>
-            )}
+            Found {output.data.length} result
+            {output.data.length !== 1 ? 's' : ''}
+            {output.total !== undefined &&
+              output.total > output.data.length && (
+                <span> of {output.total} total</span>
+              )}
           </div>
           <div className='max-h-48 space-y-2 overflow-y-auto'>
             {output.data.slice(0, 5).map((result, i) => (
               <Link
                 key={i}
                 href={result.url}
-                className='block rounded border p-2 text-xs transition-colors hover:bg-fd-accent'
+                className='block rounded-lg border p-2 text-xs transition-colors hover:bg-fd-accent'
               >
                 <div className='font-medium text-fd-card-foreground'>
                   {result.title || result.url}

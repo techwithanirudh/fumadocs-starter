@@ -25,7 +25,7 @@ export type ToolProps = ComponentProps<typeof Collapsible>
 export const Tool = ({ className, ...props }: ToolProps) => (
   <Collapsible
     className={cn(
-      'not-prose mb-4 w-full rounded-xl border border-fd-border',
+      'not-prose group mb-3 w-full rounded-xl border border-fd-border',
       className
     )}
     {...props}
@@ -78,12 +78,12 @@ export const ToolHeader = ({
     )}
     {...props}
   >
-    <div className='flex items-center gap-2'>
+    <div className='flex w-full items-center gap-2'>
       {icon ?? <WrenchIcon className='size-4 text-muted-foreground' />}
       <span className='font-medium text-sm'>
         {title ?? type.split('-').slice(1).join('-')}
       </span>
-      {getStatusBadge(state)}
+      <div className='ml-auto justify-end'>{getStatusBadge(state)}</div>
     </div>
     <ChevronDownIcon className='size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180' />
   </CollapsibleTrigger>
@@ -110,7 +110,7 @@ export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
     <h4 className='font-medium text-muted-foreground text-xs uppercase tracking-wide'>
       Parameters
     </h4>
-    <div className='rounded-md bg-muted/50'>
+    <div className='rounded-lg bg-muted/50'>
       <DynamicCodeBlock lang='json' code={JSON.stringify(input, null, 2)} />
     </div>
   </div>
@@ -151,7 +151,7 @@ export const ToolOutput = ({
       </h4>
       <div
         className={cn(
-          'overflow-x-auto rounded-md text-xs [&_table]:w-full',
+          'overflow-x-auto rounded-lg text-xs [&_table]:w-full',
           errorText
             ? 'bg-destructive/10 text-destructive'
             : 'bg-muted/50 text-foreground'

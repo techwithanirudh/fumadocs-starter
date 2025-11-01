@@ -18,9 +18,11 @@ import {
 import {
   type ComponentProps,
   createContext,
+  forwardRef,
   type SyntheticEvent,
   use,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -125,6 +127,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
   const [input, setInput] = useState(
     () => localStorage.getItem(StorageKeyInput) ?? ''
   )
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const isLoading = status === 'streaming' || status === 'submitted'
   const onStart = (e?: SyntheticEvent) => {
     e?.preventDefault()
@@ -135,7 +138,9 @@ function SearchAIInput(props: ComponentProps<'form'>) {
   localStorage.setItem(StorageKeyInput, input)
 
   useEffect(() => {
-    if (isLoading) document.getElementById('nd-ai-input')?.focus()
+    if (isLoading) {
+      inputRef.current?.focus()
+    }
   }, [isLoading])
 
   return (
@@ -145,6 +150,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
       onSubmit={onStart}
     >
       <Input
+        ref={inputRef}
         value={input}
         placeholder={isLoading ? 'AI is answering...' : 'Ask a question'}
         autoFocus
@@ -254,26 +260,31 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
   )
 }
 
-function Input(props: ComponentProps<'textarea'>) {
-  const ref = useRef<HTMLDivElement>(null)
-  const shared = cn('col-start-1 row-start-1', props.className)
+const Input = forwardRef<HTMLTextAreaElement, ComponentProps<'textarea'>>(
+  (props, ref) => {
+    const divRef = useRef<HTMLDivElement>(null)
+    const id = useId()
+    const shared = cn('col-start-1 row-start-1', props.className)
 
-  return (
-    <div className='grid flex-1'>
-      <textarea
-        id='nd-ai-input'
-        {...props}
-        className={cn(
-          'resize-none bg-transparent placeholder:text-fd-muted-foreground focus-visible:outline-none',
-          shared
-        )}
-      />
-      <div ref={ref} className={cn(shared, 'invisible break-all')}>
-        {`${props.value?.toString() ?? ''}\n`}
+    return (
+      <div className='grid flex-1'>
+        <textarea
+          ref={ref}
+          id={id}
+          {...props}
+          className={cn(
+            'resize-none bg-transparent placeholder:text-fd-muted-foreground focus-visible:outline-none',
+            shared
+          )}
+        />
+        <div ref={divRef} className={cn(shared, 'invisible break-all')}>
+          {`${props.value?.toString() ?? ''}\n`}
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
+)
+Input.displayName = 'Input'
 
 const roleName: Record<string, string> = {
   user: 'you',
@@ -282,22 +293,24 @@ const roleName: Record<string, string> = {
 
 function ToolRenderer({
   part,
-  isLoading,
+  isActive,
 }: {
   part: UIMessage['parts'][number] & {
     type: string
     toolCallId?: string
     state?: string
   }
-  isLoading: boolean
+  isActive: boolean
 }) {
-  const [hasBeenStreaming, setHasBeenStreaming] = useState(isLoading)
+  const [isOpen, setIsOpen] = useState(isActive)
 
   useEffect(() => {
-    if (isLoading) {
-      setHasBeenStreaming(true)
+    if (isActive) {
+      setIsOpen(true)
+    } else if (!isActive) {
+      setIsOpen(false)
     }
-  }, [isLoading])
+  }, [isActive])
 
   if (!part.type.startsWith('tool-') || !('input' in part)) {
     return null
@@ -360,7 +373,7 @@ function ToolRenderer({
   if (part.type === 'tool-provideLinks') return null
 
   return (
-    <Tool key={toolCallId} defaultOpen={hasBeenStreaming}>
+    <Tool key={toolCallId} open={isOpen} onOpenChange={setIsOpen}>
       <ToolHeader
         state={toolState}
         type={part.type as `tool-${string}`}
@@ -382,8 +395,13 @@ function ToolRenderer({
 function Message({
   message,
   isLoading,
+  status,
   ...props
-}: { message: UIMessage; isLoading: boolean } & ComponentProps<'div'>) {
+}: {
+  message: UIMessage
+  isLoading: boolean
+  status: string
+} & ComponentProps<'div'>) {
   let markdown = ''
   let links: z.infer<typeof ProvideLinksToolSchema>['links'] = []
 
@@ -398,6 +416,9 @@ function Message({
     }
   }
 
+  const parts = message.parts ?? []
+  const isStreaming = status === 'streaming'
+
   return (
     <div {...props}>
       <p
@@ -408,14 +429,15 @@ function Message({
       >
         {roleName[message.role] ?? 'unknown'}
       </p>
-      <div className='prose space-y-3 text-sm'>
-        {message.parts.map((part, idx) => {
+      <div className='prose text-sm'>
+        {parts.map((part, idx) => {
           if (part.type.startsWith('tool-') && 'input' in part) {
+            const isPartActive = isStreaming && parts.length - 1 === idx
             return (
               <ToolRenderer
                 key={`tool-${part.toolCallId ?? idx}`}
                 part={part}
-                isLoading={isLoading}
+                isActive={isPartActive}
               />
             )
           }
@@ -423,9 +445,11 @@ function Message({
         })}
         {markdown && <Markdown text={markdown} />}
       </div>
-      {links && links.length > 0 && (
-        <ProvideLinksVisualizer input={{ links }} output={{ links }} />
-      )}
+      <div className='mt-2 empty:hidden'>
+        {links && links.length > 0 && (
+          <ProvideLinksVisualizer input={{ links }} output={{ links }} />
+        )}
+      </div>
     </div>
   )
 }
@@ -503,6 +527,7 @@ export function AISearchTrigger() {
                       chat.status === 'streaming' &&
                       chat.messages.length - 1 === idx
                     }
+                    status={chat.status}
                   />
                 ))}
             </div>

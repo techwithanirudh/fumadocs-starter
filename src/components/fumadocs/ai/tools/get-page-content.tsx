@@ -37,7 +37,7 @@ export function GetPageContentVisualizer({
         className={cn('rounded-xl bg-fd-card p-3', props.className)}
       >
         <div className='space-y-2'>
-          <div className='rounded border bg-fd-muted/50 p-2'>
+          <div className='rounded-lg border bg-fd-muted/50 p-2'>
             <div className='space-y-2'>
               <Skeleton className='h-3 w-full' />
               <Skeleton className='h-3 w-5/6' />
@@ -71,7 +71,7 @@ export function GetPageContentVisualizer({
       </div>
       {output?.success && output.data && (
         <div className='space-y-2'>
-          <div className='max-h-32 overflow-y-auto rounded border bg-fd-muted/50 p-2'>
+          <div className='max-h-32 overflow-y-auto rounded-lg border bg-fd-muted/50 p-2'>
             <pre className='line-clamp-6 whitespace-pre-wrap text-fd-muted-foreground text-xs'>
               {output.data}
             </pre>
