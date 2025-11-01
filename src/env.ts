@@ -6,8 +6,7 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(['development', 'production', 'test'])
       .default('development'),
-    OPENAI_API_KEY: z.string().startsWith('sk-'),
-    FIRECRAWL_API_KEY: z.string().optional(),
+    OPENAI_API_KEY: z.string().startsWith('sk-')
   },
   client: {
     NEXT_PUBLIC_BASE_URL: z.preprocess(

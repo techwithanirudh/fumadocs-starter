@@ -38,10 +38,6 @@ import { Markdown } from './markdown'
 import type { GetPageContentOutput } from './tools/get-page-content'
 import { GetPageContentVisualizer } from './tools/get-page-content'
 import { ProvideLinksVisualizer } from './tools/provide-links'
-import type { ScrapeOutput } from './tools/scrape'
-import { ScrapeVisualizer } from './tools/scrape'
-import type { SearchOutput } from './tools/search'
-import { SearchVisualizer } from './tools/search'
 import type { SearchDocsOutput } from './tools/search-docs'
 import { SearchDocsVisualizer } from './tools/search-docs'
 
@@ -354,35 +350,6 @@ function ToolRenderer({
             state={toolState}
             input={input as { path?: string }}
             output={output as GetPageContentOutput | undefined}
-          />
-        )
-      case 'scrape':
-        return (
-          <ScrapeVisualizer
-            state={toolState}
-            input={
-              input as {
-                url?: string
-                formats?: string[]
-                maxAge?: number
-                onlyMainContent?: boolean
-              }
-            }
-            output={output as ScrapeOutput | undefined}
-          />
-        )
-      case 'search':
-        return (
-          <SearchVisualizer
-            state={toolState}
-            input={
-              input as {
-                query?: string
-                limit?: number
-                sources?: Array<{ type: 'web' | 'images' | 'news' }>
-              }
-            }
-            output={output as SearchOutput | undefined}
           />
         )
       default:

@@ -12,8 +12,6 @@ import { systemPrompt } from '@/lib/ai/prompts'
 import { provider } from '@/lib/ai/providers'
 import { getPageContent } from '@/lib/ai/tools/get-page-content'
 import { provideLinks } from '@/lib/ai/tools/provide-links'
-import { scrape } from '@/lib/ai/tools/scrape'
-import { search } from '@/lib/ai/tools/search'
 import { searchDocs } from '@/lib/ai/tools/search-docs'
 import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
@@ -52,8 +50,6 @@ export async function POST(request: Request) {
       provideLinks,
       searchDocs,
       getPageContent,
-      scrape,
-      search,
     },
     messages: convertToModelMessages(messages, {
       ignoreIncompleteToolCalls: true,

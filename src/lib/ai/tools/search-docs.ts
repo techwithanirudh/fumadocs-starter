@@ -29,8 +29,15 @@ export const searchDocs = tool({
       'Optional tag filter, e.g. a top-level section.'
     ),
     locale: z.string().optional().describe('Optional locale for i18n setups.'),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(50)
+      .default(10)
+      .describe('Maximum number of results to return (default: 10, max: 50).'),
   }),
-  execute: async ({ query, tag: tagParam, locale }) => {
+  execute: async ({ query, tag: tagParam, locale, limit }) => {
     const tag = tagParam === 'all' ? undefined : tagParam
     const results = await server.search(query, {
       tag,
@@ -39,7 +46,8 @@ export const searchDocs = tool({
 
     return {
       success: true,
-      data: results,
+      data: results.slice(0, limit),
+      total: results.length,
     }
   },
 })

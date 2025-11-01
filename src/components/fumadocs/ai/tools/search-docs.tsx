@@ -7,6 +7,7 @@ type SearchDocsInput = {
   query: string
   tag?: string
   locale?: string
+  limit?: number
 }
 
 export type SearchDocsOutput = {
@@ -23,6 +24,7 @@ export type SearchDocsOutput = {
       styles?: { highlight?: boolean }
     }>
   }>
+  total?: number
 }
 
 type ToolState =
@@ -91,8 +93,10 @@ export function SearchDocsVisualizer({
       {output?.success && output.data && output.data.length > 0 && (
         <div className='space-y-2'>
           <div className='font-medium text-fd-muted-foreground text-xs'>
-            Found {output.data.length} result
-            {output.data.length !== 1 ? 's' : ''}
+            Found {output.data.length} result{output.data.length !== 1 ? 's' : ''}
+            {output.total !== undefined && output.total > output.data.length && (
+              <span> of {output.total} total</span>
+            )}
           </div>
           <div className='max-h-48 space-y-2 overflow-y-auto'>
             {output.data.slice(0, 5).map((result, i) => (
