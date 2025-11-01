@@ -26,7 +26,6 @@
     "@ai-sdk/react": "^2.0.81",
     "@bprogress/next": "^3.2.12",
     "@fumadocs/mdx-remote": "^1.4.3",
-    "@mendable/firecrawl-js": "^4.4.1",
     "@next/bundle-analyzer": "16.0.1",
     "@next/env": "16.0.1",
     "@radix-ui/react-collapsible": "^1.1.12",
