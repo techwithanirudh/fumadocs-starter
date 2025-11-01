@@ -102,11 +102,11 @@ export function SearchDocsVisualizer({
                 className='block rounded border p-2 text-xs hover:bg-fd-accent transition-colors'
               >
                 <div className='font-medium text-fd-card-foreground'>
-                  {result.title || result.id}
+                  {result.title || result.url}
                 </div>
-                {result.description && (
+                {result.content && (
                   <div className='mt-1 text-fd-muted-foreground line-clamp-2'>
-                    {result.description}
+                    {result.content}
                   </div>
                 )}
               </Link>
