@@ -23,10 +23,8 @@ import { Tool, ToolContent, ToolHeader, ToolOutput } from '@/components/ai-eleme
 import { GetPageContentVisualizer } from './tools/get-page-content'
 import { ProvideLinksVisualizer } from './tools/provide-links'
 import { SearchDocsVisualizer } from './tools/search-docs'
-import { WebSearchVisualizer } from './tools/web-search'
 import type { GetPageContentOutput } from './tools/get-page-content'
 import type { SearchDocsOutput } from './tools/search-docs'
-import type { WebSearchOutput } from './tools/web-search'
 
 const Context = createContext<{
   open: boolean
@@ -301,14 +299,6 @@ function ToolRenderer({
             state={toolState}
             input={input as { query?: string; tag?: string; locale?: string }}
             output={output as SearchDocsOutput | undefined}
-          />
-        )
-      case 'webSearch':
-        return (
-          <WebSearchVisualizer
-            state={toolState}
-            input={input as { query?: string }}
-            output={output as WebSearchOutput | undefined}
           />
         )
       case 'getPageContent':

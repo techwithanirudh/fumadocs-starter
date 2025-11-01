@@ -16,6 +16,14 @@ import { web_search } from '@/lib/ai/tools/web-search'
 import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
 import { searchDocs } from '@/lib/ai/tools/search-docs'
+import {
+  firecrawlScrape,
+  firecrawlMap,
+  firecrawlSearch,
+  firecrawlCrawl,
+  firecrawlCheckCrawlStatus,
+  firecrawlExtract,
+} from '@/lib/ai/tools/firecrawl'
 import type { OpenAIResponsesProviderOptions } from '@ai-sdk/openai'
 
 export const runtime = 'edge'
@@ -55,6 +63,12 @@ export async function POST(request: Request) {
       web_search,
       searchDocs,
       getPageContent,
+      firecrawlScrape,
+      firecrawlMap,
+      firecrawlSearch,
+      firecrawlCrawl,
+      firecrawlCheckCrawlStatus,
+      firecrawlExtract,
     },
     messages: convertToModelMessages(messages, {
       ignoreIncompleteToolCalls: true,
