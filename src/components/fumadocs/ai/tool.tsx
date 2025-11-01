@@ -1,13 +1,7 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
-import { cn } from '@/lib/cn'
 import type { ToolUIPart } from 'ai'
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock'
 import {
   CheckCircleIcon,
   ChevronDownIcon,
@@ -18,7 +12,13 @@ import {
 } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
 import { isValidElement } from 'react'
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock'
+import { Badge } from '@/components/ui/badge'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import { cn } from '@/lib/cn'
 
 export type ToolProps = ComponentProps<typeof Collapsible>
 
@@ -143,7 +143,7 @@ export const ToolOutput = ({
 
   return (
     <div
-      className={cn('space-y-2 p-3 rounded-xl bg-fd-card', className)}
+      className={cn('space-y-2 rounded-xl bg-fd-card p-3', className)}
       {...props}
     >
       <h4 className='font-medium text-muted-foreground text-xs uppercase tracking-wide'>

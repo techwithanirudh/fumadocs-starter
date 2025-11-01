@@ -1,13 +1,13 @@
-import type { ComponentProps } from 'react'
 import type {
+  Document,
   SearchData,
-  SearchResultWeb,
   SearchResultImages,
   SearchResultNews,
-  Document,
+  SearchResultWeb,
 } from '@mendable/firecrawl-js'
-import { cn } from '@/lib/cn'
+import type { ComponentProps } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/cn'
 
 type SearchInput = {
   query: string
@@ -66,17 +66,17 @@ export function SearchVisualizer({
     >
       <div className='mb-3 space-y-1'>
         {input.query && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>Query:</span> {input.query}
           </div>
         )}
         {input.limit && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>Limit:</span> {input.limit}
           </div>
         )}
         {input.sources && input.sources.length > 0 && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>Sources:</span>{' '}
             {input.sources.map((s) => s.type).join(', ')}
           </div>
@@ -87,7 +87,7 @@ export function SearchVisualizer({
 
         if ('error' in output && output.error) {
           return (
-            <div className='text-xs text-fd-destructive'>{output.error}</div>
+            <div className='text-fd-destructive text-xs'>{output.error}</div>
           )
         }
 
@@ -194,30 +194,30 @@ export function SearchVisualizer({
 
         return (
           <div className='space-y-2'>
-            <div className='text-xs font-medium text-fd-muted-foreground'>
+            <div className='font-medium text-fd-muted-foreground text-xs'>
               Found {validResults.length} result
               {validResults.length !== 1 ? 's' : ''}
             </div>
-            <div className='space-y-2 max-h-64 overflow-y-auto'>
+            <div className='max-h-64 space-y-2 overflow-y-auto'>
               {validResults.slice(0, 5).map((result, i) => (
                 <a
                   key={i}
                   href={result.url}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='block rounded border p-2 text-xs hover:bg-fd-accent transition-colors'
+                  className='block rounded border p-2 text-xs transition-colors hover:bg-fd-accent'
                 >
                   <div className='font-medium text-fd-card-foreground'>
                     {result.title || result.url}
                   </div>
                   {result.description && (
-                    <div className='mt-1 text-fd-muted-foreground line-clamp-2'>
+                    <div className='mt-1 line-clamp-2 text-fd-muted-foreground'>
                       {result.description}
                     </div>
                   )}
                   {result.markdown && (
                     <div className='mt-1 rounded bg-fd-muted/50 p-2'>
-                      <pre className='whitespace-pre-wrap text-xs text-fd-muted-foreground line-clamp-3'>
+                      <pre className='line-clamp-3 whitespace-pre-wrap text-fd-muted-foreground text-xs'>
                         {result.markdown}
                       </pre>
                     </div>

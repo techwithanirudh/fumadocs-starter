@@ -47,7 +47,7 @@ export function ProvideLinksVisualizer({
           <Link
             key={i}
             href={href}
-            className='block rounded-lg border p-3 text-xs hover:bg-fd-accent hover:text-fd-accent-foreground transition-colors'
+            className='block rounded-lg border p-3 text-xs transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground'
           >
             <p className='font-medium'>{item.title || item.url}</p>
             {item.label && (

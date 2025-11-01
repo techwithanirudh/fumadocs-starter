@@ -1,9 +1,20 @@
 'use client'
 import { type UIMessage, type UseChatHelpers, useChat } from '@ai-sdk/react'
 import { Presence } from '@radix-ui/react-presence'
-import { DefaultChatTransport, tool } from 'ai'
+import { DefaultChatTransport } from 'ai'
 import { buttonVariants } from 'fumadocs-ui/components/ui/button'
-import { Loader2, MessageCircleIcon, RefreshCw, Send, X } from 'lucide-react'
+import {
+  Download,
+  FileText,
+  Globe,
+  Globe2,
+  Loader2,
+  MessageCircleIcon,
+  RefreshCw,
+  Search,
+  Send,
+  X,
+} from 'lucide-react'
 import {
   type ComponentProps,
   createContext,
@@ -14,26 +25,25 @@ import {
   useRef,
   useState,
 } from 'react'
-import { FileText, Globe, Search, Download, Globe2 } from 'lucide-react'
 import type { z } from 'zod'
-import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
-import { cn } from '@/lib/cn'
-import { Markdown } from '../markdown'
 import {
   Tool,
   ToolContent,
   ToolHeader,
   ToolOutput,
-} from '@/components/ai-elements/tool'
+} from '@/components/fumadocs/ai/tool'
+import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
+import { cn } from '@/lib/cn'
+import { Markdown } from './markdown'
+import type { GetPageContentOutput } from './tools/get-page-content'
 import { GetPageContentVisualizer } from './tools/get-page-content'
 import { ProvideLinksVisualizer } from './tools/provide-links'
-import { SearchDocsVisualizer } from './tools/search-docs'
-import { ScrapeVisualizer } from './tools/scrape'
-import { SearchVisualizer } from './tools/search'
-import type { GetPageContentOutput } from './tools/get-page-content'
-import type { SearchDocsOutput } from './tools/search-docs'
 import type { ScrapeOutput } from './tools/scrape'
+import { ScrapeVisualizer } from './tools/scrape'
 import type { SearchOutput } from './tools/search'
+import { SearchVisualizer } from './tools/search'
+import type { SearchDocsOutput } from './tools/search-docs'
+import { SearchDocsVisualizer } from './tools/search-docs'
 
 const Context = createContext<{
   open: boolean
@@ -285,10 +295,6 @@ function ToolRenderer({
   }
   isLoading: boolean
 }) {
-  if (!part.type.startsWith('tool-') || !('input' in part)) {
-    return null
-  }
-
   const [hasBeenStreaming, setHasBeenStreaming] = useState(isLoading)
 
   useEffect(() => {
@@ -296,6 +302,10 @@ function ToolRenderer({
       setHasBeenStreaming(true)
     }
   }, [isLoading])
+
+  if (!part.type.startsWith('tool-') || !('input' in part)) {
+    return null
+  }
 
   const { toolCallId, state } = part
   const toolName = part.type.replace('tool-', '')
@@ -431,7 +441,7 @@ function Message({
       >
         {roleName[message.role] ?? 'unknown'}
       </p>
-      <div className='prose text-sm space-y-3'>
+      <div className='prose space-y-3 text-sm'>
         {message.parts.map((part, idx) => {
           if (part.type.startsWith('tool-') && 'input' in part) {
             return (
@@ -474,11 +484,12 @@ export function AISearchTrigger() {
     }
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: biome doesn't understand the effect
   useEffect(() => {
     const listener = (e: KeyboardEvent) => onKeyPress(e)
     window.addEventListener('keydown', listener)
     return () => window.removeEventListener('keydown', listener)
-  }, [open])
+  }, [])
 
   return (
     <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>

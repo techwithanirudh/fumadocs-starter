@@ -1,7 +1,7 @@
-import type { ComponentProps } from 'react'
 import type { Document } from '@mendable/firecrawl-js'
-import { cn } from '@/lib/cn'
+import type { ComponentProps } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/cn'
 
 type ScrapeInput = {
   url: string
@@ -61,73 +61,73 @@ export function ScrapeVisualizer({
     >
       <div className='mb-3 space-y-1'>
         {input.url && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>URL:</span>{' '}
             <a
               href={input.url}
               target='_blank'
               rel='noopener noreferrer'
-              className='text-fd-primary hover:underline break-all'
+              className='break-all text-fd-primary hover:underline'
             >
               {input.url}
             </a>
           </div>
         )}
         {input.formats && input.formats.length > 0 && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>Formats:</span>{' '}
             {input.formats.join(', ')}
           </div>
         )}
         {input.maxAge && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>Cache:</span> {input.maxAge}ms
           </div>
         )}
       </div>
       {output && 'error' in output && output.error && (
-        <div className='text-xs text-fd-destructive'>{output.error}</div>
+        <div className='text-fd-destructive text-xs'>{output.error}</div>
       )}
       {output &&
         !('error' in output && output.error) &&
         'markdown' in output && (
           <div className='space-y-2'>
             {output.metadata?.title && (
-              <div className='text-xs font-medium text-fd-card-foreground'>
+              <div className='font-medium text-fd-card-foreground text-xs'>
                 {output.metadata.title}
               </div>
             )}
             {output.metadata?.description && (
-              <div className='text-xs text-fd-muted-foreground line-clamp-2'>
+              <div className='line-clamp-2 text-fd-muted-foreground text-xs'>
                 {output.metadata.description}
               </div>
             )}
             {output.metadata?.url && output.metadata.url !== input.url && (
-              <div className='text-xs text-fd-muted-foreground'>
+              <div className='text-fd-muted-foreground text-xs'>
                 <span className='font-medium'>Source:</span>{' '}
                 <a
                   href={output.metadata.url}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='text-fd-primary hover:underline break-all'
+                  className='break-all text-fd-primary hover:underline'
                 >
                   {output.metadata.url}
                 </a>
               </div>
             )}
             {output.markdown && (
-              <div className='rounded border bg-fd-muted/50 p-2 max-h-48 overflow-y-auto'>
-                <pre className='whitespace-pre-wrap text-xs text-fd-muted-foreground line-clamp-10'>
+              <div className='max-h-48 overflow-y-auto rounded border bg-fd-muted/50 p-2'>
+                <pre className='line-clamp-10 whitespace-pre-wrap text-fd-muted-foreground text-xs'>
                   {output.markdown}
                 </pre>
               </div>
             )}
             {output.summary && (
               <div className='rounded border bg-fd-muted/50 p-2'>
-                <div className='text-xs font-medium text-fd-muted-foreground mb-1'>
+                <div className='mb-1 font-medium text-fd-muted-foreground text-xs'>
                   Summary
                 </div>
-                <div className='text-xs text-fd-muted-foreground'>
+                <div className='text-fd-muted-foreground text-xs'>
                   {output.summary}
                 </div>
               </div>
@@ -136,18 +136,18 @@ export function ScrapeVisualizer({
               Array.isArray(output.links) &&
               output.links.length > 0 && (
                 <div className='space-y-1'>
-                  <div className='text-xs font-medium text-fd-muted-foreground'>
+                  <div className='font-medium text-fd-muted-foreground text-xs'>
                     Found {output.links.length} link
                     {output.links.length !== 1 ? 's' : ''}
                   </div>
-                  <div className='space-y-1 max-h-32 overflow-y-auto'>
+                  <div className='max-h-32 space-y-1 overflow-y-auto'>
                     {output.links.slice(0, 5).map((link: string, i: number) => (
                       <a
                         key={i}
                         href={link}
                         target='_blank'
                         rel='noopener noreferrer'
-                        className='block rounded border p-2 text-xs hover:bg-fd-accent transition-colors break-all'
+                        className='block break-all rounded border p-2 text-xs transition-colors hover:bg-fd-accent'
                       >
                         <div className='text-fd-primary hover:underline'>
                           {link}
@@ -159,7 +159,7 @@ export function ScrapeVisualizer({
               )}
             {output.screenshot && (
               <div className='rounded border bg-fd-muted/50 p-2'>
-                <div className='text-xs text-fd-muted-foreground'>
+                <div className='text-fd-muted-foreground text-xs'>
                   Screenshot available
                 </div>
               </div>

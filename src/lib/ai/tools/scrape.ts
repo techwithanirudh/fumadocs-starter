@@ -1,6 +1,6 @@
 import { tool } from 'ai'
 import { z } from 'zod'
-import { getClient, removeEmptyTopLevel, ORIGIN } from './firecrawl/client'
+import { getClient, ORIGIN, removeEmptyTopLevel } from './firecrawl/client'
 
 const scrapeParamsSchema = z.object({
   formats: z

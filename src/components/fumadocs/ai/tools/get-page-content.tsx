@@ -1,7 +1,7 @@
 import Link from 'fumadocs-core/link'
 import type { ComponentProps } from 'react'
-import { cn } from '@/lib/cn'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/cn'
 
 type GetPageContentInput = {
   path: string
@@ -62,7 +62,7 @@ export function GetPageContentVisualizer({
       className={cn('rounded-xl bg-fd-card p-3', props.className)}
     >
       <div className='mb-3 space-y-1'>
-        <div className='text-xs text-fd-muted-foreground'>
+        <div className='text-fd-muted-foreground text-xs'>
           <span className='font-medium'>Path:</span>{' '}
           <Link href={pagePath} className='text-fd-primary hover:underline'>
             {input.path}
@@ -71,15 +71,15 @@ export function GetPageContentVisualizer({
       </div>
       {output?.success && output.data && (
         <div className='space-y-2'>
-          <div className='rounded border bg-fd-muted/50 p-2 max-h-32 overflow-y-auto'>
-            <pre className='whitespace-pre-wrap text-xs text-fd-muted-foreground line-clamp-6'>
+          <div className='max-h-32 overflow-y-auto rounded border bg-fd-muted/50 p-2'>
+            <pre className='line-clamp-6 whitespace-pre-wrap text-fd-muted-foreground text-xs'>
               {output.data}
             </pre>
           </div>
         </div>
       )}
       {output?.success === false && (
-        <div className='text-xs text-fd-destructive'>
+        <div className='text-fd-destructive text-xs'>
           {output.data || 'Page not found'}
         </div>
       )}

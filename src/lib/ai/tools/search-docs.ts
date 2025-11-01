@@ -1,8 +1,8 @@
 import { tool } from 'ai'
 import { initAdvancedSearch } from 'fumadocs-core/search/server'
 import { z } from 'zod'
-import { source } from '@/lib/source'
 import { categories } from '@/lib/constants'
+import { source } from '@/lib/source'
 
 const server = initAdvancedSearch({
   language: 'english',
@@ -31,7 +31,7 @@ export const searchDocs = tool({
     locale: z.string().optional().describe('Optional locale for i18n setups.'),
   }),
   execute: async ({ query, tag: tagParam, locale }) => {
-    let tag = tagParam === 'all' ? undefined : tagParam
+    const tag = tagParam === 'all' ? undefined : tagParam
     const results = await server.search(query, {
       tag,
       locale,

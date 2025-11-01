@@ -1,7 +1,7 @@
 import Link from 'fumadocs-core/link'
 import type { ComponentProps } from 'react'
-import { cn } from '@/lib/cn'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/cn'
 
 type SearchDocsInput = {
   query: string
@@ -73,39 +73,39 @@ export function SearchDocsVisualizer({
     >
       <div className='mb-3 space-y-1'>
         {input.query && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>Query:</span> {input.query}
           </div>
         )}
         {input.tag && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>Tag:</span> {input.tag}
           </div>
         )}
         {input.locale && (
-          <div className='text-xs text-fd-muted-foreground'>
+          <div className='text-fd-muted-foreground text-xs'>
             <span className='font-medium'>Locale:</span> {input.locale}
           </div>
         )}
       </div>
       {output?.success && output.data && output.data.length > 0 && (
         <div className='space-y-2'>
-          <div className='text-xs font-medium text-fd-muted-foreground'>
+          <div className='font-medium text-fd-muted-foreground text-xs'>
             Found {output.data.length} result
             {output.data.length !== 1 ? 's' : ''}
           </div>
-          <div className='space-y-2 max-h-48 overflow-y-auto'>
+          <div className='max-h-48 space-y-2 overflow-y-auto'>
             {output.data.slice(0, 5).map((result, i) => (
               <Link
                 key={i}
                 href={result.url}
-                className='block rounded border p-2 text-xs hover:bg-fd-accent transition-colors'
+                className='block rounded border p-2 text-xs transition-colors hover:bg-fd-accent'
               >
                 <div className='font-medium text-fd-card-foreground'>
                   {result.title || result.url}
                 </div>
                 {result.content && (
-                  <div className='mt-1 text-fd-muted-foreground line-clamp-2'>
+                  <div className='mt-1 line-clamp-2 text-fd-muted-foreground'>
                     {result.content}
                   </div>
                 )}
@@ -115,7 +115,7 @@ export function SearchDocsVisualizer({
         </div>
       )}
       {output?.success === false && (
-        <div className='text-xs text-fd-destructive'>Search failed</div>
+        <div className='text-fd-destructive text-xs'>Search failed</div>
       )}
     </div>
   )

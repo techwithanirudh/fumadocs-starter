@@ -1,6 +1,6 @@
 import { LargeSearchToggle } from 'fumadocs-ui/components/layout/search-toggle'
 import { DocsLayout } from 'fumadocs-ui/layouts/notebook'
-import { AISearchTrigger } from '@/components/fumadocs/ai/search'
+import { AISearchTrigger } from '@/components/fumadocs/ai'
 import { baseOptions, linkItems, logo } from '@/lib/layout.shared'
 import { source } from '@/lib/source'
 import 'katex/dist/katex.min.css'

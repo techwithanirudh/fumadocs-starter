@@ -1,6 +1,6 @@
+import { categories } from '@/lib/constants'
 import { owner, repo } from '@/lib/github'
 import type { Page } from '@/lib/source'
-import { categories } from '@/lib/constants'
 
 export async function getLLMText(page: Page) {
   const slugs = page.path.split('/')

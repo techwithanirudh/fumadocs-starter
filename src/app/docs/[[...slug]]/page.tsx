@@ -10,10 +10,7 @@ import { DocsPage } from 'fumadocs-ui/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactElement } from 'react'
-import {
-  LLMCopyButton,
-  ViewOptions,
-} from '@/components/fumadocs/ai/page-actions'
+import { LLMCopyButton, ViewOptions } from '@/components/fumadocs/page-actions'
 import {
   HoverCard,
   HoverCardContent,
@@ -46,12 +43,12 @@ export default async function Page(
         style: 'clerk',
       }}
     >
-      <div className='flex flex-col sm:flex-row items-start sm:items-center relative gap-2'>
-        <h1 className='font-semibold text-[1.75em] break-all'>
+      <div className='relative flex flex-col items-start gap-2 sm:flex-row sm:items-center'>
+        <h1 className='break-all font-semibold text-[1.75em]'>
           {page.data.title}
         </h1>
 
-        <div className='flex flex-row items-center gap-2 items-center shrink-0 justify-end ml-auto sm:flex hidden'>
+        <div className='ml-auto flex hidden shrink-0 flex-row items-center items-center justify-end gap-2 sm:flex'>
           <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
           <ViewOptions
             markdownUrl={`${page.url}.mdx`}
