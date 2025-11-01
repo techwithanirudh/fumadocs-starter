@@ -238,7 +238,7 @@ function Input(props: ComponentProps<'textarea'>) {
 
 const roleName: Record<string, string> = {
   user: 'you',
-  assistant: 'assistant',
+  assistant: 'fumadocs',
 }
 
 function Message({
