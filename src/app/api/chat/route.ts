@@ -18,7 +18,7 @@ import { searchDocs } from '@/lib/ai/tools/search-docs'
 import { scrape } from '@/lib/ai/tools/scrape'
 import { search } from '@/lib/ai/tools/search'
 
-export const runtime = 'edge'
+export const revalidate = false
 
 function getLLMsTxt() {
   const scanned: string[] = []
