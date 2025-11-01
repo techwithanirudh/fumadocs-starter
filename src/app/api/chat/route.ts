@@ -12,7 +12,7 @@ import { systemPrompt } from '@/lib/ai/prompts'
 import { provider } from '@/lib/ai/providers'
 import { getPageContent } from '@/lib/ai/tools/get-page-content'
 import { provideLinks } from '@/lib/ai/tools/provide-links'
-import { webSearch } from '@/lib/ai/tools/web-search'
+import { web_search } from '@/lib/ai/tools/web-search'
 import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
 import { searchDocs } from '@/lib/ai/tools/search-docs'
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     system: systemPrompt({ llms: getLLMsTxt() }),
     tools: {
       provideLinks,
-      webSearch,
+      web_search,
       searchDocs,
       getPageContent,
     },

@@ -24,7 +24,7 @@ export type ToolProps = ComponentProps<typeof Collapsible>;
 
 export const Tool = ({ className, ...props }: ToolProps) => (
   <Collapsible
-    className={cn("not-prose mb-4 w-full rounded-md border border-fd-border", className)}
+    className={cn("not-prose mb-4 w-full rounded-xl border border-fd-border", className)}
     {...props}
   />
 );
@@ -33,6 +33,7 @@ export type ToolHeaderProps = {
   title?: string;
   type: ToolUIPart["type"];
   state: ToolUIPart["state"];
+  icon?: ReactNode;
   className?: string;
 };
 
@@ -40,21 +41,15 @@ const getStatusBadge = (status: ToolUIPart["state"]) => {
   const labels: Record<ToolUIPart["state"], string> = {
     "input-streaming": "Pending",
     "input-available": "Running",
-    "approval-requested": "Awaiting Approval",
-    "approval-responded": "Responded",
     "output-available": "Completed",
-    "output-error": "Error",
-    "output-denied": "Denied",
+    "output-error": "Error"
   };
 
   const icons: Record<ToolUIPart["state"], ReactNode> = {
     "input-streaming": <CircleIcon className="size-4" />,
     "input-available": <ClockIcon className="size-4 animate-pulse" />,
-    "approval-requested": <ClockIcon className="size-4 text-yellow-600" />,
-    "approval-responded": <CheckCircleIcon className="size-4 text-blue-600" />,
     "output-available": <CheckCircleIcon className="size-4 text-green-600" />,
     "output-error": <XCircleIcon className="size-4 text-red-600" />,
-    "output-denied": <XCircleIcon className="size-4 text-orange-600" />,
   };
 
   return (
@@ -70,6 +65,7 @@ export const ToolHeader = ({
   title,
   type,
   state,
+  icon,
   ...props
 }: ToolHeaderProps) => (
   <CollapsibleTrigger
@@ -80,7 +76,7 @@ export const ToolHeader = ({
     {...props}
   >
     <div className="flex items-center gap-2">
-      <WrenchIcon className="size-4 text-muted-foreground" />
+      {icon ?? <WrenchIcon className="size-4 text-muted-foreground" />}
       <span className="font-medium text-sm">
         {title ?? type.split("-").slice(1).join("-")}
       </span>
@@ -118,8 +114,8 @@ export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
 );
 
 export type ToolOutputProps = ComponentProps<"div"> & {
-  output: ToolUIPart["output"];
-  errorText: ToolUIPart["errorText"];
+  output?: ToolUIPart["output"];
+  errorText?: ToolUIPart["errorText"];
 };
 
 export const ToolOutput = ({
@@ -143,7 +139,7 @@ export const ToolOutput = ({
   }
 
   return (
-    <div className={cn("space-y-2 p-4", className)} {...props}>
+    <div className={cn("space-y-2 p-3 rounded-xl bg-fd-card", className)} {...props}>
       <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
         {errorText ? "Error" : "Result"}
       </h4>

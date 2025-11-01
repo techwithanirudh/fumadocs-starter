@@ -1,5 +1,5 @@
 import { openai } from '@ai-sdk/openai'
 
-export const webSearch = openai.tools.webSearch({
+export const web_search = openai.tools.webSearch({
   searchContextSize: 'medium',
 })

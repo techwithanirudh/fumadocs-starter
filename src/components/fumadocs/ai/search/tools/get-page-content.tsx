@@ -1,5 +1,4 @@
 import Link from 'fumadocs-core/link'
-import { FileText } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/cn'
 
@@ -28,11 +27,7 @@ export function GetPageContentVisualizer({
 
   if (isSkeleton) {
     return (
-      <div {...props} className={cn('rounded-lg border bg-fd-card p-3', props.className)}>
-        <div className='mb-2 flex items-center gap-2'>
-          <FileText className='size-4 text-fd-muted-foreground' />
-          <span className='font-medium text-sm text-fd-card-foreground'>Get Page Content</span>
-        </div>
+      <div {...props} className={cn('rounded-xl bg-fd-card p-3', props.className)}>
         <div className='space-y-2'>
           <div className='rounded border bg-fd-muted/50 p-2'>
             <div className='space-y-2'>
@@ -52,11 +47,7 @@ export function GetPageContentVisualizer({
   const pagePath = input.path.startsWith('/') ? input.path : `/docs/${input.path}`
 
   return (
-    <div {...props} className={cn('rounded-lg border bg-fd-card p-3', props.className)}>
-      <div className='mb-2 flex items-center gap-2'>
-        <FileText className='size-4 text-fd-muted-foreground' />
-        <span className='font-medium text-sm text-fd-card-foreground'>Get Page Content</span>
-      </div>
+    <div {...props} className={cn('rounded-xl bg-fd-card p-3', props.className)}>
       <div className='mb-3 space-y-1'>
         <div className='text-xs text-fd-muted-foreground'>
           <span className='font-medium'>Path:</span>{' '}

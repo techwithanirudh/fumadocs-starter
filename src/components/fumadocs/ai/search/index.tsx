@@ -14,15 +14,19 @@ import {
   useRef,
   useState,
 } from 'react'
+import { FileText, Globe, Search } from 'lucide-react'
 import type { z } from 'zod'
 import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
 import { cn } from '@/lib/cn'
 import { Markdown } from '../markdown'
+import { Tool, ToolContent, ToolHeader, ToolOutput } from '@/components/ai-elements/tool'
 import { GetPageContentVisualizer } from './tools/get-page-content'
 import { ProvideLinksVisualizer } from './tools/provide-links'
 import { SearchDocsVisualizer } from './tools/search-docs'
 import { WebSearchVisualizer } from './tools/web-search'
-import { Tool, ToolContent, ToolHeader, ToolOutput } from '@/components/ai-elements/tool'
+import type { GetPageContentOutput } from './tools/get-page-content'
+import type { SearchDocsOutput } from './tools/search-docs'
+import type { WebSearchOutput } from './tools/web-search'
 
 const Context = createContext<{
   open: boolean
@@ -39,7 +43,7 @@ function Header() {
 
   return (
     <div className='sticky top-0 flex items-start gap-2'>
-      <div className='flex-1 rounded-xl border bg-fd-card p-3 text-fd-card-foreground'>
+      <div className='flex-1 rounded-xl bg-fd-card p-3 text-fd-card-foreground'>
         <p className='font-medium text-sm'>Ask AI</p>
       </div>
       <button
@@ -178,30 +182,44 @@ function SearchAIInput(props: ComponentProps<'form'>) {
 
 function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const stateRef = useRef({ lastHeight: 0, isUserScrolled: false })
 
   useEffect(() => {
-    if (!containerRef.current) return
-    function callback() {
-      const container = containerRef.current
+    const container = containerRef.current
+    if (!container) return
+
+    function handleResize() {
       if (!container) return
+      const currentHeight = container.scrollHeight
+      const scrollTop = container.scrollTop
+      const clientHeight = container.clientHeight
+      const isNearBottom = scrollTop + clientHeight >= currentHeight - 100
+      const heightIncreased = currentHeight > stateRef.current.lastHeight
 
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'instant',
-      })
+      if (heightIncreased && (isNearBottom || !stateRef.current.isUserScrolled)) {
+        container.scrollTo({ top: container.scrollHeight, behavior: 'instant' })
+      }
+
+      stateRef.current.lastHeight = currentHeight
     }
 
-    const observer = new ResizeObserver(callback)
-    callback()
-
-    const element = containerRef.current?.firstElementChild
-
-    if (element) {
-      observer.observe(element)
+    function handleScroll() {
+      if (!container) return
+      const scrollTop = container.scrollTop
+      const clientHeight = container.clientHeight
+      const scrollHeight = container.scrollHeight
+      stateRef.current.isUserScrolled = scrollTop + clientHeight < scrollHeight - 100
     }
+
+    const observer = new ResizeObserver(handleResize)
+    observer.observe(container.firstElementChild ?? container)
+    handleResize()
+
+    container.addEventListener('scroll', handleScroll)
 
     return () => {
       observer.disconnect()
+      container.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
@@ -256,33 +274,49 @@ function ToolRenderer({
 
   const { toolCallId, state } = part
   const toolName = part.type.replace('tool-', '')
-  const input = part.input as any
-  const output = part.output as any
+  const input = part.input as unknown
+  const output = part.output as unknown
+  const errorText = 'errorText' in part ? (part.errorText as string | undefined) : undefined
+
+  const toolState = (state as 'input-streaming' | 'input-available' | 'output-available' | 'output-error') ?? 'input-available'
+
+  const getToolIcon = () => {
+    switch (toolName) {
+      case 'searchDocs':
+        return <Search className='size-4 text-muted-foreground' />
+      case 'webSearch':
+        return <Globe className='size-4 text-muted-foreground' />
+      case 'getPageContent':
+        return <FileText className='size-4 text-muted-foreground' />
+      default:
+        return undefined
+    }
+  }
 
   const renderVisualizer = () => {
     switch (toolName) {
       case 'searchDocs':
         return (
           <SearchDocsVisualizer
-            state={state}
-            input={input}
-            output={output}
+            state={toolState}
+            input={input as { query?: string; tag?: string; locale?: string }}
+            output={output as SearchDocsOutput | undefined}
           />
         )
       case 'webSearch':
         return (
           <WebSearchVisualizer
-            state={state}
-            input={input}
-            output={output}
+            state={toolState}
+            input={input as { query?: string }}
+            output={output as WebSearchOutput | undefined}
           />
         )
       case 'getPageContent':
         return (
           <GetPageContentVisualizer
-            state={state}
-            input={input}
-            output={output}
+            state={toolState}
+            input={input as { path?: string }}
+            output={output as GetPageContentOutput | undefined}
           />
         )
       default:
@@ -290,15 +324,21 @@ function ToolRenderer({
     }
   }
 
+  if (part.type === 'tool-provideLinks') return null;
+
   return (
-    <Tool key={toolCallId}>
-      <ToolHeader state={state} type={part.type} />
+    <Tool key={toolCallId} defaultOpen>
+      <ToolHeader 
+        state={toolState} 
+        type={part.type as `tool-${string}`} 
+        icon={getToolIcon()} 
+      />
       <ToolContent>
-        {(state === 'input-streaming' || state === 'input-available' || state === 'output-available') && (
+        {(toolState === 'input-streaming' || toolState === 'input-available' || toolState === 'output-available') && (
           renderVisualizer()
         )}
-        {state === 'output-error' && (
-          <ToolOutput errorText={part.errorText} />
+        {toolState === 'output-error' && (
+          <ToolOutput errorText={errorText} output={undefined} />
         )}
       </ToolContent>
     </Tool>
@@ -373,13 +413,11 @@ export function AISearchTrigger() {
     }
   }
 
-  const onKeyPressRef = useRef(onKeyPress)
-  onKeyPressRef.current = onKeyPress
   useEffect(() => {
-    const listener = (e: KeyboardEvent) => onKeyPressRef.current(e)
+    const listener = (e: KeyboardEvent) => onKeyPress(e)
     window.addEventListener('keydown', listener)
     return () => window.removeEventListener('keydown', listener)
-  }, [])
+  }, [open])
 
   return (
     <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>

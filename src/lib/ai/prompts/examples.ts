@@ -28,7 +28,11 @@ webSearch(query: "Shadcn UI theming Tailwind CSS", topK: 5)
 ...
 
 \`\`\`tool
-provideLinks(links: ["guides/using-custom-themes", "guides/customizing-the-layout", "https://ui.shadcn.com/docs/theming"])
+provideLinks(links: [
+  { url: "/docs/guides/using-custom-themes", title: "Using Custom Themes", type: "documentation" },
+  { url: "/docs/guides/customizing-the-layout", title: "Customizing the Layout", type: "documentation" },
+  { url: "https://ui.shadcn.com/docs/theming", title: "Shadcn UI Theming", type: "site" }
+])
 \`\`\`
 
 ### 2. Not in internal docs, perform a web search
@@ -59,8 +63,8 @@ webSearch(query: "ARIA treeview roving tabindex keyboard navigation example")
 
 \`\`\`tool
 provideLinks(links: [
-  "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
-  "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tree_Role"
+  { url: "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/", title: "ARIA Treeview Pattern", type: "site" },
+  { url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tree_Role", title: "ARIA Tree Role", type: "site" }
 ])
 \`\`\`
 

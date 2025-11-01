@@ -1,4 +1,3 @@
-import { Globe } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/cn'
 
@@ -33,11 +32,7 @@ export function WebSearchVisualizer({
 
   if (isSkeleton) {
     return (
-      <div {...props} className={cn('rounded-lg border bg-fd-card p-3', props.className)}>
-        <div className='mb-2 flex items-center gap-2'>
-          <Globe className='size-4 text-fd-muted-foreground' />
-          <span className='font-medium text-sm text-fd-card-foreground'>Web Search</span>
-        </div>
+      <div {...props} className={cn('rounded-xl bg-fd-card p-3', props.className)}>
         <div className='space-y-2'>
           <div className='h-4 w-32 animate-pulse rounded bg-fd-muted' />
           <div className='space-y-1.5'>
@@ -53,11 +48,7 @@ export function WebSearchVisualizer({
   if (!input) return null
 
   return (
-    <div {...props} className={cn('rounded-lg border bg-fd-card p-3', props.className)}>
-      <div className='mb-2 flex items-center gap-2'>
-        <Globe className='size-4 text-fd-muted-foreground' />
-        <span className='font-medium text-sm text-fd-card-foreground'>Web Search</span>
-      </div>
+    <div {...props} className={cn('rounded-xl bg-fd-card p-3', props.className)}>
       <div className='mb-3 space-y-1'>
         {input.query && (
           <div className='text-xs text-fd-muted-foreground'>

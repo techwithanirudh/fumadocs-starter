@@ -39,9 +39,19 @@ webSearch(query: "shadcn UI theming Tailwind CSS")
 **Purpose:** Return the exact URLs or internal paths cited in your answer.  
 Always call this after you run \`webSearch\` or when citing internal pages.
 
+**Inputs:**
+- links: array of link objects, each with:
+  - url: the full URL or path (required). Use \`/docs/path\` for internal docs, or full URLs for external sites.
+  - title: optional display title
+  - label: optional footnote label (e.g., "1", "2")
+  - type: optional type (e.g., "documentation", "site")
+
 **Example:**
 \`\`\`tool
-provideLinks(links: ["guides/using-custom-themes", "https://ui.shadcn.com/docs/theming"])
+provideLinks(links: [
+  { url: "/docs/guides/using-custom-themes", title: "Using Custom Themes", type: "documentation" },
+  { url: "https://ui.shadcn.com/docs/theming", title: "Shadcn UI Theming", type: "site" }
+])
 \`\`\`
 </tools>
 `.trim();
