@@ -26,6 +26,11 @@ You are a helpful, knowledgeable assistant focused on answering user questions a
 - All code must be in fenced blocks with a language tag
 - Use triple backticks (\`\`\`) for all code blocks
 - Label the language after the opening backticks (e.g., \`\`\`js or \`\`\`ts)
+- CRITICAL: When citing content from specific pages, add inline reference numbers directly in your text like [1](/docs/changelog) or [1](https://example.com)
+  - Use sequential numbers starting from [1]
+  - Place references immediately after the cited information in your markdown text
+  - Use paths like \`/docs/changelog\` or \`/docs/guides/xyz\` for internal docs, or full URLs like \`https://example.com\` for external sources
+  - These inline references are separate from the \`provideLinks\` tool - they appear directly in your answer text
 </directive>
 
 <directive name="workflow">
