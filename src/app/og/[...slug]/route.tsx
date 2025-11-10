@@ -1,6 +1,7 @@
 import { ImageResponse } from '@takumi-rs/image-response'
 import { notFound } from 'next/navigation'
-import { categoryMap } from '@/lib/get-llm-text'
+import { categories } from '@/lib/constants'
+import { getPageImage } from '@/lib/metadata'
 import { source } from '@/lib/source'
 import { getImageResponseOptions, generate as MetadataImage } from './generate'
 
@@ -14,7 +15,7 @@ export async function GET(
   const page = source.getPage(slug.slice(0, -1))
   if (!page) notFound()
   const slugs = page.path.split('/')
-  const tag = categoryMap[slugs[0]] ?? slugs[0]
+  const tag = categories[slugs[0]] ?? slugs[0]
 
   return new ImageResponse(
     <MetadataImage
@@ -29,8 +30,7 @@ export async function GET(
 export function generateStaticParams(): {
   slug: string[]
 }[] {
-  return source.generateParams().map((page) => ({
-    ...page,
-    slug: [...page.slug, 'image.webp'],
+  return source.getPages().map((page) => ({
+    slug: getPageImage(page).segments,
   }))
 }

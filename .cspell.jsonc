@@ -55,6 +55,10 @@
     "shadcn",
     "fuma",
     "takumi",
-    "customise"
+    "customise",
+    "firecrawl",
+    "treeview",
+    "intitle",
+    "inurl"
   ]
 }

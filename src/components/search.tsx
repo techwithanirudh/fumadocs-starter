@@ -26,28 +26,7 @@ import { ArrowRight, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/cn'
-
-const items = [
-  {
-    name: 'All',
-    value: undefined,
-  },
-  {
-    name: 'Home',
-    description: 'Only results about the main documentation page',
-    value: '(index)',
-  },
-  {
-    name: 'API Reference',
-    description: 'Only results about the API reference',
-    value: 'api-reference',
-  },
-  {
-    name: 'Changelog',
-    description: 'Only results about the changelog',
-    value: 'changelog',
-  },
-]
+import { tags } from '@/lib/constants'
 
 export default function CustomSearchDialog(props: SharedProps) {
   const [open, setOpen] = useState(false)
@@ -133,11 +112,11 @@ export default function CustomSearchDialog(props: SharedProps) {
               })}
             >
               <span className='me-2 text-fd-muted-foreground/80'>Filter</span>
-              {items.find((item) => item.value === tag)?.name}
+              {tags.find((item) => item.value === tag)?.name}
               <ChevronDown className='size-3.5 text-fd-muted-foreground' />
             </PopoverTrigger>
             <PopoverContent className='flex flex-col gap-1 p-1' align='start'>
-              {items.map((item, i) => {
+              {tags.map((item, i) => {
                 const isSelected = item.value === tag
 
                 return (

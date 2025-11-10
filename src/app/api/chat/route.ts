@@ -1,22 +1,40 @@
-import { createOpenAI } from '@ai-sdk/openai'
 import {
   convertToModelMessages,
   InvalidToolInputError,
   NoSuchToolError,
   smoothStream,
+  stepCountIs,
   streamText,
-  tool,
   type UIMessage,
 } from 'ai'
 import { env } from '@/env'
 import { systemPrompt } from '@/lib/ai/prompts'
-import { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
+import { provider } from '@/lib/ai/providers'
+import { getPageContent } from '@/lib/ai/tools/get-page-content'
+import { provideLinks } from '@/lib/ai/tools/provide-links'
+import { searchDocs } from '@/lib/ai/tools/search-docs'
+import { categories } from '@/lib/constants'
+import { source } from '@/lib/source'
 
-export const runtime = 'edge'
+function getLLMsTxt() {
+  const scanned: string[] = []
+  scanned.push('# Docs')
+  const map = new Map<string, string[]>()
 
-const openai = createOpenAI({
-  apiKey: env.OPENAI_API_KEY,
-})
+  for (const page of source.getPages()) {
+    const dir = page.path.split('/')[0]
+    const list = map.get(dir) ?? []
+    list.push(`- [${page.data.title}](${page.url}): ${page.data.description}`)
+    map.set(dir, list)
+  }
+
+  for (const [key, value] of map) {
+    scanned.push(`## ${categories[key]}`)
+    scanned.push(value.join('\n'))
+  }
+
+  return scanned.join('\n\n')
+}
 
 export async function POST(request: Request) {
   const {
@@ -26,20 +44,12 @@ export async function POST(request: Request) {
   } = await request.json()
 
   const result = streamText({
-    model: openai.responses('gpt-4.1-mini'),
-    system: systemPrompt,
+    model: provider.languageModel('chat-model'),
+    system: systemPrompt({ llms: getLLMsTxt() }),
     tools: {
-      provideLinks: tool({
-        description:
-          'Provide links to articles found using the Web Search tool. This is compulsory and MUST be called after a web search, as it gives the user context on which URLs were used to generate the response.',
-        inputSchema: ProvideLinksToolSchema,
-        execute: async ({ links }) => ({
-          links,
-        }),
-      }),
-      webSearch: openai.tools.webSearchPreview({
-        searchContextSize: 'medium',
-      }),
+      provideLinks,
+      searchDocs,
+      getPageContent,
     },
     messages: convertToModelMessages(messages, {
       ignoreIncompleteToolCalls: true,
@@ -49,6 +59,7 @@ export async function POST(request: Request) {
       delayInMs: 20,
       chunking: 'line',
     }),
+    stopWhen: stepCountIs(15),
     onStepFinish: async ({ toolResults }) => {
       if (env.NODE_ENV !== 'production') {
         console.log(`Step Results: ${JSON.stringify(toolResults, null, 2)}`)

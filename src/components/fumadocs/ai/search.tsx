@@ -2,23 +2,45 @@
 import { type UIMessage, type UseChatHelpers, useChat } from '@ai-sdk/react'
 import { Presence } from '@radix-ui/react-presence'
 import { DefaultChatTransport } from 'ai'
-import Link from 'fumadocs-core/link'
 import { buttonVariants } from 'fumadocs-ui/components/ui/button'
-import { Loader2, MessageCircleIcon, RefreshCw, Send, X } from 'lucide-react'
+import {
+  Download,
+  FileText,
+  Globe,
+  Globe2,
+  Loader2,
+  MessageCircleIcon,
+  RefreshCw,
+  Search,
+  Send,
+  X,
+} from 'lucide-react'
 import {
   type ComponentProps,
   createContext,
   type SyntheticEvent,
   use,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
 } from 'react'
 import type { z } from 'zod'
+import {
+  Tool,
+  ToolContent,
+  ToolHeader,
+  ToolOutput,
+} from '@/components/fumadocs/ai/tool'
 import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
 import { cn } from '@/lib/cn'
 import { Markdown } from './markdown'
+import type { GetPageContentOutput } from './tools/get-page-content'
+import { GetPageContentVisualizer } from './tools/get-page-content'
+import { ProvideLinksVisualizer } from './tools/provide-links'
+import type { SearchDocsOutput } from './tools/search-docs'
+import { SearchDocsVisualizer } from './tools/search-docs'
 
 const Context = createContext<{
   open: boolean
@@ -35,7 +57,7 @@ function Header() {
 
   return (
     <div className='sticky top-0 flex items-start gap-2'>
-      <div className='flex-1 rounded-xl border bg-fd-card p-3 text-fd-card-foreground'>
+      <div className='flex-1 rounded-xl bg-fd-card p-3 text-fd-card-foreground'>
         <p className='font-medium text-sm'>Ask AI</p>
       </div>
       <button
@@ -174,30 +196,48 @@ function SearchAIInput(props: ComponentProps<'form'>) {
 
 function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const stateRef = useRef({ lastHeight: 0, isUserScrolled: false })
 
   useEffect(() => {
-    if (!containerRef.current) return
-    function callback() {
-      const container = containerRef.current
+    const container = containerRef.current
+    if (!container) return
+
+    function handleResize() {
       if (!container) return
+      const currentHeight = container.scrollHeight
+      const scrollTop = container.scrollTop
+      const clientHeight = container.clientHeight
+      const isNearBottom = scrollTop + clientHeight >= currentHeight - 100
+      const heightIncreased = currentHeight > stateRef.current.lastHeight
 
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'instant',
-      })
+      if (
+        heightIncreased &&
+        (isNearBottom || !stateRef.current.isUserScrolled)
+      ) {
+        container.scrollTo({ top: container.scrollHeight, behavior: 'instant' })
+      }
+
+      stateRef.current.lastHeight = currentHeight
     }
 
-    const observer = new ResizeObserver(callback)
-    callback()
-
-    const element = containerRef.current?.firstElementChild
-
-    if (element) {
-      observer.observe(element)
+    function handleScroll() {
+      if (!container) return
+      const scrollTop = container.scrollTop
+      const clientHeight = container.clientHeight
+      const scrollHeight = container.scrollHeight
+      stateRef.current.isUserScrolled =
+        scrollTop + clientHeight < scrollHeight - 100
     }
+
+    const observer = new ResizeObserver(handleResize)
+    observer.observe(container.firstElementChild ?? container)
+    handleResize()
+
+    container.addEventListener('scroll', handleScroll)
 
     return () => {
       observer.disconnect()
+      container.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
@@ -217,12 +257,13 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
 
 function Input(props: ComponentProps<'textarea'>) {
   const ref = useRef<HTMLDivElement>(null)
+  const id = useId()
   const shared = cn('col-start-1 row-start-1', props.className)
 
   return (
     <div className='grid flex-1'>
       <textarea
-        id='nd-ai-input'
+        id={id}
         {...props}
         className={cn(
           'resize-none bg-transparent placeholder:text-fd-muted-foreground focus-visible:outline-none',
@@ -238,13 +279,120 @@ function Input(props: ComponentProps<'textarea'>) {
 
 const roleName: Record<string, string> = {
   user: 'you',
-  assistant: 'fumadocs',
+  assistant: 'assistant',
+}
+
+function ToolRenderer({
+  part,
+  isActive,
+}: {
+  part: UIMessage['parts'][number] & {
+    type: string
+    toolCallId?: string
+    state?: string
+  }
+  isActive: boolean
+}) {
+  const [isOpen, setIsOpen] = useState(isActive)
+
+  useEffect(() => {
+    if (isActive) {
+      setIsOpen(true)
+    } else if (!isActive) {
+      setIsOpen(false)
+    }
+  }, [isActive])
+
+  if (!part.type.startsWith('tool-') || !('input' in part)) {
+    return null
+  }
+
+  const { toolCallId, state } = part
+  const toolName = part.type.replace('tool-', '')
+  const input = part.input as unknown
+  const output = part.output as unknown
+  const errorText =
+    'errorText' in part ? (part.errorText as string | undefined) : undefined
+
+  const toolState =
+    (state as
+      | 'input-streaming'
+      | 'input-available'
+      | 'output-available'
+      | 'output-error') ?? 'input-available'
+
+  const getToolIcon = () => {
+    switch (toolName) {
+      case 'searchDocs':
+        return <Search className='size-4 text-muted-foreground' />
+      case 'webSearch':
+        return <Globe className='size-4 text-muted-foreground' />
+      case 'getPageContent':
+        return <FileText className='size-4 text-muted-foreground' />
+      case 'scrape':
+        return <Download className='size-4 text-muted-foreground' />
+      case 'search':
+        return <Globe2 className='size-4 text-muted-foreground' />
+      default:
+        return undefined
+    }
+  }
+
+  const renderVisualizer = () => {
+    switch (toolName) {
+      case 'searchDocs':
+        return (
+          <SearchDocsVisualizer
+            state={toolState}
+            input={input as { query?: string; tag?: string; locale?: string }}
+            output={output as SearchDocsOutput | undefined}
+          />
+        )
+      case 'getPageContent':
+        return (
+          <GetPageContentVisualizer
+            state={toolState}
+            input={input as { path?: string }}
+            output={output as GetPageContentOutput | undefined}
+          />
+        )
+      default:
+        return null
+    }
+  }
+
+  if (part.type === 'tool-provideLinks') return null
+
+  return (
+    <Tool key={toolCallId} open={isOpen} onOpenChange={setIsOpen}>
+      <ToolHeader
+        state={toolState}
+        type={part.type as `tool-${string}`}
+        icon={getToolIcon()}
+      />
+      <ToolContent>
+        {(toolState === 'input-streaming' ||
+          toolState === 'input-available' ||
+          toolState === 'output-available') &&
+          renderVisualizer()}
+        {toolState === 'output-error' && (
+          <ToolOutput errorText={errorText} output={undefined} />
+        )}
+      </ToolContent>
+    </Tool>
+  )
 }
 
 function Message({
   message,
+  isLoading,
+  status,
   ...props
-}: { message: UIMessage } & ComponentProps<'div'>) {
+}: {
+  message: UIMessage
+  isLoading: boolean
+  status: string
+} & ComponentProps<'div'>) {
   let markdown = ''
   let links: z.infer<typeof ProvideLinksToolSchema>['links'] = []
 
@@ -259,6 +407,9 @@ function Message({
     }
   }
 
+  const parts = message.parts ?? []
+  const isStreaming = status === 'streaming'
+
   return (
     <div {...props}>
       <p
@@ -270,22 +421,26 @@ function Message({
         {roleName[message.role] ?? 'unknown'}
       </p>
       <div className='prose text-sm'>
-        <Markdown text={markdown} />
+        {parts.map((part, idx) => {
+          if (part.type.startsWith('tool-') && 'input' in part) {
+            const isPartActive = isStreaming && parts.length - 1 === idx
+            return (
+              <ToolRenderer
+                key={`tool-${part.toolCallId ?? idx}`}
+                part={part}
+                isActive={isPartActive}
+              />
+            )
+          }
+          return null
+        })}
+        {markdown && <Markdown text={markdown} />}
       </div>
-      {links && links.length > 0 && (
-        <div className='mt-2 flex flex-row flex-wrap items-center gap-1'>
-          {links.map((item, i) => (
-            <Link
-              key={i}
-              href={item.url}
-              className='block rounded-lg border p-3 text-xs hover:bg-fd-accent hover:text-fd-accent-foreground'
-            >
-              <p className='font-medium'>{item.title}</p>
-              <p className='text-fd-muted-foreground'>Reference {item.label}</p>
-            </Link>
-          ))}
-        </div>
-      )}
+      <div className='mt-2 empty:hidden'>
+        {links && links.length > 0 && (
+          <ProvideLinksVisualizer input={{ links }} output={{ links }} />
+        )}
+      </div>
     </div>
   )
 }
@@ -311,10 +466,9 @@ export function AISearchTrigger() {
     }
   }
 
-  const onKeyPressRef = useRef(onKeyPress)
-  onKeyPressRef.current = onKeyPress
+  // biome-ignore lint/correctness/useExhaustiveDependencies: biome doesn't understand the effect
   useEffect(() => {
-    const listener = (e: KeyboardEvent) => onKeyPressRef.current(e)
+    const listener = (e: KeyboardEvent) => onKeyPress(e)
     window.addEventListener('keydown', listener)
     return () => window.removeEventListener('keydown', listener)
   }, [])
@@ -356,8 +510,16 @@ export function AISearchTrigger() {
             <div className='flex flex-col gap-4'>
               {chat.messages
                 .filter((msg) => msg.role !== 'system')
-                .map((item) => (
-                  <Message key={item.id} message={item} />
+                .map((item, idx) => (
+                  <Message
+                    key={item.id}
+                    message={item}
+                    isLoading={
+                      chat.status === 'streaming' &&
+                      chat.messages.length - 1 === idx
+                    }
+                    status={chat.status}
+                  />
                 ))}
             </div>
           </List>

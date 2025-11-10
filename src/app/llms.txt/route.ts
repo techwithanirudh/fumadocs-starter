@@ -1,4 +1,4 @@
-import { categoryMap } from '@/lib/get-llm-text'
+import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
 
 export const revalidate = false
@@ -16,7 +16,7 @@ export async function GET() {
   }
 
   for (const [key, value] of map) {
-    scanned.push(`## ${categoryMap[key]}`)
+    scanned.push(`## ${categories[key]}`)
     scanned.push(value.join('\n'))
   }
 

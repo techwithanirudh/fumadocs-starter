@@ -6,3 +6,4 @@
 - [] Update Docs for new ways
 - [x] add back search with ai in empty search area
 - [] remove all different package managers, and make it bun only
+- ai generated links are not proper

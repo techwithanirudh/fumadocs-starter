@@ -10,17 +10,14 @@ import { DocsPage } from 'fumadocs-ui/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactElement } from 'react'
-import {
-  LLMCopyButton,
-  ViewOptions,
-} from '@/components/fumadocs/ai/page-actions'
+import { LLMCopyButton, ViewOptions } from '@/components/fumadocs/page-actions'
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card'
 import { owner, repo } from '@/lib/github'
-import { createMetadata } from '@/lib/metadata'
+import { createMetadata, getPageImage } from '@/lib/metadata'
 import { source } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
 
@@ -46,11 +43,23 @@ export default async function Page(
         style: 'clerk',
       }}
     >
-      <h1 className='font-semibold text-[1.75em]'>{page.data.title}</h1>
+      <div className='relative flex flex-col items-start gap-2 sm:flex-row sm:items-center'>
+        <h1 className='break-all font-semibold text-[1.75em]'>
+          {page.data.title}
+        </h1>
+
+        <div className='ml-auto flex hidden shrink-0 flex-row items-center items-center justify-end gap-2 sm:flex'>
+          <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
+          <ViewOptions
+            markdownUrl={`${page.url}.mdx`}
+            githubUrl={`https://github.com/${owner}/${repo}/blob/main/content/docs/${page.path}`}
+          />
+        </div>
+      </div>
       <p className='mb-2 text-fd-muted-foreground text-lg'>
         {page.data.description}
       </p>
-      <div className='flex flex-row items-center gap-2 border-b pb-6'>
+      <div className='flex items-center gap-2 pb-6 sm:hidden'>
         <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
         <ViewOptions
           markdownUrl={`${page.url}.mdx`}
@@ -130,7 +139,7 @@ export async function generateMetadata(
     page.data.description ?? 'The library for building documentation sites'
 
   const image = {
-    url: ['/og', ...slug, 'image.webp'].join('/'),
+    url: getPageImage(page).url,
     width: 1200,
     height: 630,
   }
