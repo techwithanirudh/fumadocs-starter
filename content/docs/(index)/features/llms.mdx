@@ -23,10 +23,10 @@ Large language models waste tokens crawling HTML, JS, and site chrome. By shippi
 
 ## API Reference
 
-- [Get museum hours](/docs/api-reference/operations/museum-hours): No description available
-- [Buy museum tickets](/docs/api-reference/tickets): No description available
+- [Get museum hours](/docs/api-reference/operations/getMuseumHours): Get upcoming museum operating hours.
+- [Buy museum tickets](/docs/api-reference/tickets/buyMuseumTickets): Purchase museum tickets for general entry or special events.
 
-## UI Framework
+## Home
 
 - [Quickstart](/docs/quickstart): Start building awesome documentation in under 5 minutes
 ```
@@ -42,12 +42,10 @@ This file is generated at the root of your deployed site, enabling agents to dis
 ```md
 # API Reference: Get museum hours
 
-URL: /docs/api-reference/operations/museum-hours
-Source: content/docs/api-reference/operations/museum-hours.mdx
+URL: /docs/api-reference/operations/getMuseumHours
+Source: https://raw.githubusercontent.com/techwithanirudh/fumadocs-starter/refs/heads/main/content/docs/api-reference/(generated)/operations/getMuseumHours.mdx
 
-> No description available
-
-## Operation: GET /museum-hours
+Get upcoming museum operating hours.
 
 ...full MDX content...
 ```
@@ -59,18 +57,17 @@ This file is generated at build time by globbing `content/docs/**/*.mdx` and joi
 - Provides the raw MDX/Markdown content of a requested page
 - Preserves headings, paragraphs, code samples, and frontmatter
 
-Example: `/llms.mdx/app`
+Example: `/llms.mdx/quickstart`
 
 ```md
-# App Framework: Introduction
+# Home: Quickstart
 
-URL: /docs/app
-Source: https://raw.githubusercontent.com/techwithanirudh/fumadocs-starter/main/content/docs/(index)/index.mdx
+URL: /docs/quickstart
+Source: https://raw.githubusercontent.com/techwithanirudh/fumadocs-starter/refs/heads/main/content/docs/(index)/quickstart.mdx
 
-Welcome to your new documentation.
+Start building awesome documentation in under 5 minutes
 
-## Getting Started
+## Setup your development environment
 
-The first step to creating amazing documentation is setting up your editing environment.
-...
+A minimum version of Node.js 18 is required...
 ```

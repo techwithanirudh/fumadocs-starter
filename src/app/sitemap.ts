@@ -1,11 +1,10 @@
 import type { MetadataRoute } from 'next'
-import { baseUrl } from '@/lib/metadata'
+import { url } from '@/lib/url'
 import { source } from '@/lib/source'
 
 export const revalidate = false
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const url = (path: string): string => new URL(path, baseUrl).toString()
   const items = await Promise.all(
     source.getPages().map(async (page) => {
       const { lastModified } = await page.data.load()

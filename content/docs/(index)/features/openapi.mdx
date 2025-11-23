@@ -161,10 +161,10 @@ export async function generateDocs() { /* [!code --] */
 Remove the reference to `generateDocs`:
 
 ```tsx title="scripts/pre-build.ts"
-import { generateDocs } from './generate-docs.mjs' /* [!code --] */
+import { generateDocs } from './generate-docs.js' /* [!code --] */
 
 async function main() {
-  console.log('Generating docs...') /* [!code ++] */
+  // comment the below to disable openapi generation /* [!code ++] */
   await Promise.all([generateDocs()]) /* [!code --] */
 }
 ```

@@ -1,16 +1,16 @@
 import { Feed } from 'feed'
 import { title } from '@/lib/layout.shared'
-import { baseUrl } from '@/lib/metadata'
 import { source } from '@/lib/source'
+import { url } from './url'
 
 export async function getRSS() {
   const feed = new Feed({
     title: `${title}`,
-    id: new URL('/rss.xml', baseUrl).toString(),
-    link: new URL('/rss.xml', baseUrl).toString(),
+    id: url('/rss.xml'),
+    link: url('/rss.xml'),
     language: 'en',
-    image: new URL('/banner.png', baseUrl).toString(),
-    favicon: new URL('/icon.png', baseUrl).toString(),
+    image: url('/banner.png'),
+    favicon: url('/icon.png'),
     copyright: `All rights reserved ${new Date().getFullYear()}, ${title}`,
   })
 
@@ -29,7 +29,7 @@ export async function getRSS() {
       id: page.url,
       title: page.data.title,
       description: page.data.description,
-      link: new URL(page.url, baseUrl).toString(),
+      link: url(page.url),
       date: lastModified ? new Date(lastModified) : new Date(),
       author: [
         {
