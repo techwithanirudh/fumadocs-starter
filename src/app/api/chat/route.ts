@@ -11,7 +11,6 @@ import { env } from '@/env'
 import { systemPrompt } from '@/lib/ai/prompts'
 import { provider } from '@/lib/ai/providers'
 import { getPageContent } from '@/lib/ai/tools/get-page-content'
-import { provideLinks } from '@/lib/ai/tools/provide-links'
 import { searchDocs } from '@/lib/ai/tools/search-docs'
 import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
@@ -46,8 +45,15 @@ export async function POST(request: Request) {
   const result = streamText({
     model: provider.languageModel('chat-model'),
     system: systemPrompt({ llms: getLLMsTxt() }),
+    providerOptions: {
+      openai: {
+        reasoningEffort: "minimal",
+        reasoningSummary: "auto",
+        textVerbosity: "medium",
+        serviceTier: "priority",
+      },
+    },
     tools: {
-      provideLinks,
       searchDocs,
       getPageContent,
     },

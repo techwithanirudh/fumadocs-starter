@@ -33,3 +33,6 @@ fumadocs-basehub
 
 # cspell
 .cspellcache
+
+# agent
+.agent

@@ -5,14 +5,9 @@ import { DefaultChatTransport } from 'ai'
 import { buttonVariants } from 'fumadocs-ui/components/ui/button'
 import {
   ArrowUpIcon,
-  Download,
-  FileText,
-  Globe,
-  Globe2,
   MessageCircleIcon,
   TrashIcon,
   RotateCcw,
-  Search,
   SquareIcon,
   X,
   LoaderCircleIcon,
@@ -28,21 +23,10 @@ import {
   useRef,
   useState,
 } from 'react'
-import type { z } from 'zod'
-import {
-  Tool,
-  ToolContent,
-  ToolHeader,
-  ToolOutput,
-} from '@/components/fumadocs/ai/tool'
-import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema'
+import type { MyUIMessage } from '@/app/api/chat/types'
 import { cn } from '@/lib/cn'
 import { Markdown } from './markdown'
-import type { GetPageContentOutput } from './tools/get-page-content'
-import { GetPageContentVisualizer } from './tools/get-page-content'
-import { ProvideLinksVisualizer } from './tools/provide-links'
-import type { SearchDocsOutput } from './tools/search-docs'
-import { SearchDocsVisualizer } from './tools/search-docs'
+import { MessageMetadata } from './message-metadata'
 
 const Context = createContext<{
   open: boolean
@@ -109,7 +93,7 @@ function SearchAIActions() {
         buttonVariants({
           color: 'secondary',
           size: 'icon-sm',
-          className: 'gap-1.5 rounded-t-md rounded-bl-lg rounded-br-md [&_svg]:size-4 transition-opacity duration-100',
+          className: 'gap-1.5 rounded-t-md rounded-bl-lg rounded-br-md [&_svg]:size-4 transition-opacity duration-200',
         }),
         !isLoading && messages.at(-1)?.role === 'assistant' ? 'opacity-100' : 'opacity-0'
       )}
@@ -283,133 +267,15 @@ const roleName: Record<string, string> = {
   assistant: 'assistant',
 }
 
-function ToolRenderer({
-  part,
-  isActive,
-}: {
-  part: UIMessage['parts'][number] & {
-    type: string
-    toolCallId?: string
-    state?: string
-  }
-  isActive: boolean
-}) {
-  const [isOpen, setIsOpen] = useState(isActive)
-
-  useEffect(() => {
-    if (isActive) {
-      setIsOpen(true)
-    } else if (!isActive) {
-      setIsOpen(false)
-    }
-  }, [isActive])
-
-  if (!part.type.startsWith('tool-') || !('input' in part)) {
-    return null
-  }
-
-  const { toolCallId, state } = part
-  const toolName = part.type.replace('tool-', '')
-  const input = part.input as unknown
-  const output = part.output as unknown
-  const errorText =
-    'errorText' in part ? (part.errorText as string | undefined) : undefined
-
-  const toolState =
-    (state as
-      | 'input-streaming'
-      | 'input-available'
-      | 'output-available'
-      | 'output-error') ?? 'input-available'
-
-  const getToolIcon = () => {
-    switch (toolName) {
-      case 'searchDocs':
-        return <Search className='size-4 text-muted-foreground' />
-      case 'webSearch':
-        return <Globe className='size-4 text-muted-foreground' />
-      case 'getPageContent':
-        return <FileText className='size-4 text-muted-foreground' />
-      case 'scrape':
-        return <Download className='size-4 text-muted-foreground' />
-      case 'search':
-        return <Globe2 className='size-4 text-muted-foreground' />
-      default:
-        return undefined
-    }
-  }
-
-  const renderVisualizer = () => {
-    switch (toolName) {
-      case 'searchDocs':
-        return (
-          <SearchDocsVisualizer
-            state={toolState}
-            input={input as { query?: string; tag?: string; locale?: string }}
-            output={output as SearchDocsOutput | undefined}
-          />
-        )
-      case 'getPageContent':
-        return (
-          <GetPageContentVisualizer
-            state={toolState}
-            input={input as { path?: string }}
-            output={output as GetPageContentOutput | undefined}
-          />
-        )
-      default:
-        return null
-    }
-  }
-
-  if (part.type === 'tool-provideLinks') return null
-
-  return (
-    <Tool key={toolCallId} open={isOpen} onOpenChange={setIsOpen}>
-      <ToolHeader
-        state={toolState}
-        type={part.type as `tool-${string}`}
-        icon={getToolIcon()}
-      />
-      <ToolContent>
-        {(toolState === 'input-streaming' ||
-          toolState === 'input-available' ||
-          toolState === 'output-available') &&
-          renderVisualizer()}
-        {toolState === 'output-error' && (
-          <ToolOutput errorText={errorText} output={undefined} />
-        )}
-      </ToolContent>
-    </Tool>
-  )
-}
-
 function Message({
   message,
-  isLoading,
-  status,
+  isInProgress,
   ...props
 }: {
-  message: UIMessage
-  isLoading: boolean
-  status: string
+  message: MyUIMessage
+  isInProgress: boolean
 } & ComponentProps<'div'>) {
-  let markdown = ''
-  let links: z.infer<typeof ProvideLinksToolSchema>['links'] = []
-
-  for (const part of message.parts ?? []) {
-    if (part.type === 'text') {
-      markdown += part.text
-      continue
-    }
-
-    if (part.type === 'tool-provideLinks' && part.input) {
-      links = (part.input as z.infer<typeof ProvideLinksToolSchema>).links
-    }
-  }
-
-  const parts = message.parts ?? []
-  const isStreaming = status === 'streaming'
+  const parts = (message.parts ?? []) as MyUIMessage['parts']
 
   return (
     <div {...props}>
@@ -421,26 +287,16 @@ function Message({
       >
         {roleName[message.role] ?? 'unknown'}
       </p>
-      <div className='prose text-sm'>
+      <div className='flex flex-col gap-2'>
+        <MessageMetadata inProgress={isInProgress} parts={parts} />
         {parts.map((part, idx) => {
-          if (part.type.startsWith('tool-') && 'input' in part) {
-            const isPartActive = isStreaming && parts.length - 1 === idx
-            return (
-              <ToolRenderer
-                key={`tool-${part.toolCallId ?? idx}`}
-                part={part}
-                isActive={isPartActive}
-              />
-            )
-          }
-          return null
+          if (part.type !== 'text') return null
+          return (
+            <div key={`${message.id}-text-${idx}`} className='prose text-sm'>
+              <Markdown text={part.text} />
+            </div>
+          )
         })}
-        {markdown && <Markdown text={markdown} />}
-      </div>
-      <div className='mt-2 empty:hidden'>
-        {links && links.length > 0 && (
-          <ProvideLinksVisualizer input={{ links }} output={{ links }} />
-        )}
       </div>
     </div>
   )
@@ -514,16 +370,18 @@ export function AISearchTrigger() {
                 .map((item, idx) => (
                   <Message
                     key={item.id}
-                    message={item}
-                    isLoading={
-                      chat.status === 'streaming' &&
-                      chat.messages.length - 1 === idx
+                    message={item as MyUIMessage}
+                    isInProgress={
+                      chat.messages.length - 1 === idx &&
+                      (chat.status === 'streaming' ||
+                        chat.status === 'submitted')
                     }
-                    status={chat.status}
                   />
                 ))}
             </div>
-            {chat.status === 'streaming' || chat.status === 'submitted' && <LoaderCircleIcon className='size-4 animate-spin text-fd-muted-foreground' />}
+            {(chat.status === 'streaming' || chat.status === 'submitted') && (
+              <LoaderCircleIcon className='size-4 animate-spin text-fd-muted-foreground' />
+            )}
           </List>
           <div className='rounded-xl border bg-fd-card text-fd-card-foreground has-focus-visible:ring-2 has-focus-visible:ring-fd-ring'>
             <SearchAIInput />
