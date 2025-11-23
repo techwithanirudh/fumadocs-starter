@@ -1,5 +1,5 @@
 import { isToolUIPart } from 'ai'
-import { BookmarkIcon } from 'lucide-react'
+import { ChevronDownIcon, LinkIcon, SearchIcon, WrenchIcon } from 'lucide-react'
 import type { MyUIMessage } from '@/app/api/chat/types'
 import { Shimmer } from '@/components/ai-elements/shimmer'
 import {
@@ -46,9 +46,12 @@ export const MessageMetadata = ({
 
   if (sources.length > 0 && !(tool && inProgress)) {
     return (
-      <Sources>
+      <Sources className='group/source peer/source'>
         <SourcesTrigger count={sources.length}>
-          <BookmarkIcon className='size-4' />
+          <span className='relative size-4'>
+            <SearchIcon className='absolute inset-0 size-4 transition-opacity duration-200 group-hover/source:opacity-0' />
+            <ChevronDownIcon className='absolute inset-0 size-4 opacity-0 transition-all duration-200 group-hover/source:opacity-100 peer-data-[state=open]/source:rotate-180' />
+          </span>
           <p>Used {sources.length} sources</p>
         </SourcesTrigger>
         <SourcesContent>
@@ -67,12 +70,30 @@ export const MessageMetadata = ({
   }
 
   if (tool && inProgress) {
+    let Icon = WrenchIcon;
+    let label = 'Working';
+    const name = tool.type.replace('tool-', '').replace(/([A-Z])/g, ' $1').trim();
+
+    switch (tool.type) {
+      case 'tool-searchDocs':
+        Icon = SearchIcon;
+        label = 'Searching docs';
+        break;
+      case 'tool-getPageContent':
+        Icon = LinkIcon;
+        label = 'Fetching page';
+        break;
+      default:
+        label = `Running ${name}`;
+        break;
+    }
+
     return (
-      <div className='flex items-center gap-2'>
-        <Spinner />
-        <Shimmer>{tool.type}</Shimmer>
+      <div className="flex items-center gap-2 text-muted-foreground  animate-pulse">
+        <Icon className='size-4' />
+        <Shimmer>{label}</Shimmer>
       </div>
-    )
+    );
   }
 
   if (!tool && sources.length === 0) {

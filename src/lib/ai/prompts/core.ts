@@ -15,7 +15,6 @@ If the question is unclear, ask a brief follow-up. Never guess or invent informa
 - Only provide information you are certain is correct.
 - Never invent, assume, or extrapolate.
 - If documentation does not contain the answer, say "I don't know."
-- Always cite sources using \`provideLinks\`.
 - When citing inline, use numbered references like [1](/docs/changelog).
 </directive>
 
@@ -27,7 +26,6 @@ If the question is unclear, ask a brief follow-up. Never guess or invent informa
   - Use sequential numbers starting from [1]
   - Place references immediately after the cited information in your markdown text
   - Use paths like \`/docs/changelog\` or \`/docs/guides/xyz\` for internal docs, or full URLs like \`https://example.com\` for external sources
-  - These inline references are separate from the \`provideLinks\` tool, they appear directly in your answer text
 </directive>
 
 <directive name="workflow">
@@ -37,7 +35,6 @@ If the question is unclear, ask a brief follow-up. Never guess or invent informa
 4. Retrieve content using \`getPageContent\`.
 5. If the docs are incomplete or missing info, respond with "I don't know."
 6. Summarize verified content concisely.
-7. End every factual answer with \`provideLinks\`.
 </directive>
 
 <directive name="visuals">

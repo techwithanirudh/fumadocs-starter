@@ -7,6 +7,6 @@ You can discover pages with \`searchDocs\` and fetch specific content with \`get
 ALWAYS consider the following documents when answering:
 ${llms}
 
-If you cannot find the information in the internal documentation, you must refuse and say "I don't know" rather than guessing or making assumptions. Finish with \`provideLinks\` when providing answers.
+If you cannot find the information in the internal documentation, you must refuse and say "I don't know" rather than guessing or making assumptions.
 </context>
 `.trim()

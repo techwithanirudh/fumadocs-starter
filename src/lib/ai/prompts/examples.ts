@@ -19,13 +19,6 @@ Final Answer:
 Explain them clearly, then cite:
 [1](/docs/guides/using-custom-themes) [2](/docs/guides/customizing-the-layout)
 
-\`\`\`tool
-provideLinks(links: [
-  { url: "guides/using-custom-themes", title: "Using Custom Themes" },
-  { url: "guides/customizing-the-layout", title: "Customizing the Layout" }
-])
-\`\`\`
-
 ### 2. Refuse when info is missing
 User: How do I enable keyboard navigation for the sidebar tree?
 
