@@ -4,16 +4,18 @@ import { Presence } from '@radix-ui/react-presence'
 import { DefaultChatTransport } from 'ai'
 import { buttonVariants } from 'fumadocs-ui/components/ui/button'
 import {
+  ArrowUpIcon,
   Download,
   FileText,
   Globe,
   Globe2,
-  Loader2,
   MessageCircleIcon,
-  RefreshCw,
+  TrashIcon,
+  RotateCcw,
   Search,
-  Send,
+  SquareIcon,
   X,
+  LoaderCircleIcon,
 } from 'lucide-react'
 import {
   type ComponentProps,
@@ -53,12 +55,27 @@ function useChatContext() {
 }
 
 function Header() {
-  const { setOpen } = use(Context)!
+  const { setOpen, chat } = use(Context)!
 
   return (
     <div className='sticky top-0 flex items-start gap-2'>
-      <div className='flex-1 rounded-xl bg-fd-card p-3 text-fd-card-foreground'>
+      <div className='flex-1 flex justify-between items-center rounded-xl bg-fd-card py-2 px-3 text-fd-card-foreground'>
         <p className='font-medium text-sm'>Ask AI</p>
+        <div className='flex items-center gap-1.5'>
+          <button
+            type='button'
+            className={cn(
+              buttonVariants({
+                color: 'secondary',
+                size: 'icon-xs',
+                className: '[&_svg]:size-3.5',
+              })
+            )}
+            onClick={() => chat.setMessages([])}
+          >
+            <TrashIcon />
+          </button>
+        </div>
       </div>
       <button
         type='button'
@@ -80,7 +97,7 @@ function Header() {
 }
 
 function SearchAIActions() {
-  const { messages, status, setMessages, regenerate } = useChatContext()
+  const { messages, status, regenerate } = useChatContext()
   const isLoading = status === 'streaming'
 
   if (messages.length === 0) return null
@@ -93,29 +110,15 @@ function SearchAIActions() {
           className={cn(
             buttonVariants({
               color: 'secondary',
-              size: 'sm',
-              className: 'gap-1.5 rounded-full',
+              size: 'icon-sm',
+              className: 'gap-1.5 rounded-t-md rounded-bl-lg rounded-br-md [&_svg]:size-4',
             })
           )}
           onClick={() => regenerate()}
         >
-          <RefreshCw className='size-4' />
-          Retry
+          <RotateCcw />
         </button>
       )}
-      <button
-        type='button'
-        className={cn(
-          buttonVariants({
-            color: 'secondary',
-            size: 'sm',
-            className: 'rounded-full',
-          })
-        )}
-        onClick={() => setMessages([])}
-      >
-        Clear Chat
-      </button>
     </>
   )
 }
@@ -147,7 +150,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
     >
       <Input
         value={input}
-        placeholder={isLoading ? 'AI is answering...' : 'Ask a question'}
+        placeholder={isLoading ? 'Generating...' : 'Ask a question'}
         autoFocus
         className='p-3'
         disabled={status === 'streaming' || status === 'submitted'}
@@ -167,13 +170,13 @@ function SearchAIInput(props: ComponentProps<'form'>) {
           className={cn(
             buttonVariants({
               color: 'secondary',
-              className: 'mt-2 gap-2 rounded-full transition-all',
+              size: 'icon-sm',
+              className: 'mt-2 rounded-full transition-all [&_svg]:size-3.5',
             })
           )}
           onClick={stop}
         >
-          <Loader2 className='size-4 animate-spin text-fd-muted-foreground' />
-          Abort Answer
+          <SquareIcon className='fill-fd-foreground' />
         </button>
       ) : (
         <button
@@ -182,12 +185,13 @@ function SearchAIInput(props: ComponentProps<'form'>) {
           className={cn(
             buttonVariants({
               color: 'secondary',
-              className: 'mt-2 rounded-full transition-all',
+              size: 'icon-sm',
+              className: 'mt-2 rounded-full transition-all [&_svg]:size-4',
             })
           )}
           disabled={input.length === 0}
         >
-          <Send className='size-4' />
+          <ArrowUpIcon />
         </button>
       )}
     </form>
@@ -522,6 +526,7 @@ export function AISearchTrigger() {
                   />
                 ))}
             </div>
+            {chat.status === 'streaming' && <LoaderCircleIcon className='size-4 animate-spin text-fd-muted-foreground' />}
           </List>
           <div className='rounded-xl border bg-fd-card text-fd-card-foreground has-focus-visible:ring-2 has-focus-visible:ring-fd-ring'>
             <SearchAIInput />
