@@ -28,13 +28,14 @@ export const MessageMetadata = ({
 
   if (!lastPart) {
     return (
-      <div className="flex items-center gap-2">
+      <div className='flex items-center gap-2'>
         <Spinner /> {reasoning ? <Shimmer>Thinking...</Shimmer> : ''}
       </div>
     )
   }
 
   const tool = isToolUIPart(lastPart) ? lastPart : null
+
   const sources = Array.from(
     new Map(
       parts
@@ -47,15 +48,15 @@ export const MessageMetadata = ({
     return (
       <Sources>
         <SourcesTrigger count={sources.length}>
-          <BookmarkIcon className="size-4" />
+          <BookmarkIcon className='size-4' />
           <p>Used {sources.length} sources</p>
         </SourcesTrigger>
         <SourcesContent>
-          <ul className="flex flex-col gap-2">
+          <ul className='flex flex-col gap-2'>
             {sources.map((source) => (
-              <li className="ml-4.5 list-disc pl-1" key={source.url}>
+              <li className='ml-4.5 list-disc pl-1' key={source.url}>
                 <Source href={source.url} title={source.url}>
-                  {source.title}
+                  {source.title ?? source.url}
                 </Source>
               </li>
             ))}
@@ -67,7 +68,7 @@ export const MessageMetadata = ({
 
   if (tool && inProgress) {
     return (
-      <div className="flex items-center gap-2">
+      <div className='flex items-center gap-2'>
         <Spinner />
         <Shimmer>{tool.type}</Shimmer>
       </div>
@@ -78,6 +79,5 @@ export const MessageMetadata = ({
     return null
   }
 
-  return <div className="h-12" />
+  return <div className='h-12' />
 }
-

@@ -1,32 +1,28 @@
 'use client'
-import { type UIMessage, type UseChatHelpers, useChat } from '@ai-sdk/react'
-import { Presence } from '@radix-ui/react-presence'
-import { DefaultChatTransport } from 'ai'
-import { buttonVariants } from 'fumadocs-ui/components/ui/button'
-import {
-  ArrowUpIcon,
-  MessageCircleIcon,
-  TrashIcon,
-  RotateCcw,
-  SquareIcon,
-  X,
-  LoaderCircleIcon,
-} from 'lucide-react'
 import {
   type ComponentProps,
   createContext,
+  type ReactNode,
   type SyntheticEvent,
   use,
   useEffect,
-  useId,
+  useEffectEvent,
   useMemo,
   useRef,
   useState,
 } from 'react'
-import type { MyUIMessage } from '@/app/api/chat/types'
+import { MessageCircleIcon, RefreshCw, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { buttonVariants } from 'fumadocs-ui/components/ui/button'
+import { type UIMessage, useChat, type UseChatHelpers } from '@ai-sdk/react'
+import { DefaultChatTransport } from 'ai'
 import { Markdown } from './markdown'
+import { Presence } from '@radix-ui/react-presence'
+import { MyUIMessage } from '@/app/api/chat/types'
+import { SquareIcon } from 'lucide-react'
+import { ArrowUpIcon } from 'lucide-react'
 import { MessageMetadata } from './message-metadata'
+import { TrashIcon } from 'lucide-react'
 
 const Context = createContext<{
   open: boolean
@@ -43,7 +39,7 @@ function Header() {
 
   return (
     <div className='sticky top-0 flex items-start gap-2'>
-      <div className='flex-1 flex justify-between items-center rounded-xl bg-fd-card py-2 px-3 text-fd-card-foreground'>
+      <div className='flex flex-1 items-center justify-between rounded-xl bg-fd-card px-3 py-2 text-fd-card-foreground'>
         <p className='font-medium text-sm'>Ask AI</p>
         <div className='flex items-center gap-1.5'>
           <button
@@ -93,13 +89,16 @@ function SearchAIActions() {
         buttonVariants({
           color: 'secondary',
           size: 'icon-sm',
-          className: 'gap-1.5 rounded-t-md rounded-bl-lg rounded-br-md [&_svg]:size-4 transition-opacity duration-200',
+          className:
+            'gap-1.5 rounded-t-md rounded-br-md rounded-bl-lg transition-opacity duration-200 [&_svg]:size-4',
         }),
-        !isLoading && messages.at(-1)?.role === 'assistant' ? 'opacity-100' : 'opacity-0'
+        !isLoading && messages.at(-1)?.role === 'assistant'
+          ? 'opacity-100'
+          : 'opacity-0'
       )}
       onClick={() => regenerate()}
     >
-      <RotateCcw />
+      <RefreshCw />
     </button>
   )
 }
@@ -152,7 +151,8 @@ function SearchAIInput(props: ComponentProps<'form'>) {
             buttonVariants({
               color: 'secondary',
               size: 'icon-sm',
-              className: 'mt-2 rounded-b-md rounded-tr-lg rounded-tl-md transition-all [&_svg]:size-3.5',
+              className:
+                'mt-2 rounded-b-md rounded-tl-md rounded-tr-lg transition-all [&_svg]:size-3.5',
             })
           )}
           onClick={stop}
@@ -167,7 +167,8 @@ function SearchAIInput(props: ComponentProps<'form'>) {
             buttonVariants({
               color: 'secondary',
               size: 'icon-sm',
-              className: 'mt-2 rounded-b-md rounded-tr-lg rounded-tl-md transition-all [&_svg]:size-4',
+              className:
+                'mt-2 rounded-b-md rounded-tl-md rounded-tr-lg transition-all [&_svg]:size-4',
             })
           )}
           disabled={input.length === 0}
@@ -181,48 +182,30 @@ function SearchAIInput(props: ComponentProps<'form'>) {
 
 function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const stateRef = useRef({ lastHeight: 0, isUserScrolled: false })
 
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    function handleResize() {
+    if (!containerRef.current) return
+    function callback() {
+      const container = containerRef.current
       if (!container) return
-      const currentHeight = container.scrollHeight
-      const scrollTop = container.scrollTop
-      const clientHeight = container.clientHeight
-      const isNearBottom = scrollTop + clientHeight >= currentHeight - 100
-      const heightIncreased = currentHeight > stateRef.current.lastHeight
 
-      if (
-        heightIncreased &&
-        (isNearBottom || !stateRef.current.isUserScrolled)
-      ) {
-        container.scrollTo({ top: container.scrollHeight, behavior: 'instant' })
-      }
-
-      stateRef.current.lastHeight = currentHeight
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'instant',
+      })
     }
 
-    function handleScroll() {
-      if (!container) return
-      const scrollTop = container.scrollTop
-      const clientHeight = container.clientHeight
-      const scrollHeight = container.scrollHeight
-      stateRef.current.isUserScrolled =
-        scrollTop + clientHeight < scrollHeight - 100
+    const observer = new ResizeObserver(callback)
+    callback()
+
+    const element = containerRef.current?.firstElementChild
+
+    if (element) {
+      observer.observe(element)
     }
-
-    const observer = new ResizeObserver(handleResize)
-    observer.observe(container.firstElementChild ?? container)
-    handleResize()
-
-    container.addEventListener('scroll', handleScroll)
 
     return () => {
       observer.disconnect()
-      container.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
@@ -231,7 +214,7 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
       ref={containerRef}
       {...props}
       className={cn(
-        'fd-scroll-container flex min-w-0 flex-col overflow-y-auto',
+        'fd-scroll-container overflow-y-auto min-w-0 flex flex-col',
         props.className
       )}
     >
@@ -242,20 +225,19 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
 
 function Input(props: ComponentProps<'textarea'>) {
   const ref = useRef<HTMLDivElement>(null)
-  const id = useId()
   const shared = cn('col-start-1 row-start-1', props.className)
 
   return (
     <div className='grid flex-1'>
       <textarea
-        id={id}
+        id='nd-ai-input'
         {...props}
         className={cn(
           'resize-none bg-transparent placeholder:text-fd-muted-foreground focus-visible:outline-none',
           shared
         )}
       />
-      <div ref={ref} className={cn(shared, 'invisible break-all')}>
+      <div ref={ref} className={cn(shared, 'break-all invisible')}>
         {`${props.value?.toString() ?? ''}\n`}
       </div>
     </div>
@@ -281,7 +263,7 @@ function Message({
     <div {...props}>
       <p
         className={cn(
-          'mb-1 font-medium text-fd-muted-foreground text-sm',
+          'mb-1 text-sm font-medium text-fd-muted-foreground',
           message.role === 'assistant' && 'text-fd-primary'
         )}
       >
@@ -302,7 +284,7 @@ function Message({
   )
 }
 
-export function AISearchTrigger() {
+export function AISearch({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
   const chat = useChat({
     id: 'search',
@@ -311,7 +293,38 @@ export function AISearchTrigger() {
     }),
   })
 
-  const onKeyPress = (e: KeyboardEvent) => {
+  return (
+    <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>
+      {children}
+    </Context>
+  )
+}
+
+export function AISearchTrigger() {
+  const { open, setOpen } = use(Context)!
+
+  return (
+    <button
+      className={cn(
+        buttonVariants({
+          variant: 'secondary',
+        }),
+        'fixed end-4 bottom-4 gap-3 w-24  text-fd-muted-foreground rounded-2xl shadow-lg z-20 transition-all',
+        open && 'translate-y-10 opacity-0'
+      )}
+      onClick={() => setOpen(true)}
+    >
+      <MessageCircleIcon className='size-4.5' />
+      Ask AI
+    </button>
+  )
+}
+
+export function AISearchPanel() {
+  const { open, setOpen } = use(Context)!
+  const chat = useChatContext()
+
+  const onKeyPress = useEffectEvent((e: KeyboardEvent) => {
     if (e.key === 'Escape' && open) {
       setOpen(false)
       e.preventDefault()
@@ -321,88 +334,85 @@ export function AISearchTrigger() {
       setOpen(true)
       e.preventDefault()
     }
-  }
+  })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: biome doesn't understand the effect
   useEffect(() => {
-    const listener = (e: KeyboardEvent) => onKeyPress(e)
-    window.addEventListener('keydown', listener)
-    return () => window.removeEventListener('keydown', listener)
+    window.addEventListener('keydown', onKeyPress)
+    return () => window.removeEventListener('keydown', onKeyPress)
   }, [])
 
   return (
-    <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>
+    <>
       <style>
         {`
         @keyframes ask-ai-open {
           from {
-            translate: 100% 0;
+            width: 0px;
+          }
+          to {
+            width: var(--ai-chat-width);
           }
         }
-        
         @keyframes ask-ai-close {
+          from {
+            width: var(--ai-chat-width);
+          }
           to {
-            translate: 100% 0;
-            opacity: 0;
+            width: 0px;
           }
         }`}
       </style>
       <Presence present={open}>
         <div
+          data-state={open ? 'open' : 'closed'}
+          className='fixed inset-0 z-30 backdrop-blur-xs bg-fd-overlay data-[state=open]:animate-fd-fade-in data-[state=closed]:animate-fd-fade-out lg:hidden'
+          onClick={() => setOpen(false)}
+        />
+      </Presence>
+      <Presence present={open}>
+        <div
           className={cn(
-            'fixed inset-y-2 z-30 flex flex-col rounded-2xl border bg-fd-popover p-2 text-fd-popover-foreground shadow-lg max-sm:inset-x-2 sm:end-2 sm:w-[460px]',
+            'overflow-hidden z-30 bg-fd-popover text-fd-popover-foreground [--ai-chat-width:400px] xl:[--ai-chat-width:460px]',
+            'fixed inset-y-2 z-30 flex flex-col rounded-2xl border bg-fd-popover text-fd-popover-foreground shadow-xl max-sm:inset-x-2 sm:end-2 sm:w-[460px]',
             open
-              ? 'animate-[ask-ai-open_300ms]'
-              : 'animate-[ask-ai-close_300ms]'
+              ? 'animate-fd-dialog-in lg:animate-[ask-ai-open_200ms]'
+              : 'animate-fd-dialog-out lg:animate-[ask-ai-close_200ms]'
           )}
         >
-          <Header />
-          <List
-            className='flex-1 overscroll-contain px-3 py-4'
-            style={{
-              maskImage:
-                'linear-gradient(to bottom, transparent, white 1rem, white calc(100% - 1rem), transparent 100%)',
-            }}
-          >
-            <div className='flex flex-col gap-4'>
-              {chat.messages
-                .filter((msg) => msg.role !== 'system')
-                .map((item, idx) => (
-                  <Message
-                    key={item.id}
-                    message={item as MyUIMessage}
-                    isInProgress={
-                      chat.messages.length - 1 === idx &&
-                      (chat.status === 'streaming' ||
-                        chat.status === 'submitted')
-                    }
-                  />
-                ))}
-            </div>
-            {(chat.status === 'streaming' || chat.status === 'submitted') && (
-              <LoaderCircleIcon className='size-4 animate-spin text-fd-muted-foreground' />
-            )}
-          </List>
-          <div className='rounded-xl border bg-fd-card text-fd-card-foreground has-focus-visible:ring-2 has-focus-visible:ring-fd-ring'>
-            <SearchAIInput />
-            <div className='flex items-center gap-1.5 p-2'>
-              <SearchAIActions />
+          <div className='flex flex-col p-3 size-full lg:w-(--ai-chat-width)'>
+            <Header />
+            <List
+              className='px-3 py-4 flex-1 overscroll-contain'
+              style={{
+                maskImage:
+                  'linear-gradient(to bottom, transparent, white 1rem, white calc(100% - 1rem), transparent 100%)',
+              }}
+            >
+              <div className='flex flex-col gap-4'>
+                {chat.messages
+                  .filter((msg) => msg.role !== 'system')
+                  .map((item, idx) => (
+                    <Message
+                      key={item.id}
+                      message={item}
+                      isInProgress={
+                        chat.messages.length - 1 === idx &&
+                        (chat.status === 'streaming' ||
+                          chat.status === 'submitted')
+                      }
+                    />
+                  ))}
+              </div>
+            </List>
+            <div className='rounded-xl border bg-fd-card text-fd-card-foreground has-focus-visible:ring-2 has-focus-visible:ring-fd-ring'>
+              <SearchAIInput />
+              <div className='flex items-center gap-1.5 p-2'>
+                <SearchAIActions />
+              </div>
             </div>
           </div>
         </div>
       </Presence>
-      <button
-        className={cn(
-          'fixed bottom-4 z-20 flex h-10 w-24 items-center gap-2 gap-3 rounded-2xl border bg-fd-secondary px-2 font-medium text-fd-muted-foreground text-sm shadow-lg transition-[translate,opacity]',
-          'end-[calc(var(--removed-body-scroll-bar-size,0px)+var(--fd-layout-offset)+1rem)]',
-          open && 'translate-y-10 opacity-0'
-        )}
-        onClick={() => setOpen(true)}
-        type='button'
-      >
-        <MessageCircleIcon className='size-4.5' />
-        Ask AI
-      </button>
-    </Context>
+    </>
   )
 }

@@ -1,10 +1,14 @@
 import { LargeSearchToggle } from 'fumadocs-ui/components/layout/search-toggle'
 import { DocsLayout } from 'fumadocs-ui/layouts/notebook'
-import { AISearchTrigger } from '@/components/fumadocs/ai/search'
 import { baseOptions, linkItems, logo } from '@/lib/layout.shared'
 import { source } from '@/lib/source'
 import 'katex/dist/katex.min.css'
 import type { CSSProperties } from 'react'
+import {
+  AISearch,
+  AISearchTrigger,
+  AISearchPanel,
+} from '@/components/fumadocs/ai/search'
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
   const base = baseOptions()
@@ -65,8 +69,11 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
       }}
     >
       {children}
-      {/* <DocsBackground /> */}
-      <AISearchTrigger />
+
+      <AISearch>
+        <AISearchPanel />
+        <AISearchTrigger />
+      </AISearch>
     </DocsLayout>
   )
 }
