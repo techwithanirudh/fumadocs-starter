@@ -1,4 +1,5 @@
 import { baseUrl, createMetadata } from '@/lib/metadata'
+import { title } from '@/lib/layout.shared'
 import '@/styles/globals.css'
 import type { Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
@@ -26,6 +27,16 @@ export const metadata = createMetadata({
   },
   description: 'The Next.js framework for building documentation sites',
   metadataBase: baseUrl,
+  alternates: {
+    types: {
+      'application/rss+xml': [
+        {
+          title: `${title}`,
+          url: `${baseUrl}/rss.xml`,
+        },
+      ],
+    },
+  },
 })
 
 export const viewport: Viewport = {

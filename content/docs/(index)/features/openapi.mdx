@@ -63,20 +63,18 @@ Follow these steps to completely remove the OpenAPI integration from your projec
 Comment out the OpenAPI transformer:
 
 ```tsx title="lib/source.ts" 
-import { transformerOpenAPI } from 'fumadocs-openapi/server' /* [!code --] */
+import { openapiPlugin } from 'fumadocs-openapi/server' /* [!code --] */
 import { loader } from 'fumadocs-core/source'
-import { docs } from '@/.source'
+import { docs } from 'fumadocs-mdx:collections/docs'
 
 export const source = loader({
   baseUrl: '/docs',
   source: docs.toFumadocsSource(),
-  pageTree: { /* [!code --] */
-    transformers: [transformerOpenAPI()], /* [!code --] */
-  }, /* [!code --] */
+  plugins: [ /* [!code --] */
+    openapiPlugin() /* [!code --] */
+  ], /* [!code --] */
 })
 ```
-
-
 
 ### 2. Remove the OpenAPI config file
 

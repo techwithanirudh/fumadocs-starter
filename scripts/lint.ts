@@ -1,68 +1,79 @@
-import type { InferPageType } from 'fumadocs-core/source'
 import {
   type FileObject,
   printErrors,
   scanURLs,
   validateFiles,
-} from 'next-validate-link'
-import { source } from '@/lib/source'
+} from 'next-validate-link';
+import { InferPageType } from 'fumadocs-core/source';
+import { source } from '@/lib/source';
 
-type AnySource = typeof source
+type AnySource = typeof source;
 
 async function checkLinks() {
   const scanned = await scanURLs({
     populate: {
-      'docs/[[...slug]]': source.getPages().map((page) => {
-        return {
-          value: {
-            slug: page.slugs,
-          },
-          hashes: getHeadings(page),
-        }
-      }),
+      'docs/[[...slug]]': await Promise.all(
+        source.getPages().map(async (page) => {
+          return {
+            value: {
+              slug: page.slugs,
+            },
+            hashes: await getHeadings(page),
+          };
+        }),
+      ),
     },
-  })
+  });
 
   console.log(
-    `collected ${scanned.urls.size} URLs, ${scanned.fallbackUrls.length} fallbacks`
-  )
+    `collected ${scanned.urls.size} URLs, ${scanned.fallbackUrls.length} fallbacks`,
+  );
 
   printErrors(
-    await validateFiles([...(await getFiles(source))], {
-      scanned,
-      markdown: {
-        components: {
-          Card: { attributes: ['href'] },
+    await validateFiles(
+      [...(await getFiles(source))],
+      {
+        scanned,
+        markdown: {
+          components: {
+            Card: { attributes: ['href'] },
+          },
         },
+        checkRelativePaths: 'as-url',
       },
-      checkRelativePaths: 'as-url',
-    }),
-    true
-  )
+    ),
+    true,
+  );
 }
 
-function getHeadings({ data }: InferPageType<AnySource>): string[] {
-  const headings = data.toc.map((item) => item.url.slice(1))
-  const elementIds = data._exports?.elementIds
+async function getHeadings({
+  data,
+}: InferPageType<AnySource>): Promise<string[]> {
+  if ('type' in data && data.type === 'openapi') return [];
+  const { _exports, toc } = await data.load();
+  const headings = toc.map((item) => item.url.slice(1));
+  const elementIds = _exports?.elementIds;
   if (Array.isArray(elementIds)) {
-    headings.push(...elementIds)
+    headings.push(...elementIds);
   }
 
-  return headings
+  return headings;
 }
 
 async function getFiles(source: AnySource) {
-  const files: FileObject[] = []
+  const files: FileObject[] = [];
   for (const page of source.getPages()) {
+    if ('type' in page.data && page.data.type === 'openapi') continue;
+
     files.push({
       data: page.data,
       url: page.url,
-      path: page.absolutePath,
+      path: page.data.info.fullPath,
       content: await page.data.getText('raw'),
-    })
+    });
   }
 
-  return files
+  return files;
 }
 
-void checkLinks()
+void checkLinks();

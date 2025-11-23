@@ -20,6 +20,7 @@ import { owner, repo } from '@/lib/github'
 import { createMetadata, getPageImage } from '@/lib/metadata'
 import { source } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
+import { PageLastUpdate } from 'fumadocs-ui/layouts/docs/page'
 
 const generator = createGenerator()
 
@@ -33,7 +34,7 @@ export default async function Page(
 
   if (!page) return notFound()
 
-  const { body: Mdx, toc, lastModified } = page.data
+  const { body: Mdx, toc, lastModified } = await page.data.load()
 
   return (
     <DocsPage
@@ -109,6 +110,7 @@ export default async function Page(
         />
         {page.data.index ? <DocsCategory url={page.url} /> : null}
       </div>
+      {lastModified && <PageLastUpdate date={lastModified} />}
     </DocsPage>
   )
 }
