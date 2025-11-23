@@ -20,12 +20,12 @@ The official OpenAPI integration supports:
 
 ## Changing the OpenAPI schema
 
-The `generate-docs` script uses the OpenAPI schema to generate the documentation. You can change the OpenAPI schema by modifying the `openapi.json` file in `content/docs/api-reference` of your project.
+The `generate-docs` script uses the OpenAPI schema to generate the documentation. You can change the OpenAPI schema by modifying the `openapi.yml` file in `content/docs/api-reference` of your project.
 
 ```ts title="scripts/generate-docs.ts"
 import * as OpenAPI from 'fumadocs-openapi'
 import { rimraf } from 'rimraf'
-import { openapi } from './lib/openapi' // [!code highlight]
+import { openapi } from '@/lib/openapi' // [!code highlight]
 
 const out = './content/docs/api-reference/(generated)'
 
@@ -58,11 +58,11 @@ bun run build:pre
 
 Follow these steps to completely remove the OpenAPI integration from your project.
 
-### 1. Update `lib/source.ts`
+### 1. Update `src/lib/source.tsx`
 
 Comment out the OpenAPI transformer:
 
-```tsx title="lib/source.ts" 
+```tsx title="src/lib/source.tsx" 
 import { openapiPlugin } from 'fumadocs-openapi/server' /* [!code --] */
 import { loader } from 'fumadocs-core/source'
 import { docs } from 'fumadocs-mdx:collections/docs'
@@ -78,9 +78,9 @@ export const source = loader({
 
 ### 2. Remove the OpenAPI config file
 
-Delete the `lib/openapi.ts` file:
+Delete the `src/lib/openapi/index.ts` file:
 
-```ts twoslash title="lib/openapi.ts"
+```ts twoslash title="src/lib/openapi/index.ts"
 import { createOpenAPI } from 'fumadocs-openapi/server' /* [!code --] */
 
 export const openapi = createOpenAPI({ /* [!code --] */
@@ -173,7 +173,7 @@ async function main() {
 
 ### 5. Remove the API proxy
 
-Delete the `app/api/proxy/route.ts` file.
+Delete the `src/app/api/proxy/route.ts` file.
 
 
 
@@ -181,7 +181,7 @@ Delete the `app/api/proxy/route.ts` file.
 
 Remove the OpenAPI CSS import from `src/styles/globals.css`:
 
-```css title="styles/globals.css"
+```css title="src/styles/globals.css"
 @import 'tailwindcss' source(none);
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
@@ -194,40 +194,17 @@ Remove the OpenAPI CSS import from `src/styles/globals.css`:
 
 ### 7. Update the docs page
 
-Remove OpenAPI references in `src/app/docs/[[...slug]]/page.tsx`:
+Remove OpenAPI references in `src/mdx-components.tsx`:
 
-```tsx title="app/docs/[[...slug]]/page.tsx"
-import { APIPage } from 'fumadocs-openapi/ui' /* [!code --] */
-import { openapi } from '@/lib/openapi' /* [!code --] */
+```tsx title="src/mdx-components.tsx"
+import { APIPage } from '@/components/api-page' /* [!code --] */
 
-export default async function Page() {
-  return (
-    <PageRoot
-      toc={{
-        toc,
-        single: false,
-      }}
-    >
-      {/* ... */}
-      <PageArticle>
-        {/* ... */}
-        <div className='prose flex-1 text-fd-foreground/80'>
-          <Mdx
-            components={getMDXComponents({
-              // ...
-              APIPage: (props) => ( /* [!code --] */
-                <APIPage {...openapi.getAPIPageProps(props)} /> /* [!code --] */
-              ), /* [!code --] */
-              // ...
-            })}
-          />
-          {page.data.index ? <DocsCategory url={page.url} /> : null}
-        </div>
-        {/* ... */}
-      </PageArticle>
-      {/* ... */}
-    </PageRoot>
-  )
+export function getMDXComponents(components?: MDXComponents) {
+  return {
+    // ...
+    APIPage, /* [!code --] */
+    // ...
+  }
 }
 ```
 
