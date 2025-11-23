@@ -20,6 +20,6 @@ export function useMode(tree: Root): string | undefined {
   const pathname = usePathname()
   const page = findPage(tree, pathname)
 
-  const id = page?.$id ?? ''
+  const id = page?.$ref?.file ?? ''
   return id.split('/')[0]
 }
