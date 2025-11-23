@@ -45,6 +45,7 @@
         "bierner.markdown-emoji",
         "bierner.markdown-checkbox",
         "bierner.jsdoc-markdown-highlighting",
+        "unifiedjs.vscode-mdx",
         "ms-vscode.wordcount",
         // Other
         "albert.tabout",
