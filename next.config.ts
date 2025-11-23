@@ -29,7 +29,7 @@ async function createNextConfig(): Promise<NextConfig> {
       'twoslash',
       'twoslash-protocol',
       'shiki',
-      '@takumi-rs/core',
+      '@takumi-rs/image-response',
     ],
     images: {
       unoptimized: true,

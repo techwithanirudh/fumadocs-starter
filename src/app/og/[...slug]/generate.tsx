@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 import type { ImageResponseOptions } from '@takumi-rs/image-response'
 import type { ReactNode } from 'react'
 import { title as siteName } from '@/lib/layout.shared'
@@ -9,11 +9,27 @@ export interface GenerateProps {
   tag?: string
 }
 
-const font = readFileSync('./src/app/og/[...slug]/fonts/Inter-Regular.ttf')
-const fontSemiBold = readFileSync(
-  './src/app/og/[...slug]/fonts/Inter-SemiBold.ttf'
+const font = readFile('./src/app/og/[...slug]/fonts/Inter-Regular.ttf').then(
+  (data) => ({
+    name: 'Inter',
+    data,
+    weight: 400,
+  })
 )
-const fontBold = readFileSync('./src/app/og/[...slug]/fonts/Inter-Bold.ttf')
+const fontSemiBold = readFile(
+  './src/app/og/[...slug]/fonts/Inter-SemiBold.ttf'
+).then((data) => ({
+  name: 'Inter',
+  data,
+  weight: 500,
+}))
+const fontBold = readFile('./src/app/og/[...slug]/fonts/Inter-Bold.ttf').then(
+  (data) => ({
+    name: 'Inter',
+    data,
+    weight: 700,
+  })
+)
 
 export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
   return {
@@ -23,26 +39,10 @@ export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
     persistentImages: [
       {
         src: 'logo.svg',
-        data: readFileSync('./public/logo.svg'),
+        data: await readFile('./public/logo.svg'),
       },
     ],
-    fonts: [
-      {
-        name: 'Inter',
-        data: font,
-        weight: 400,
-      },
-      {
-        name: 'Inter',
-        data: fontSemiBold,
-        weight: 500,
-      },
-      {
-        name: 'Inter',
-        data: fontBold,
-        weight: 700,
-      },
-    ],
+    fonts: await Promise.all([font, fontSemiBold, fontBold]),
   }
 }
 
