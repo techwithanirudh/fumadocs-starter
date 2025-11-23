@@ -39,7 +39,6 @@ export default async function Page(
   return (
     <DocsPage
       toc={toc}
-      lastUpdate={lastModified ? new Date(lastModified) : undefined}
       tableOfContent={{
         style: 'clerk',
       }}
