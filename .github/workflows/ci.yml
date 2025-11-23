@@ -16,9 +16,6 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Build app
-        run: bun run build
-
       - name: Run type check
         run: bun typecheck
 

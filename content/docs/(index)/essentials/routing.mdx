@@ -10,19 +10,24 @@ Fumadocs uses a file-system based routing system to organize your documents. Thi
 
 <Files>
     <Folder name="content/docs (content directory)" defaultOpen>
-        <Folder name="app" defaultOpen>
+        <Folder name="(index)" defaultOpen>
 
             <File name="index.mdx" />
 
-            <File name="getting-started.mdx" />
+            <File name="quickstart.mdx" />
         </Folder>
         <Folder name="api-reference" defaultOpen>
 
             <File name="index.mdx" />
 
-            <Folder name="events" defaultOpen>
-                <File name="get.mdx" />
-                <File name="post.json" />
+            <Folder name="(generated)" defaultOpen>
+                <Folder name="events" defaultOpen>
+                    <File name="getSpecialEvent.mdx" />
+                    <File name="createSpecialEvent.mdx" />
+                </Folder>
+                <Folder name="operations" defaultOpen>
+                    <File name="getMuseumHours.mdx" />
+                </Folder>
             </Folder>
 
         </Folder>
@@ -87,7 +92,7 @@ Customize folders by creating a `meta.json` file in the folder.
 {
   "title": "Display Name",
   "icon": "MyIcon",
-  "pages": ["index", "getting-started"],
+  "pages": ["index", "quickstart"],
   "defaultOpen": true
 }
 ```

@@ -6,6 +6,7 @@ import { createGenerator } from 'fumadocs-typescript'
 import { AutoTypeTable } from 'fumadocs-typescript/ui'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
+import { PageLastUpdate } from 'fumadocs-ui/layouts/docs/page'
 import { DocsPage } from 'fumadocs-ui/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -33,7 +34,7 @@ export default async function Page(
 
   if (!page) return notFound()
 
-  const { body: Mdx, toc, lastModified } = page.data
+  const { body: Mdx, toc, lastModified } = await page.data.load()
 
   return (
     <DocsPage
@@ -109,6 +110,7 @@ export default async function Page(
         />
         {page.data.index ? <DocsCategory url={page.url} /> : null}
       </div>
+      {lastModified && <PageLastUpdate date={lastModified} />}
     </DocsPage>
   )
 }

@@ -26,7 +26,7 @@ export function createMetadata(override: Metadata): Metadata {
 }
 
 export function getPageImage(page: Page) {
-  const segments = [...page.slugs, 'image.png']
+  const segments = [...page.slugs, 'image.webp']
   return {
     segments,
     url: `/og/${segments.join('/')}`,
@@ -36,4 +36,4 @@ export function getPageImage(page: Page) {
 export const baseUrl =
   env.NODE_ENV === 'development' || !env.NEXT_PUBLIC_BASE_URL
     ? new URL('http://localhost:3000')
-    : new URL(`https://${env.NEXT_PUBLIC_BASE_URL}`)
+    : new URL(env.NEXT_PUBLIC_BASE_URL)

@@ -1,3 +1,4 @@
+import { title } from '@/lib/layout.shared'
 import { baseUrl, createMetadata } from '@/lib/metadata'
 import '@/styles/globals.css'
 import type { Viewport } from 'next'
@@ -8,6 +9,7 @@ import 'katex/dist/katex.css'
 import { NextProvider } from 'fumadocs-core/framework/next'
 import { TreeContextProvider } from 'fumadocs-ui/contexts/tree'
 import { source } from '@/lib/source'
+import { url } from '@/lib/url'
 
 const geist = Geist({
   variable: '--font-sans',
@@ -26,6 +28,16 @@ export const metadata = createMetadata({
   },
   description: 'The Next.js framework for building documentation sites',
   metadataBase: baseUrl,
+  alternates: {
+    types: {
+      'application/rss+xml': [
+        {
+          title,
+          url: url('/rss.xml'),
+        },
+      ],
+    },
+  },
 })
 
 export const viewport: Viewport = {

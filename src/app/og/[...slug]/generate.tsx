@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 import type { ImageResponseOptions } from '@takumi-rs/image-response'
 import type { ReactNode } from 'react'
 import { title as siteName } from '@/lib/layout.shared'
@@ -9,40 +9,39 @@ export interface GenerateProps {
   tag?: string
 }
 
-const font = readFileSync('./src/app/og/[...slug]/fonts/Inter-Regular.ttf')
-const fontSemiBold = readFileSync(
-  './src/app/og/[...slug]/fonts/Inter-SemiBold.ttf'
+const font = readFile('./src/app/og/[...slug]/fonts/Inter-Regular.ttf').then(
+  (data) => ({
+    name: 'Inter',
+    data,
+    weight: 400,
+  })
 )
-const fontBold = readFileSync('./src/app/og/[...slug]/fonts/Inter-Bold.ttf')
+const fontSemiBold = readFile(
+  './src/app/og/[...slug]/fonts/Inter-SemiBold.ttf'
+).then((data) => ({
+  name: 'Inter',
+  data,
+  weight: 500,
+}))
+const fontBold = readFile('./src/app/og/[...slug]/fonts/Inter-Bold.ttf').then(
+  (data) => ({
+    name: 'Inter',
+    data,
+    weight: 700,
+  })
+)
+const logo = readFile('./public/logo.svg').then((data) => ({
+  src: 'logo.svg',
+  data,
+}))
 
 export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
   return {
     format: 'webp',
     width: 1200,
     height: 630,
-    persistentImages: [
-      {
-        src: 'logo.svg',
-        data: readFileSync('./public/logo.svg'),
-      },
-    ],
-    fonts: [
-      {
-        name: 'Inter',
-        data: font,
-        weight: 400,
-      },
-      {
-        name: 'Inter',
-        data: fontSemiBold,
-        weight: 500,
-      },
-      {
-        name: 'Inter',
-        data: fontBold,
-        weight: 700,
-      },
-    ],
+    persistentImages: [await logo],
+    fonts: await Promise.all([font, fontSemiBold, fontBold]),
   }
 }
 
@@ -59,7 +58,7 @@ export function generate({ title, description, tag }: GenerateProps) {
         height: '100%',
         color: 'white',
         backgroundColor: '#0c0c0c',
-        backgroundImage: `linear-gradient(to top right, ${primaryColor}, transparent), noise-v1(opacity(0.3) frequency(1.0) octaves(4))`,
+        backgroundImage: `linear-gradient(to top right, ${primaryColor}, transparent)`,
       }}
     >
       <div

@@ -18,7 +18,7 @@
     "incremental": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@/.source": ["./.source/index.ts"]
+      "fumadocs-mdx:collections/*": [".source/*"]
     },
     "plugins": [
       {
@@ -32,7 +32,6 @@
     "**/*.ts",
     "**/*.mts",
     "**/*.tsx",
-    "content/**/*.mdx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "next.config.ts"

@@ -12,14 +12,16 @@ type AnySource = typeof source
 async function checkLinks() {
   const scanned = await scanURLs({
     populate: {
-      'docs/[[...slug]]': source.getPages().map((page) => {
-        return {
-          value: {
-            slug: page.slugs,
-          },
-          hashes: getHeadings(page),
-        }
-      }),
+      'docs/[[...slug]]': await Promise.all(
+        source.getPages().map(async (page) => {
+          return {
+            value: {
+              slug: page.slugs,
+            },
+            hashes: await getHeadings(page),
+          }
+        })
+      ),
     },
   })
 
@@ -41,9 +43,12 @@ async function checkLinks() {
   )
 }
 
-function getHeadings({ data }: InferPageType<AnySource>): string[] {
-  const headings = data.toc.map((item) => item.url.slice(1))
-  const elementIds = data._exports?.elementIds
+async function getHeadings({
+  data,
+}: InferPageType<AnySource>): Promise<string[]> {
+  const { _exports, toc } = await data.load()
+  const headings = toc.map((item) => item.url.slice(1))
+  const elementIds = _exports?.elementIds
   if (Array.isArray(elementIds)) {
     headings.push(...elementIds)
   }
@@ -54,10 +59,12 @@ function getHeadings({ data }: InferPageType<AnySource>): string[] {
 async function getFiles(source: AnySource) {
   const files: FileObject[] = []
   for (const page of source.getPages()) {
+    if ('type' in page.data && page.data.type === 'openapi') continue
+
     files.push({
       data: page.data,
       url: page.url,
-      path: page.absolutePath,
+      path: page.data.info.fullPath,
       content: await page.data.getText('raw'),
     })
   }
