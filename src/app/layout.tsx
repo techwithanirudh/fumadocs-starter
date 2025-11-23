@@ -32,7 +32,7 @@ export const metadata = createMetadata({
       'application/rss+xml': [
         {
           title: `${title}`,
-          url: `${baseUrl}/rss.xml`,
+          url: new URL('/rss.xml', baseUrl).toString(),
         },
       ],
     },

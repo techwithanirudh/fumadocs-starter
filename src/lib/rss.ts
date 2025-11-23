@@ -6,11 +6,11 @@ import { source } from '@/lib/source'
 export async function getRSS() {
   const feed = new Feed({
     title: `${title}`,
-    id: `${baseUrl}/rss.xml`,
-    link: `${baseUrl}/rss.xml`,
+    id: new URL('/rss.xml', baseUrl).toString(),
+    link: new URL('/rss.xml', baseUrl).toString(),
     language: 'en',
-    image: `${baseUrl}/banner.png`,
-    favicon: `${baseUrl}/icon.png`,
+    image: new URL('/banner.png', baseUrl).toString(),
+    favicon: new URL('/icon.png', baseUrl).toString(),
     copyright: `All rights reserved ${new Date().getFullYear()}, ${title}`,
   })
 
@@ -29,7 +29,7 @@ export async function getRSS() {
       id: page.url,
       title: page.data.title,
       description: page.data.description,
-      link: `${baseUrl}${page.url}`,
+      link: new URL(page.url, baseUrl).toString(),
       date: lastModified ? new Date(lastModified) : new Date(),
       author: [
         {
