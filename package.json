@@ -19,7 +19,7 @@
     "lint:unsafe": "biome lint --write --unsafe .",
     "format": "biome format --write .",
     "typegen": "fumadocs-mdx && next typegen",
-    "typecheck": "bun run typegen && tsc --noEmit --incremental false",
+    "typecheck": "bun run typegen && tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {

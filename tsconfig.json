@@ -32,7 +32,6 @@
     "**/*.ts",
     "**/*.mts",
     "**/*.tsx",
-    "content/**/*.mdx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "next.config.ts"

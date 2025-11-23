@@ -59,7 +59,7 @@ export function generate({ title, description, tag }: GenerateProps) {
         height: '100%',
         color: 'white',
         backgroundColor: '#0c0c0c',
-        backgroundImage: `linear-gradient(to top right, ${primaryColor}, transparent), noise-v1(opacity(0.3) frequency(1.0) octaves(4))`,
+        backgroundImage: `linear-gradient(to top right, ${primaryColor}, transparent)`,
       }}
     >
       <div
