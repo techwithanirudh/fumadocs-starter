@@ -1,5 +1,5 @@
-import { baseUrl, createMetadata } from '@/lib/metadata'
 import { title } from '@/lib/layout.shared'
+import { baseUrl, createMetadata } from '@/lib/metadata'
 import '@/styles/globals.css'
 import type { Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'

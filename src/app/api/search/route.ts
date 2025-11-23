@@ -6,19 +6,21 @@ export const { GET } = createSearchAPI('advanced', {
   indexes: async () => {
     const pages = source.getPages()
 
-    const indexes = await Promise.all(pages.map(async (page) => {
-      const { structuredData } = await page.data.load()
+    const indexes = await Promise.all(
+      pages.map(async (page) => {
+        const { structuredData } = await page.data.load()
 
-      return {
-        title: page.data.title,
-        description: page.data.description,
-        url: page.url,
-        id: page.url,
-        structuredData: structuredData ?? undefined,
-        tag: page.path.split('/')[0],
-      }
-    }));
+        return {
+          title: page.data.title,
+          description: page.data.description,
+          url: page.url,
+          id: page.url,
+          structuredData: structuredData ?? undefined,
+          tag: page.path.split('/')[0],
+        }
+      })
+    )
 
-    return indexes;
+    return indexes
   },
 })

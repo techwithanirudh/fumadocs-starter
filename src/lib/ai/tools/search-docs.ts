@@ -8,18 +8,20 @@ const server = initAdvancedSearch({
   language: 'english',
   indexes: async () => {
     const pages = source.getPages()
-    const indexes = await Promise.all(pages.map(async (page) => {
-      const { structuredData } = await page.data.load()
-      return {
-        id: page.url,
-        title: page.data.title,
-        description: page.data.description,
-        structuredData: structuredData,
-        url: page.url,
-        tag: page.path.split('/')[0],
-      }
-    }))
-    return indexes;
+    const indexes = await Promise.all(
+      pages.map(async (page) => {
+        const { structuredData } = await page.data.load()
+        return {
+          id: page.url,
+          title: page.data.title,
+          description: page.data.description,
+          structuredData: structuredData,
+          url: page.url,
+          tag: page.path.split('/')[0],
+        }
+      })
+    )
+    return indexes
   },
 })
 

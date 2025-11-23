@@ -3,12 +3,12 @@ import {
   defineDocs,
   frontmatterSchema,
   metaSchema,
-} from 'fumadocs-mdx/config';
-import { z } from 'zod';
-import type { ElementContent } from 'hast';
-import jsonSchema from 'fumadocs-mdx/plugins/json-schema';
-import lastModified from 'fumadocs-mdx/plugins/last-modified';
-import type { ShikiTransformer } from 'shiki';
+} from 'fumadocs-mdx/config'
+import jsonSchema from 'fumadocs-mdx/plugins/json-schema'
+import lastModified from 'fumadocs-mdx/plugins/last-modified'
+import type { ElementContent } from 'hast'
+import type { ShikiTransformer } from 'shiki'
+import { z } from 'zod'
 
 export const docs = defineDocs({
   docs: {
@@ -30,7 +30,7 @@ export const docs = defineDocs({
       description: z.string().optional(),
     }),
   },
-});
+})
 
 function transformerEscape(): ShikiTransformer {
   return {
@@ -38,18 +38,18 @@ function transformerEscape(): ShikiTransformer {
     code(hast) {
       function replace(node: ElementContent) {
         if (node.type === 'text') {
-          node.value = node.value.replace('[\\!code', '[!code');
+          node.value = node.value.replace('[\\!code', '[!code')
         } else if ('children' in node) {
           for (const child of node.children) {
-            replace(child);
+            replace(child)
           }
         }
       }
 
-      replace(hast);
-      return hast;
+      replace(hast)
+      return hast
     },
-  };
+  }
 }
 
 export default defineConfig({
@@ -62,17 +62,17 @@ export default defineConfig({
   mdxOptions: async () => {
     const { rehypeCodeDefaultOptions } = await import(
       'fumadocs-core/mdx-plugins/rehype-code'
-    );
+    )
     const { remarkSteps } = await import(
       'fumadocs-core/mdx-plugins/remark-steps'
-    );
-    const { transformerTwoslash } = await import('fumadocs-twoslash');
+    )
+    const { transformerTwoslash } = await import('fumadocs-twoslash')
     const { createFileSystemTypesCache } = await import(
       'fumadocs-twoslash/cache-fs'
-    );
-    const { default: remarkMath } = await import('remark-math');
-    const { default: rehypeKatex } = await import('rehype-katex');
-    const { remarkAutoTypeTable } = await import('fumadocs-typescript');
+    )
+    const { default: remarkMath } = await import('remark-math')
+    const { default: rehypeKatex } = await import('rehype-katex')
+    const { remarkAutoTypeTable } = await import('fumadocs-typescript')
 
     return {
       rehypeCodeOptions: {
@@ -98,12 +98,8 @@ export default defineConfig({
           id: 'package-manager',
         },
       },
-      remarkPlugins: [
-        remarkSteps,
-        remarkMath,
-        remarkAutoTypeTable,
-      ],
+      remarkPlugins: [remarkSteps, remarkMath, remarkAutoTypeTable],
       rehypePlugins: (v) => [rehypeKatex, ...v],
-    };
+    }
   },
-});
+})

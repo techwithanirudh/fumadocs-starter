@@ -1,13 +1,12 @@
-import { getRSS } from '@/lib/rss';
+import { getRSS } from '@/lib/rss'
 
-export const revalidate = false;
+export const revalidate = false
 
 export async function GET() {
-  const rss = await getRSS();
+  const rss = await getRSS()
   return new Response(rss, {
     headers: {
       'Content-Type': 'application/rss+xml; charset=utf-8',
     },
-  });
+  })
 }
-

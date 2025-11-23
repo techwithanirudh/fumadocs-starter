@@ -6,6 +6,7 @@ import { createGenerator } from 'fumadocs-typescript'
 import { AutoTypeTable } from 'fumadocs-typescript/ui'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
+import { PageLastUpdate } from 'fumadocs-ui/layouts/docs/page'
 import { DocsPage } from 'fumadocs-ui/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -20,7 +21,6 @@ import { owner, repo } from '@/lib/github'
 import { createMetadata, getPageImage } from '@/lib/metadata'
 import { source } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
-import { PageLastUpdate } from 'fumadocs-ui/layouts/docs/page'
 
 const generator = createGenerator()
 

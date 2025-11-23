@@ -1,18 +1,18 @@
+import { docs } from 'fumadocs-mdx:collections/server'
 import {
   type InferMetaType,
   type InferPageType,
   type LoaderPlugin,
-  loader
-} from 'fumadocs-core/source';
-import { openapiPlugin } from 'fumadocs-openapi/server';
-import { docs } from 'fumadocs-mdx:collections/server';
-import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
+  loader,
+} from 'fumadocs-core/source'
+import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
+import { openapiPlugin } from 'fumadocs-openapi/server'
 
 export const source = loader({
   baseUrl: '/docs',
   plugins: [pageTreeCodeTitles(), lucideIconsPlugin(), openapiPlugin()],
-  source: docs.toFumadocsSource()
-});
+  source: docs.toFumadocsSource(),
+})
 
 function pageTreeCodeTitles(): LoaderPlugin {
   return {
@@ -24,15 +24,14 @@ function pageTreeCodeTitles(): LoaderPlugin {
         ) {
           return {
             ...node,
-            name: <code className="text-[0.8125rem]">{node.name}</code>,
-          };
+            name: <code className='text-[0.8125rem]'>{node.name}</code>,
+          }
         }
-        return node;
+        return node
       },
     },
-  };
+  }
 }
 
-
-export type Page = InferPageType<typeof source>;
-export type Meta = InferMetaType<typeof source>;
+export type Page = InferPageType<typeof source>
+export type Meta = InferMetaType<typeof source>
