@@ -1,14 +1,9 @@
-@import 'tailwindcss' source(none);
+@import 'tailwindcss';
 @import 'fumadocs-ui/css/solar.css';
 @import 'fumadocs-ui/css/preset.css';
 @import 'fumadocs-twoslash/twoslash.css';
 @import 'fumadocs-openapi/css/preset.css';
 @import 'tw-animate-css';
-
-@source ".";
-@source "../components";
-@source "../content";
-@source "../app";
 
 @custom-variant dark (&:is(.dark *));
 

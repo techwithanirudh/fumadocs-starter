@@ -12,9 +12,9 @@ Fumadocs provides multiple ways to theme your docs. This guide walks you through
 
 Fumadocs UI ships with ready-to-use themes and a Tailwind CSS preset.
 
-Only Tailwind CSS v4 is supported. Import the preset and a theme stylesheet in your `styles/globals.css` file:
+Only Tailwind CSS v4 is supported. Import the preset and a theme stylesheet in your `src/styles/globals.css` file:
 
-```css title="globals.css"
+```css title="src/styles/globals.css"
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
@@ -22,7 +22,7 @@ Only Tailwind CSS v4 is supported. Import the preset and a theme stylesheet in y
 
 > **Note:** If you're using Shadcn UI, use the `shadcn` preset to have Fumadocs UI adopt your Shadcn theme.
 
-```css title="globals.css (shadcn)"
+```css title="src/styles/globals.css (shadcn)"
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/shadcn.css';
 @import 'fumadocs-ui/css/preset.css';
@@ -44,7 +44,8 @@ Light/dark modes are supported via [`next-themes`](https://github.com/pacocourse
 
 Pick a built-in theme by importing its stylesheet:
 
-```css title="tailwind.css"
+```css title="src/styles/globals.css"
+@import 'tailwindcss';
 @import 'fumadocs-ui/css/<theme>.css';
 @import 'fumadocs-ui/css/preset.css';
 ```
@@ -105,7 +106,7 @@ Pick a built-in theme by importing its stylesheet:
 
 Customize the design system colors with CSS variables:
 
-```css title="global.css"
+```css title="src/styles/globals.css"
 @theme {
   --color-fd-background: hsl(0, 0%, 96%);
   --color-fd-foreground: hsl(0, 0%, 3.9%);
