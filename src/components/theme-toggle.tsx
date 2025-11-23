@@ -100,7 +100,7 @@ const Pill = () => (
   <motion.div
     layoutId='activeTheme'
     initial={false}
-    transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
+    transition={{ type: 'spring', bounce: 0.1, duration: 0.5 }}
     className='pointer-events-none absolute inset-0 z-0 rounded-full bg-accent'
   />
 )
