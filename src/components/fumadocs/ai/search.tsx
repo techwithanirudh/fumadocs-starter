@@ -103,23 +103,20 @@ function SearchAIActions() {
   if (messages.length === 0) return null
 
   return (
-    <>
-      {!isLoading && messages.at(-1)?.role === 'assistant' && (
-        <button
-          type='button'
-          className={cn(
-            buttonVariants({
-              color: 'secondary',
-              size: 'icon-sm',
-              className: 'gap-1.5 rounded-t-md rounded-bl-lg rounded-br-md [&_svg]:size-4',
-            })
-          )}
-          onClick={() => regenerate()}
-        >
-          <RotateCcw />
-        </button>
+    <button
+      type='button'
+      className={cn(
+        buttonVariants({
+          color: 'secondary',
+          size: 'icon-sm',
+          className: 'gap-1.5 rounded-t-md rounded-bl-lg rounded-br-md [&_svg]:size-4 transition-opacity duration-100',
+        }),
+        !isLoading && messages.at(-1)?.role === 'assistant' ? 'opacity-100' : 'opacity-0'
       )}
-    </>
+      onClick={() => regenerate()}
+    >
+      <RotateCcw />
+    </button>
   )
 }
 
@@ -152,7 +149,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
         value={input}
         placeholder={isLoading ? 'Generating...' : 'Ask a question'}
         autoFocus
-        className='p-3'
+        className={cn('p-3', isLoading && 'text-fd-muted-foreground')}
         disabled={status === 'streaming' || status === 'submitted'}
         onChange={(e) => {
           setInput(e.target.value)
@@ -171,7 +168,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
             buttonVariants({
               color: 'secondary',
               size: 'icon-sm',
-              className: 'mt-2 rounded-full transition-all [&_svg]:size-3.5',
+              className: 'mt-2 rounded-b-md rounded-tr-lg rounded-tl-md transition-all [&_svg]:size-3.5',
             })
           )}
           onClick={stop}
@@ -186,7 +183,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
             buttonVariants({
               color: 'secondary',
               size: 'icon-sm',
-              className: 'mt-2 rounded-full transition-all [&_svg]:size-4',
+              className: 'mt-2 rounded-b-md rounded-tr-lg rounded-tl-md transition-all [&_svg]:size-4',
             })
           )}
           disabled={input.length === 0}
@@ -526,11 +523,11 @@ export function AISearchTrigger() {
                   />
                 ))}
             </div>
-            {chat.status === 'streaming' && <LoaderCircleIcon className='size-4 animate-spin text-fd-muted-foreground' />}
+            {chat.status === 'streaming' || chat.status === 'submitted' && <LoaderCircleIcon className='size-4 animate-spin text-fd-muted-foreground' />}
           </List>
           <div className='rounded-xl border bg-fd-card text-fd-card-foreground has-focus-visible:ring-2 has-focus-visible:ring-fd-ring'>
             <SearchAIInput />
-            <div className='flex items-center gap-1.5 p-1 empty:hidden'>
+            <div className='flex items-center gap-1.5 p-2'>
               <SearchAIActions />
             </div>
           </div>
