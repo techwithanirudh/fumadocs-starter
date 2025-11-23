@@ -30,18 +30,17 @@ const fontBold = readFile('./src/app/og/[...slug]/fonts/Inter-Bold.ttf').then(
     weight: 700,
   })
 )
+const logo = readFile('./public/logo.svg').then((data) => ({
+  src: 'logo.svg',
+  data,
+}))
 
 export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
   return {
     format: 'webp',
     width: 1200,
     height: 630,
-    persistentImages: [
-      {
-        src: 'logo.svg',
-        data: await readFile('./public/logo.svg'),
-      },
-    ],
+    persistentImages: [await logo],
     fonts: await Promise.all([font, fontSemiBold, fontBold]),
   }
 }

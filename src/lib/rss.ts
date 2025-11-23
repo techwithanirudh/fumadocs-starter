@@ -5,7 +5,7 @@ import { url } from './url'
 
 export async function getRSS() {
   const feed = new Feed({
-    title: `${title}`,
+    title,
     id: url('/rss.xml'),
     link: url('/rss.xml'),
     language: 'en',
