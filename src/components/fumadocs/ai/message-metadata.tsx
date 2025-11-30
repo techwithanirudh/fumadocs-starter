@@ -1,5 +1,11 @@
 import { isToolUIPart } from 'ai'
-import { ChevronDownIcon, LinkIcon, SearchIcon, WrenchIcon } from 'lucide-react'
+import {
+  Brain,
+  ChevronDownIcon,
+  LinkIcon,
+  SearchIcon,
+  WrenchIcon,
+} from 'lucide-react'
 import type { MyUIMessage } from '@/app/api/chat/types'
 import { Shimmer } from '@/components/ai-elements/shimmer'
 import {
@@ -29,7 +35,14 @@ export const MessageMetadata = ({
   if (!lastPart) {
     return (
       <div className='flex items-center gap-2'>
-        <Spinner /> {reasoning ? <Shimmer>Thinking...</Shimmer> : ''}
+        {reasoning ? (
+          <>
+            <Brain className='size-4' />
+            <Shimmer>Thinking...</Shimmer>
+          </>
+        ) : (
+          <Spinner />
+        )}
       </div>
     )
   }
