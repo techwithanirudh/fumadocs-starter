@@ -6,7 +6,7 @@ import { cn } from '@/lib/cn'
 
 export default function DocsPage(): ReactElement {
   return (
-    <main className='w-full max-w-page mx-auto px-4 flex flex-col py-16'>
+    <main className='w-full max-w-[1400px] mx-auto px-4 flex flex-col py-16'>
       <h1 className='font-semibold text-2xl md:text-3xl'>
         Welcome to the Starter Kit
       </h1>
