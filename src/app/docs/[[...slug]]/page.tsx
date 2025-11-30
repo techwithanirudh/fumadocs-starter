@@ -6,8 +6,7 @@ import { createGenerator } from 'fumadocs-typescript'
 import { AutoTypeTable } from 'fumadocs-typescript/ui'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
-import { PageLastUpdate } from 'fumadocs-ui/layouts/docs/page'
-import { DocsPage } from 'fumadocs-ui/page'
+import { PageLastUpdate, DocsPage } from 'fumadocs-ui/layouts/docs/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactElement } from 'react'
@@ -79,15 +78,15 @@ export default async function Page(
 
               return (
                 <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <Link
-                      href={
-                        found.hash
-                          ? `${found.page.url}#${found.hash}`
-                          : found.page.url
-                      }
-                      {...props}
-                    />
+                  <HoverCardTrigger
+                    href={
+                      found.hash
+                        ? `${found.page.url}#${found.hash}`
+                        : found.page.url
+                    }
+                    {...props}
+                  >
+                    {props.children}
                   </HoverCardTrigger>
                   <HoverCardContent className='text-sm'>
                     <p className='font-medium'>{found.page.data.title}</p>

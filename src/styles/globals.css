@@ -19,6 +19,7 @@
     }
   }
 
+  --spacing-page: 1436px;
   --animate-stroke: stroke 5s linear infinite;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -118,6 +119,6 @@
   background-color: var(--color-background);
 }
 
-/* header &[data-search-full] {
+header &[data-search-full] {
   @apply rounded-xl;
-} */
+}
