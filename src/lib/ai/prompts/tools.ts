@@ -15,9 +15,7 @@ Inputs:
 - limit: maximum number of results to return (optional, default: 10, max: 50)
 
 Example:
-\`\`\`tool
 searchDocs(query: "Fumadocs themes and layouts", locale: "en", limit: 10)
-\`\`\`
 
 ### 2) getPageContent
 Purpose: Fetch the content of a specific internal doc page.
@@ -28,8 +26,6 @@ IMPORTANT:
 - Wrong: \`docs/guides/using-custom-themes\`
 
 Example:
-\`\`\`tool
 getPageContent(path: "guides/using-custom-themes")
-\`\`\`
 </tools>
-`.trim()
+`
