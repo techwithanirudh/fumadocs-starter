@@ -189,10 +189,16 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
       const container = containerRef.current
       if (!container) return
 
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'instant',
-      })
+      const isNearBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight <
+        100
+
+      if (isNearBottom) {
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'instant',
+        })
+      }
     }
 
     const observer = new ResizeObserver(callback)
