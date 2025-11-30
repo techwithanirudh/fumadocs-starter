@@ -13,7 +13,6 @@ export default function Layout({ children }: LayoutProps<'/'>) {
           '--spacing-fd-container': '1300px',
         } as object
       }
-      className='dark:bg-neutral-950 dark:[--color-fd-background:var(--color-neutral-950)]'
     >
       {children}
       <Footer />

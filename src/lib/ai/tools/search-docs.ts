@@ -1,4 +1,4 @@
-import { tool } from 'ai'
+import { tool, type UIMessageStreamWriter } from 'ai'
 import { initAdvancedSearch } from 'fumadocs-core/search/server'
 import { z } from 'zod'
 import { categories } from '@/lib/constants'
@@ -30,33 +30,66 @@ const Tag = z.union([
   ...Object.keys(categories).map((key) => z.literal(key)),
 ])
 
-export const searchDocs = tool({
-  description: 'Search the documentation using the internal search server.',
-  inputSchema: z.object({
-    query: z.string().describe('The query to search for.'),
-    tag: Tag.default('all').describe(
-      'Optional tag filter, e.g. a top-level section.'
-    ),
-    locale: z.string().optional().describe('Optional locale for i18n setups.'),
-    limit: z
-      .number()
-      .int()
-      .min(1)
-      .max(50)
-      .default(10)
-      .describe('Maximum number of results to return (default: 10, max: 50).'),
-  }),
-  execute: async ({ query, tag: tagParam, locale, limit }) => {
-    const tag = tagParam === 'all' ? undefined : tagParam
-    const results = await server.search(query, {
-      tag,
-      locale,
-    })
+export const createSearchDocsTool = (writer: UIMessageStreamWriter) =>
+  tool({
+    description: 'Search the documentation using the internal search server.',
+    inputSchema: z.object({
+      query: z.string().describe('The query to search for.'),
+      tag: Tag.default('all').describe(
+        'Optional tag filter, e.g. a top-level section.'
+      ),
+      locale: z
+        .string()
+        .optional()
+        .describe('Optional locale for i18n setups.'),
+      limit: z
+        .number()
+        .int()
+        .min(1)
+        .max(50)
+        .default(10)
+        .describe(
+          'Maximum number of results to return (default: 10, max: 50).'
+        ),
+    }),
+    execute: async ({ query, tag: tagParam, locale, limit }) => {
+      const tag = tagParam === 'all' ? undefined : tagParam
+      const results = await server.search(query, {
+        tag,
+        locale,
+      })
 
-    return {
-      success: true,
-      data: results.slice(0, limit),
-      total: results.length,
-    }
-  },
-})
+      const seen = new Set<string>()
+      const deduped = results.filter((result) => {
+        if (!result.url || seen.has(result.url)) {
+          return false
+        }
+        seen.add(result.url)
+        return true
+      })
+
+      const trimmed = deduped.slice(0, limit)
+
+      trimmed.forEach((doc, index) => {
+        writer.write({
+          type: 'source-url',
+          sourceId: `search-doc-${index}-${doc.url}`,
+          url: doc.url,
+          title: doc.title,
+        })
+      })
+
+      if (trimmed.length === 0) {
+        return `No documentation found for query "${query}".`
+      }
+
+      const summary = trimmed
+        .map((doc, index) => {
+          const description = doc.description ? ` — ${doc.description}` : ''
+          return `${index + 1}. ${doc.title} (${doc.url})${description}`
+        })
+        .join('\n')
+
+      return `Found ${trimmed.length} documentation pages for "${query}":\n${summary}`
+    },
+  })
