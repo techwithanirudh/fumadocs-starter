@@ -80,8 +80,6 @@ function SearchAIActions() {
   const { messages, status, regenerate } = useChatContext()
   const isLoading = status === 'streaming'
 
-  if (messages.length === 0) return null
-
   return (
     <button
       type='button'
@@ -92,7 +90,7 @@ function SearchAIActions() {
           className:
             'gap-1.5 rounded-t-md rounded-br-md rounded-bl-lg transition-opacity duration-200 [&_svg]:size-4',
         }),
-        !isLoading && messages.at(-1)?.role === 'assistant'
+        !isLoading && messages?.length > 0 && messages.at(-1)?.role === 'assistant'
           ? 'opacity-100'
           : 'opacity-0'
       )}
