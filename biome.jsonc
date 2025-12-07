@@ -43,7 +43,7 @@
           "fix": "safe",
           "level": "info"
         },
-        "useUniqueElementIds": "warn"
+        "useUniqueElementIds": "off"
       },
       "suspicious": {
         "noArrayIndexKey": "off",
