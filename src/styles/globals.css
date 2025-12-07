@@ -127,3 +127,7 @@ header &[data-search-full] {
 [data-header-body] {
   @apply border-none;
 }
+
+#nd-page {
+  @apply @container;
+}
