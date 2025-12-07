@@ -7,13 +7,13 @@ import {
   WrenchIcon,
 } from 'lucide-react'
 import type { MyUIMessage } from '@/app/api/chat/types'
-import { Shimmer } from '@/components/ai-elements/shimmer'
+import { Shimmer } from '@/components/fumadocs/ai/shimmer'
 import {
   Source,
   Sources,
   SourcesContent,
   SourcesTrigger,
-} from '@/components/ai-elements/sources'
+} from '@/components/fumadocs/ai/sources'
 import { Spinner } from '@/components/ui/spinner'
 
 type MessageMetadataProps = {
