@@ -83,30 +83,33 @@ export const MessageMetadata = ({
   }
 
   if (tool && inProgress) {
-    let Icon = WrenchIcon;
-    let label = 'Working';
-    const name = tool.type.replace('tool-', '').replace(/([A-Z])/g, ' $1').trim();
+    let Icon = WrenchIcon
+    let label = 'Working'
+    const name = tool.type
+      .replace('tool-', '')
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
 
     switch (tool.type) {
       case 'tool-searchDocs':
-        Icon = SearchIcon;
-        label = 'Searching docs';
-        break;
+        Icon = SearchIcon
+        label = 'Searching docs'
+        break
       case 'tool-getPageContent':
-        Icon = LinkIcon;
-        label = 'Fetching page';
-        break;
+        Icon = LinkIcon
+        label = 'Fetching page'
+        break
       default:
-        label = `Running ${name}`;
-        break;
+        label = `Running ${name}`
+        break
     }
 
     return (
-      <div className="flex items-center gap-2 text-muted-foreground  animate-pulse">
+      <div className='flex animate-pulse items-center gap-2 text-muted-foreground'>
         <Icon className='size-4' />
         <Shimmer>{label}</Shimmer>
       </div>
-    );
+    )
   }
 
   if (!tool && sources.length === 0) {

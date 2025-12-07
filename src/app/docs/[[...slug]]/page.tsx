@@ -6,7 +6,7 @@ import { createGenerator } from 'fumadocs-typescript'
 import { AutoTypeTable } from 'fumadocs-typescript/ui'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
-import { PageLastUpdate, DocsPage } from 'fumadocs-ui/layouts/notebook/page'
+import { DocsPage, PageLastUpdate } from 'fumadocs-ui/layouts/notebook/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactElement } from 'react'
@@ -41,14 +41,13 @@ export default async function Page(
       tableOfContent={{
         style: 'clerk',
       }}
-
     >
-      <div className='relative flex flex-col items-start gap-2 @sm:flex-row @sm:items-center'>
+      <div className='relative flex @sm:flex-row flex-col items-start @sm:items-center gap-2'>
         <h1 className='break-all font-semibold text-[1.75em]'>
           {page.data.title}
         </h1>
 
-        <div className='ml-auto flex hidden shrink-0 flex-row items-center items-center justify-end gap-2 @sm:flex'>
+        <div className='ml-auto @sm:flex flex hidden shrink-0 flex-row items-center justify-end gap-2'>
           <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
           <ViewOptions
             markdownUrl={`${page.url}.mdx`}
@@ -59,7 +58,7 @@ export default async function Page(
       <p className='mb-2 text-fd-muted-foreground text-lg'>
         {page.data.description}
       </p>
-      <div className='flex items-center gap-2 pb-6 @sm:hidden'>
+      <div className='flex @sm:hidden items-center gap-2 pb-6'>
         <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
         <ViewOptions
           markdownUrl={`${page.url}.mdx`}

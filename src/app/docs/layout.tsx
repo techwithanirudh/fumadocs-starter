@@ -5,8 +5,8 @@ import 'katex/dist/katex.min.css'
 import type { CSSProperties } from 'react'
 import {
   AISearch,
-  AISearchTrigger,
   AISearchPanel,
+  AISearchTrigger,
 } from '@/components/fumadocs/ai/search'
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
@@ -32,7 +32,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
               ...option,
               icon: (
                 <div
-                  className="[&_svg]:size-full rounded-lg size-full text-(--tab-color) max-md:bg-(--tab-color)/10 max-md:border max-md:p-1.5"
+                  className='size-full rounded-lg text-(--tab-color) max-md:border max-md:bg-(--tab-color)/10 max-md:p-1.5 [&_svg]:size-full'
                   style={
                     {
                       '--tab-color': color,

@@ -1,4 +1,16 @@
 'use client'
+import { type UIMessage, type UseChatHelpers, useChat } from '@ai-sdk/react'
+import { Presence } from '@radix-ui/react-presence'
+import { DefaultChatTransport } from 'ai'
+import { buttonVariants } from 'fumadocs-ui/components/ui/button'
+import {
+  ArrowUpIcon,
+  MessageCircleIcon,
+  RefreshCw,
+  SquareIcon,
+  TrashIcon,
+  X,
+} from 'lucide-react'
 import {
   type ComponentProps,
   createContext,
@@ -11,18 +23,10 @@ import {
   useRef,
   useState,
 } from 'react'
-import { MessageCircleIcon, RefreshCw, X } from 'lucide-react'
+import type { MyUIMessage } from '@/app/api/chat/types'
 import { cn } from '@/lib/cn'
-import { buttonVariants } from 'fumadocs-ui/components/ui/button'
-import { type UIMessage, useChat, type UseChatHelpers } from '@ai-sdk/react'
-import { DefaultChatTransport } from 'ai'
 import { Markdown } from './markdown'
-import { Presence } from '@radix-ui/react-presence'
-import { MyUIMessage } from '@/app/api/chat/types'
-import { SquareIcon } from 'lucide-react'
-import { ArrowUpIcon } from 'lucide-react'
 import { MessageMetadata } from './message-metadata'
-import { TrashIcon } from 'lucide-react'
 
 const Context = createContext<{
   open: boolean
@@ -90,7 +94,9 @@ function SearchAIActions() {
           className:
             'gap-1.5 rounded-t-md rounded-br-md rounded-bl-lg transition-opacity duration-200 [&_svg]:size-4',
         }),
-        !isLoading && messages?.length > 0 && messages.at(-1)?.role === 'assistant'
+        !isLoading &&
+          messages?.length > 0 &&
+          messages.at(-1)?.role === 'assistant'
           ? 'opacity-100'
           : 'opacity-0'
       )}
@@ -218,7 +224,7 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
       ref={containerRef}
       {...props}
       className={cn(
-        'fd-scroll-container overflow-y-auto min-w-0 flex flex-col',
+        'fd-scroll-container flex min-w-0 flex-col overflow-y-auto',
         props.className
       )}
     >
@@ -241,7 +247,7 @@ function Input(props: ComponentProps<'textarea'>) {
           shared
         )}
       />
-      <div ref={ref} className={cn(shared, 'break-all invisible')}>
+      <div ref={ref} className={cn(shared, 'invisible break-all')}>
         {`${props.value?.toString() ?? ''}\n`}
       </div>
     </div>
@@ -267,7 +273,7 @@ function Message({
     <div {...props}>
       <p
         className={cn(
-          'mb-1 text-sm font-medium text-fd-muted-foreground',
+          'mb-1 font-medium text-fd-muted-foreground text-sm',
           message.role === 'assistant' && 'text-fd-primary'
         )}
       >
@@ -313,9 +319,10 @@ export function AISearchTrigger() {
         buttonVariants({
           variant: 'secondary',
         }),
-        'fixed end-4 bottom-4 gap-3 w-24  text-fd-muted-foreground rounded-2xl shadow-lg z-20 transition-all',
+        'fixed end-4 bottom-4 z-20 w-24 gap-3 rounded-2xl text-fd-muted-foreground shadow-lg transition-all',
         open && 'translate-y-10 opacity-0'
       )}
+      type='button'
       onClick={() => setOpen(true)}
     >
       <MessageCircleIcon className='size-4.5' />
@@ -367,27 +374,28 @@ export function AISearchPanel() {
         }`}
       </style>
       <Presence present={open}>
+        {/* biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: this is a click event */}
         <div
           data-state={open ? 'open' : 'closed'}
-          className='fixed inset-0 z-30 backdrop-blur-xs bg-fd-overlay data-[state=open]:animate-fd-fade-in data-[state=closed]:animate-fd-fade-out lg:hidden'
+          className='fixed inset-0 z-30 bg-fd-overlay backdrop-blur-xs data-[state=closed]:animate-fd-fade-out data-[state=open]:animate-fd-fade-in lg:hidden'
           onClick={() => setOpen(false)}
         />
       </Presence>
       <Presence present={open}>
         <div
           className={cn(
-            'overflow-hidden z-30 bg-fd-popover text-fd-popover-foreground',
-            'max-lg:fixed max-lg:inset-x-2 max-lg:top-4 max-lg:border max-lg:rounded-2xl max-lg:shadow-xl',
+            'z-30 overflow-hidden bg-fd-popover text-fd-popover-foreground',
+            'max-lg:fixed max-lg:inset-x-2 max-lg:top-4 max-lg:rounded-2xl max-lg:border max-lg:shadow-xl',
             'fixed inset-y-2 z-30 flex flex-col rounded-2xl border bg-fd-popover text-fd-popover-foreground shadow-xl max-sm:inset-x-2 sm:end-2 sm:w-[460px]',
             open
               ? 'animate-fd-dialog-in lg:animate-[ask-ai-open_200ms]'
-              : 'animate-fd-dialog-out lg:animate-[ask-ai-close_200ms]',
+              : 'animate-fd-dialog-out lg:animate-[ask-ai-close_200ms]'
           )}
         >
-          <div className="flex flex-col p-2 size-full xl:p-4">
+          <div className='flex size-full flex-col p-2 xl:p-4'>
             <Header />
             <List
-              className='px-3 py-4 flex-1 overscroll-contain'
+              className='flex-1 overscroll-contain px-3 py-4'
               style={{
                 maskImage:
                   'linear-gradient(to bottom, transparent, white 1rem, white calc(100% - 1rem), transparent 100%)',

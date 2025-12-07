@@ -80,10 +80,18 @@ export function generate({ title, description, tag }: GenerateProps) {
             color: primaryTextColor,
           }}
         >
-          <img
-            src='logo.svg'
-            alt={siteName}
-            style={{ width: 60, height: 60 }}
+          <span
+            role='img'
+            aria-label={typeof siteName === 'string' ? siteName : undefined}
+            style={{
+              width: 60,
+              height: 60,
+              display: 'inline-block',
+              backgroundImage: 'url(logo.svg)',
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+            }}
           />
           <span
             style={{

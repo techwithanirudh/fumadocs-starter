@@ -68,14 +68,24 @@ export const createSearchDocsTool = (writer: UIMessageStreamWriter) =>
         return true
       })
 
-      const trimmed = deduped.slice(0, limit)
+      const trimmed = deduped.slice(0, limit).map((doc) => {
+        const pageInfo = source.getPageByHref(doc.url)
+        const page = pageInfo?.page
+
+        return {
+          ...doc,
+          pageTitle: page?.data.title,
+          pageDescription: page?.data.description,
+        }
+      })
 
       trimmed.forEach((doc, index) => {
+        const title = doc.pageTitle ?? doc.url
         writer.write({
           type: 'source-url',
           sourceId: `search-doc-${index}-${doc.url}`,
           url: doc.url,
-          title: doc.title,
+          title,
         })
       })
 
@@ -85,8 +95,11 @@ export const createSearchDocsTool = (writer: UIMessageStreamWriter) =>
 
       const summary = trimmed
         .map((doc, index) => {
-          const description = doc.description ? ` — ${doc.description}` : ''
-          return `${index + 1}. ${doc.title} (${doc.url})${description}`
+          const title = doc.pageTitle ?? doc.url
+          const description = doc.pageDescription
+            ? ` — ${doc.pageDescription}`
+            : ''
+          return `${index + 1}. ${title} (${doc.url})${description}`
         })
         .join('\n')
 

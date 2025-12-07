@@ -1,21 +1,18 @@
 'use client'
 
+import { BookIcon, ChevronDownIcon } from 'lucide-react'
+import type { ComponentProps } from 'react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { cn } from '@/lib/cn'
-import { BookIcon, ChevronDownIcon } from 'lucide-react'
-import type { ComponentProps } from 'react'
 
 export type SourcesProps = ComponentProps<'div'>
 
 export const Sources = ({ className, ...props }: SourcesProps) => (
-  <Collapsible
-    className={cn('not-prose text-base', className)}
-    {...props}
-  />
+  <Collapsible className={cn('not-prose text-base', className)} {...props} />
 )
 
 export type SourcesTriggerProps = ComponentProps<typeof CollapsibleTrigger> & {
@@ -50,7 +47,7 @@ export const SourcesContent = ({
   <CollapsibleContent
     className={cn(
       'mt-3 flex w-fit flex-col gap-2',
-      'data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 outline-none data-[state=closed]:animate-out data-[state=open]:animate-in text-primary text-sm',
+      'data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-primary text-sm outline-none data-[state=closed]:animate-out data-[state=open]:animate-in',
       className
     )}
     {...props}
