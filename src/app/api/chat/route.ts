@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     const {
       messages,
     }: {
-      messages: Array<MyUIMessage>
+      messages: MyUIMessage[]
     } = await request.json()
 
     const handleStreamError = (error: unknown) => {
@@ -33,7 +33,8 @@ export async function POST(request: Request) {
 
       if (NoSuchToolError.isInstance(error)) {
         return 'The model tried to call an unknown tool.'
-      } else if (InvalidToolInputError.isInstance(error)) {
+      }
+      if (InvalidToolInputError.isInstance(error)) {
         return 'The model called a tool with invalid arguments.'
       }
 
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
             chunking: 'line',
           }),
           stopWhen: stepCountIs(15),
-          onStepFinish: async ({ toolResults }) => {
+          onStepFinish: ({ toolResults }) => {
             if (env.NODE_ENV !== 'production') {
               console.log(
                 `Step Results: ${JSON.stringify(toolResults, null, 2)}`

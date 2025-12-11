@@ -16,17 +16,17 @@ export default function DocsPage(): ReactElement {
 
       <div className='mt-8 grid grid-cols-1 gap-4 text-left md:grid-cols-2'>
         <DocumentationItem
-          title='Documentation'
           description='Get started with the Fumadocs framework.'
-          icon={{ icon: BookIcon, id: '(index)' }}
           href='/docs'
+          icon={{ icon: BookIcon, id: '(index)' }}
+          title='Documentation'
         />
 
         <DocumentationItem
-          title='API Reference'
           description="Get started with Fumadocs's API reference feature."
-          icon={{ icon: WebhookIcon, id: 'api-reference' }}
           href='/docs/api-reference'
+          icon={{ icon: WebhookIcon, id: 'api-reference' }}
+          title='API Reference'
         />
       </div>
     </main>

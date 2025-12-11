@@ -24,13 +24,6 @@
       "!**/*.grit"
     ]
   },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "lineEnding": "lf",
-    "indentWidth": 2,
-    "lineWidth": 80
-  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -39,35 +32,14 @@
         "useGenericFontNames": "off"
       },
       "correctness": {
-        "noUnusedImports": {
-          "fix": "safe",
-          "level": "info"
-        },
         "useUniqueElementIds": "off"
-      },
-      "suspicious": {
-        "noArrayIndexKey": "off",
-        "noDoubleEquals": {
-          "fix": "safe",
-          "level": "warn",
-          "options": {}
-        }
       },
       "performance": {
         "noBarrelFile": "off",
         "noNamespaceImport": "off"
       },
       "style": {
-        "noNonNullAssertion": "off",
-        "useSelfClosingElements": {
-          "fix": "safe",
-          "level": "info",
-          "options": {}
-        },
-        "useTemplate": {
-          "fix": "safe",
-          "level": "info"
-        }
+        "noNonNullAssertion": "off"
       },
       "nursery": {
         "useSortedClasses": {
@@ -79,20 +51,6 @@
         },
         "noLeakedRender": "off"
       }
-    }
-  },
-  "css": {
-    "linter": {
-      "enabled": true
-    },
-    "formatter": {
-      "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2,
-      "lineWidth": 80
-    },
-    "parser": {
-      "cssModules": true
     }
   },
   "javascript": {

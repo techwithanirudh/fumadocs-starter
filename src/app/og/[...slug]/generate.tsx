@@ -3,7 +3,7 @@ import type { ImageResponseOptions } from '@takumi-rs/image-response'
 import type { ReactNode } from 'react'
 import { title as siteName } from '@/lib/layout.shared'
 
-export interface GenerateProps {
+export type GenerateProps = {
   title: ReactNode
   description?: ReactNode
   tag?: string
@@ -80,9 +80,11 @@ export function generate({ title, description, tag }: GenerateProps) {
             color: primaryTextColor,
           }}
         >
+          {/* biome-ignore lint/correctness/useImageSize: required for OG image rendering */}
+          {/* biome-ignore lint/performance/noImgElement: required for OG image rendering */}
           <img
-            src='logo.svg'
             alt={siteName}
+            src='logo.svg'
             style={{ width: 60, height: 60 }}
           />
           <span

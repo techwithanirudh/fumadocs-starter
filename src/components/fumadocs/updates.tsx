@@ -4,12 +4,12 @@ import type { ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/cn'
 
-export interface UpdatesProps {
+export type UpdatesProps = {
   children: ReactNode
   className?: string
 }
 
-export interface UpdateProps {
+export type UpdateProps = {
   children: ReactNode
   label: string
   id?: string
@@ -27,16 +27,16 @@ export function Update({ children, label, id, className }: UpdateProps) {
 
   return (
     <div
-      id={updateId}
       className={cn(
         'fd-update relative flex w-full flex-col items-start gap-2 py-8 lg:flex-row lg:gap-6',
         className
       )}
+      id={updateId}
     >
       <div className='group top-[112px] flex w-full flex-shrink-0 flex-col items-start justify-start lg:sticky lg:w-[160px]'>
         <Badge
-          variant='secondary'
           className='h-fit flex-grow-0 rounded-lg px-2 py-1 text-sm'
+          variant='secondary'
         >
           {label}
         </Badge>

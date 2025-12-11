@@ -36,17 +36,19 @@ export function ThemeToggle({
     return (
       <LayoutGroup>
         <button
-          className={container}
           aria-label='Toggle Theme'
-          onClick={() => setTheme(value === 'light' ? 'dark' : 'light')}
+          className={container}
           data-theme-toggle=''
+          onClick={() => setTheme(value === 'light' ? 'dark' : 'light')}
           {...props}
         >
           {themes.map(({ key, icon: Icon }) => {
-            if (key === 'system') return null
+            if (key === 'system') {
+              return null
+            }
             const isActive = value === key
             return (
-              <div key={key} className='relative size-6.5 rounded-full p-1.5'>
+              <div className='relative size-6.5 rounded-full p-1.5' key={key}>
                 {isActive && <Pill />}
                 <Icon
                   className={cn(
@@ -74,11 +76,11 @@ export function ThemeToggle({
           const isActive = value === key
           return (
             <button
-              type='button'
-              key={key}
               aria-label={key}
               className='relative size-6.5 rounded-full p-1.5'
+              key={key}
               onClick={() => setTheme(key)}
+              type='button'
             >
               {isActive && <Pill />}
               <Icon
@@ -98,9 +100,9 @@ export function ThemeToggle({
 
 const Pill = () => (
   <motion.div
-    layoutId='activeTheme'
-    initial={false}
-    transition={{ type: 'spring', bounce: 0.1, duration: 0.5 }}
     className='pointer-events-none absolute inset-0 z-0 rounded-full bg-accent'
+    initial={false}
+    layoutId='activeTheme'
+    transition={{ type: 'spring', bounce: 0.1, duration: 0.5 }}
   />
 )

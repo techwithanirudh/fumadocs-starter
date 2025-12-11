@@ -31,16 +31,18 @@ export default async function Page(
   const params = await props.params
   const page = source.getPage(params.slug)
 
-  if (!page) return notFound()
+  if (!page) {
+    return notFound()
+  }
 
   const { body: Mdx, toc, lastModified } = await page.data.load()
 
   return (
     <DocsPage
-      toc={toc}
       tableOfContent={{
         style: 'clerk',
       }}
+      toc={toc}
     >
       <div className='relative flex @sm:flex-row flex-col items-start @sm:items-center gap-2'>
         <h1 className='break-all font-semibold text-[1.75em]'>
@@ -50,8 +52,8 @@ export default async function Page(
         <div className='ml-auto @sm:flex flex hidden shrink-0 flex-row items-center justify-end gap-2'>
           <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
           <ViewOptions
-            markdownUrl={`${page.url}.mdx`}
             githubUrl={`https://github.com/${owner}/${repo}/blob/main/content/docs/${page.path}`}
+            markdownUrl={`${page.url}.mdx`}
           />
         </div>
       </div>
@@ -61,20 +63,22 @@ export default async function Page(
       <div className='flex @sm:hidden items-center gap-2 pb-6'>
         <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
         <ViewOptions
-          markdownUrl={`${page.url}.mdx`}
           githubUrl={`https://github.com/${owner}/${repo}/blob/main/content/docs/${page.path}`}
+          markdownUrl={`${page.url}.mdx`}
         />
       </div>
       <div className='prose flex-1 text-fd-foreground/90'>
         <Mdx
           components={getMDXComponents({
             ...Twoslash,
-            a: ({ href, ...props }) => {
+            a: ({ href, ...linkProps }) => {
               const found = source.getPageByHref(href ?? '', {
                 dir: PathUtils.dirname(page.path),
               })
 
-              if (!found) return <Link href={href} {...props} />
+              if (!found) {
+                return <Link href={href} {...linkProps} />
+              }
 
               return (
                 <HoverCard>
@@ -84,9 +88,9 @@ export default async function Page(
                         ? `${found.page.url}#${found.hash}`
                         : found.page.url
                     }
-                    {...props}
+                    {...linkProps}
                   >
-                    {props.children}
+                    {linkProps.children}
                   </HoverCardTrigger>
                   <HoverCardContent className='text-sm'>
                     <p className='font-medium'>{found.page.data.title}</p>
@@ -98,12 +102,10 @@ export default async function Page(
               )
             },
             TypeTable,
-            AutoTypeTable: (props) => (
-              <AutoTypeTable generator={generator} {...props} />
+            AutoTypeTable: (autoTypeProps) => (
+              <AutoTypeTable generator={generator} {...autoTypeProps} />
             ),
-            DocsCategory: ({ url }) => {
-              return <DocsCategory url={url ?? page.url} />
-            },
+            DocsCategory: ({ url }) => <DocsCategory url={url ?? page.url} />,
           })}
         />
         {page.data.index ? <DocsCategory url={page.url} /> : null}
@@ -117,7 +119,7 @@ function DocsCategory({ url }: { url: string }) {
   return (
     <Cards>
       {getPageTreePeers(source.pageTree, url).map((peer) => (
-        <Card key={peer.url} title={peer.name} href={peer.url}>
+        <Card href={peer.url} key={peer.url} title={peer.name}>
           {peer.description}
         </Card>
       ))}
@@ -130,10 +132,11 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug = [] } = await props.params
   const page = source.getPage(slug)
-  if (!page)
+  if (!page) {
     return createMetadata({
       title: 'Not Found',
     })
+  }
 
   const description =
     page.data.description ?? 'The library for building documentation sites'

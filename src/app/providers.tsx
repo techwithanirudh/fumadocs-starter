@@ -18,15 +18,15 @@ export function Providers({ children }: { children: ReactNode }) {
       }}
     >
       <ProgressProvider
-        height='2px'
         color='var(--color-primary)'
+        delay={1000}
+        height='2px'
         options={{
           showSpinner: false,
         }}
-        stopDelay={1000}
-        delay={1000}
-        startOnLoad
         shallowRouting
+        startOnLoad
+        stopDelay={1000}
       >
         <TooltipProvider>{children}</TooltipProvider>
       </ProgressProvider>

@@ -47,7 +47,6 @@ function Header() {
         <p className='font-medium text-sm'>Ask AI</p>
         <div className='flex items-center gap-1.5'>
           <button
-            type='button'
             className={cn(
               buttonVariants({
                 color: 'secondary',
@@ -56,15 +55,14 @@ function Header() {
               })
             )}
             onClick={() => chat.setMessages([])}
+            type='button'
           >
             <TrashIcon />
           </button>
         </div>
       </div>
       <button
-        type='button'
         aria-label='Close'
-        tabIndex={-1}
         className={cn(
           buttonVariants({
             size: 'icon-sm',
@@ -73,6 +71,8 @@ function Header() {
           })
         )}
         onClick={() => setOpen(false)}
+        tabIndex={-1}
+        type='button'
       >
         <X />
       </button>
@@ -86,7 +86,6 @@ function SearchAIActions() {
 
   return (
     <button
-      type='button'
       className={cn(
         buttonVariants({
           color: 'secondary',
@@ -101,6 +100,7 @@ function SearchAIActions() {
           : 'opacity-0'
       )}
       onClick={() => regenerate()}
+      type='button'
     >
       <RefreshCw />
     </button>
@@ -114,16 +114,18 @@ function SearchAIInput(props: ComponentProps<'form'>) {
     () => localStorage.getItem(StorageKeyInput) ?? ''
   )
   const isLoading = status === 'streaming' || status === 'submitted'
-  const onStart = (e?: SyntheticEvent) => {
+  const onStart = async (e?: SyntheticEvent) => {
     e?.preventDefault()
-    void sendMessage({ text: input })
+    await sendMessage({ text: input })
     setInput('')
   }
 
   localStorage.setItem(StorageKeyInput, input)
 
   useEffect(() => {
-    if (isLoading) document.getElementById('nd-ai-input')?.focus()
+    if (isLoading) {
+      document.getElementById('nd-ai-input')?.focus()
+    }
   }, [isLoading])
 
   return (
@@ -133,8 +135,6 @@ function SearchAIInput(props: ComponentProps<'form'>) {
       onSubmit={onStart}
     >
       <Input
-        value={input}
-        placeholder={isLoading ? 'Generating...' : 'Ask a question'}
         autoFocus
         className={cn('p-3', isLoading && 'text-fd-muted-foreground')}
         disabled={status === 'streaming' || status === 'submitted'}
@@ -146,11 +146,11 @@ function SearchAIInput(props: ComponentProps<'form'>) {
             onStart(event)
           }
         }}
+        placeholder={isLoading ? 'Generating...' : 'Ask a question'}
+        value={input}
       />
       {isLoading ? (
         <button
-          key='bn'
-          type='button'
           className={cn(
             buttonVariants({
               color: 'secondary',
@@ -159,14 +159,14 @@ function SearchAIInput(props: ComponentProps<'form'>) {
                 'mt-2 rounded-b-md rounded-tl-md rounded-tr-lg transition-all [&_svg]:size-3.5',
             })
           )}
+          key='bn'
           onClick={stop}
+          type='button'
         >
           <SquareIcon className='fill-fd-foreground' />
         </button>
       ) : (
         <button
-          key='bn'
-          type='submit'
           className={cn(
             buttonVariants({
               color: 'secondary',
@@ -176,6 +176,8 @@ function SearchAIInput(props: ComponentProps<'form'>) {
             })
           )}
           disabled={input.length === 0}
+          key='bn'
+          type='submit'
         >
           <ArrowUpIcon />
         </button>
@@ -188,10 +190,14 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!containerRef.current) return
+    if (!containerRef.current) {
+      return
+    }
     function callback() {
       const container = containerRef.current
-      if (!container) return
+      if (!container) {
+        return
+      }
 
       const isNearBottom =
         container.scrollHeight - container.scrollTop - container.clientHeight <
@@ -247,7 +253,7 @@ function Input(props: ComponentProps<'textarea'>) {
           shared
         )}
       />
-      <div ref={ref} className={cn(shared, 'invisible break-all')}>
+      <div className={cn(shared, 'invisible break-all')} ref={ref}>
         {`${props.value?.toString() ?? ''}\n`}
       </div>
     </div>
@@ -282,9 +288,11 @@ function Message({
       <div className='flex flex-col gap-2'>
         <MessageMetadata inProgress={isInProgress} parts={parts} />
         {parts.map((part, idx) => {
-          if (part.type !== 'text') return null
+          if (part.type !== 'text') {
+            return null
+          }
           return (
-            <div key={`${message.id}-text-${idx}`} className='prose text-sm'>
+            <div className='prose text-sm' key={`${message.id}-text-${idx}`}>
               <Markdown text={part.text} />
             </div>
           )
@@ -322,8 +330,8 @@ export function AISearchTrigger() {
         'fixed end-4 bottom-4 z-20 w-24 gap-3 rounded-2xl text-fd-muted-foreground shadow-lg transition-all',
         open && 'translate-y-10 opacity-0'
       )}
-      type='button'
       onClick={() => setOpen(true)}
+      type='button'
     >
       <MessageCircleIcon className='size-4.5' />
       Ask AI
@@ -374,11 +382,12 @@ export function AISearchPanel() {
         }`}
       </style>
       <Presence present={open}>
-        {/* biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: this is a click event */}
-        <div
-          data-state={open ? 'open' : 'closed'}
+        <button
+          aria-label='Close AI search panel'
           className='fixed inset-0 z-30 bg-fd-overlay backdrop-blur-xs data-[state=closed]:animate-fd-fade-out data-[state=open]:animate-fd-fade-in lg:hidden'
+          data-state={open ? 'open' : 'closed'}
           onClick={() => setOpen(false)}
+          type='button'
         />
       </Presence>
       <Presence present={open}>
@@ -406,13 +415,13 @@ export function AISearchPanel() {
                   .filter((msg) => msg.role !== 'system')
                   .map((item, idx) => (
                     <Message
-                      key={item.id}
-                      message={item}
                       isInProgress={
                         chat.messages.length - 1 === idx &&
                         (chat.status === 'streaming' ||
                           chat.status === 'submitted')
                       }
+                      key={item.id}
+                      message={item}
                     />
                   ))}
               </div>
