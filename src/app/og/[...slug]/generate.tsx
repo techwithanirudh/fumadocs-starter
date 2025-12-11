@@ -80,8 +80,11 @@ export function generate({ title, description, tag }: GenerateProps) {
             color: primaryTextColor,
           }}
         >
-          {/* biome-ignore lint/performance/noImgElement: OG image rendering requires a plain img */}
-          <img src='logo.svg' alt={String(siteName)} width={60} height={60} />
+          <img
+            src='logo.svg'
+            alt={siteName}
+            style={{ width: 60, height: 60 }}
+          />
           <span
             style={{
               fontSize: '46px',
