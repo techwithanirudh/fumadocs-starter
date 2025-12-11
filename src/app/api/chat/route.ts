@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       execute: ({ writer }) => {
         const result = streamText({
           model: openai('gpt-5-mini'),
-          system: systemPrompt(getLLMsTxt()),
+          system: systemPrompt({ llms: getLLMsTxt() }),
           providerOptions: {
             openai: {
               reasoningEffort: 'minimal',
