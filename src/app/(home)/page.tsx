@@ -7,11 +7,9 @@ import { cn } from '@/lib/cn'
 export default function DocsPage(): ReactElement {
   return (
     <main className='mx-auto flex w-full max-w-[1400px] flex-col px-4 py-16'>
-      <h1 className='font-semibold text-2xl md:text-3xl'>
-        Welcome to the Starter Kit
-      </h1>
+      <h1 className='font-semibold text-2xl md:text-3xl'>Fumadocs Starter</h1>
       <p className='mt-1 text-fd-muted-foreground text-lg'>
-        Get started with Fumadocs.
+        A starter-template for Fumadocs.
       </p>
 
       <div className='mt-8 grid grid-cols-1 gap-4 text-left md:grid-cols-2'>

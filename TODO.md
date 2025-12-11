@@ -11,5 +11,4 @@
 Consider if we need to remove getLLMsTxt as search does it
 Refactor search tool so we don't have duplicate links (dedupe)
 Add context from page to AI
-- [x] interacting with tools jumps you to the bottom
-- [x] Use a brain icon for thinking
+- Internationalization

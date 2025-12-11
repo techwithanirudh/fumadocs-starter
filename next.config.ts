@@ -38,6 +38,11 @@ async function createNextConfig(): Promise<NextConfig> {
           hostname: 'avatars.githubusercontent.com',
           port: '',
         },
+        {
+          protocol: 'https',
+          hostname: 'fumadocs.dev',
+          port: '',
+        },
       ],
     },
     async rewrites() {

@@ -1,4 +1,5 @@
 import type { BaseLayoutProps, LinkItemType } from 'fumadocs-ui/layouts/shared'
+import { RssIcon } from 'lucide-react'
 import Image from 'next/image'
 import { ThemeToggle } from '@/components/theme-toggle'
 
@@ -19,6 +20,13 @@ export const logo = (
 )
 
 export const linkItems: LinkItemType[] = [
+  {
+    type: 'icon',
+    url: '/rss.xml',
+    text: 'RSS',
+    icon: <RssIcon />,
+    external: true,
+  },
   {
     type: 'icon',
     url: 'https://github.com/techwithanirudh/fumadocs-starter',

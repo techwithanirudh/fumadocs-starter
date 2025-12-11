@@ -102,9 +102,11 @@ export default async function Page(
               )
             },
             TypeTable,
+            // biome-ignore lint/correctness/noNestedComponentDefinitions: this is not a new component
             AutoTypeTable: (autoTypeProps) => (
               <AutoTypeTable generator={generator} {...autoTypeProps} />
             ),
+            // biome-ignore lint/correctness/noNestedComponentDefinitions: this is not a new component
             DocsCategory: ({ url }) => <DocsCategory url={url ?? page.url} />,
           })}
         />
