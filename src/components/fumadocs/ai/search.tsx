@@ -383,7 +383,7 @@ export function AISearchPanel() {
       </style>
       <Presence present={open}>
         <button
-          aria-label='Close AI search panel'
+          aria-label='Close AI panel'
           className='fixed inset-0 z-30 bg-fd-overlay backdrop-blur-xs data-[state=closed]:animate-fd-fade-out data-[state=open]:animate-fd-fade-in lg:hidden'
           data-state={open ? 'open' : 'closed'}
           onClick={() => setOpen(false)}

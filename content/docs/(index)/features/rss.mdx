@@ -1,0 +1,23 @@
+---
+title: RSS Feed
+description: Serve a sitewide RSS 2.0 feed for all documentation pages
+icon: Rss
+---
+
+## Overview
+
+This starter exposes a generated RSS 2.0 feed at `/rss.xml`. The feed includes every documentation page and is linked in the header via the RSS icon.
+
+## Endpoint
+
+- Route: `src/app/rss.xml/route.ts`
+- Response: `Content-Type: application/rss+xml; charset=utf-8`
+- URL: `/rss.xml`
+
+## Customization
+
+- Update site metadata (title, logo, RSS link icon) in `src/lib/layout.shared.tsx`.
+- Change feed branding (title, image, favicon) or language in `src/lib/rss.ts`.
+- Filter pages (e.g., exclude sections) by adjusting the `source.getPages()` iteration.
+- If you change the feed path, update both `rss.ts` and the nav link configuration.
+
