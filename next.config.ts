@@ -32,11 +32,15 @@ async function createNextConfig(): Promise<NextConfig> {
       '@takumi-rs/image-response',
     ],
     images: {
-      unoptimized: true,
       remotePatterns: [
         {
           protocol: 'https',
           hostname: 'avatars.githubusercontent.com',
+          port: '',
+        },
+        {
+          protocol: 'https',
+          hostname: 'fumadocs.dev',
           port: '',
         },
       ],

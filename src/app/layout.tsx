@@ -50,8 +50,8 @@ export const viewport: Viewport = {
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
     <html
-      lang='en'
       className={`${geist.variable} ${mono.variable}`}
+      lang='en'
       suppressHydrationWarning
     >
       <Body tree={source.pageTree}>

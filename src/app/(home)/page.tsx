@@ -6,27 +6,25 @@ import { cn } from '@/lib/cn'
 
 export default function DocsPage(): ReactElement {
   return (
-    <main className='container flex max-w-[1300px] flex-col py-16'>
-      <h1 className='font-semibold text-2xl md:text-3xl'>
-        Welcome to the Starter Kit
-      </h1>
+    <main className='mx-auto flex w-full max-w-[1400px] flex-col px-4 py-16'>
+      <h1 className='font-semibold text-2xl md:text-3xl'>Fumadocs Starter</h1>
       <p className='mt-1 text-fd-muted-foreground text-lg'>
-        Get started with Fumadocs.
+        A starter-template for Fumadocs.
       </p>
 
       <div className='mt-8 grid grid-cols-1 gap-4 text-left md:grid-cols-2'>
         <DocumentationItem
-          title='Documentation'
           description='Get started with the Fumadocs framework.'
-          icon={{ icon: BookIcon, id: '(index)' }}
           href='/docs'
+          icon={{ icon: BookIcon, id: '(index)' }}
+          title='Documentation'
         />
 
         <DocumentationItem
-          title='API Reference'
           description="Get started with Fumadocs's API reference feature."
-          icon={{ icon: WebhookIcon, id: 'api-reference' }}
           href='/docs/api-reference'
+          icon={{ icon: WebhookIcon, id: 'api-reference' }}
+          title='API Reference'
         />
       </div>
     </main>

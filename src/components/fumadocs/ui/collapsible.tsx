@@ -1,16 +1,17 @@
 'use client'
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'
-import { forwardRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/fumadocs/cn'
 
 const Collapsible = CollapsiblePrimitive.Root
 
 const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger
 
-const CollapsibleContent = forwardRef<
-  HTMLDivElement,
-  React.ComponentPropsWithoutRef<typeof CollapsiblePrimitive.CollapsibleContent>
->(({ children, ...props }, ref) => {
+function CollapsibleContent({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -19,19 +20,18 @@ const CollapsibleContent = forwardRef<
 
   return (
     <CollapsiblePrimitive.CollapsibleContent
-      ref={ref}
       {...props}
       className={cn(
         'overflow-hidden',
         mounted &&
           'data-[state=closed]:animate-fd-collapsible-up data-[state=open]:animate-fd-collapsible-down',
-        props.className
+        className
       )}
     >
       {children}
     </CollapsiblePrimitive.CollapsibleContent>
   )
-})
+}
 
 CollapsibleContent.displayName =
   CollapsiblePrimitive.CollapsibleContent.displayName

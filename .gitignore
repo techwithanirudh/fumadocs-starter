@@ -30,6 +30,10 @@ next-env.d.ts
 
 # 
 fumadocs-basehub
+core
 
 # cspell
 .cspellcache
+
+# agent
+.agent

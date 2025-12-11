@@ -111,7 +111,7 @@ export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
       Parameters
     </h4>
     <div className='rounded-lg bg-muted/50'>
-      <DynamicCodeBlock lang='json' code={JSON.stringify(input, null, 2)} />
+      <DynamicCodeBlock code={JSON.stringify(input, null, 2)} lang='json' />
     </div>
   </div>
 )
@@ -135,10 +135,10 @@ export const ToolOutput = ({
 
   if (typeof output === 'object' && !isValidElement(output)) {
     Output = (
-      <DynamicCodeBlock lang='json' code={JSON.stringify(output, null, 2)} />
+      <DynamicCodeBlock code={JSON.stringify(output, null, 2)} lang='json' />
     )
   } else if (typeof output === 'string') {
-    Output = <DynamicCodeBlock lang='json' code={output} />
+    Output = <DynamicCodeBlock code={output} lang='json' />
   }
 
   return (

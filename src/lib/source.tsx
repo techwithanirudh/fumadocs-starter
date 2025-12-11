@@ -8,6 +8,8 @@ import {
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
 import { openapiPlugin } from 'fumadocs-openapi/server'
 
+const CODE_TAG_NAME = /^<\w+ \/>$/
+
 export const source = loader({
   baseUrl: '/docs',
   plugins: [pageTreeCodeTitles(), lucideIconsPlugin(), openapiPlugin()],
@@ -20,7 +22,7 @@ function pageTreeCodeTitles(): LoaderPlugin {
       file(node) {
         if (
           typeof node.name === 'string' &&
-          (node.name.endsWith('()') || node.name.match(/^<\w+ \/>$/))
+          (node.name.endsWith('()') || node.name.match(CODE_TAG_NAME))
         ) {
           return {
             ...node,

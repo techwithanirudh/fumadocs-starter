@@ -1,4 +1,4 @@
-export interface Tag {
+export type Tag = {
   name: string
   description?: string
   value: string | undefined

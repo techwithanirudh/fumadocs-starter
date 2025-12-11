@@ -59,6 +59,7 @@
     "firecrawl",
     "treeview",
     "intitle",
-    "inurl"
+    "inurl",
+    "ultracite"
   ]
 }

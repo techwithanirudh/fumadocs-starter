@@ -44,20 +44,30 @@ export default function CustomSearchDialog(props: SharedProps) {
       if (node.type === 'page' && typeof node.name === 'string') {
         map.set(node.name.toLowerCase(), node)
       } else if (node.type === 'folder') {
-        if (node.index) onNode(node.index)
-        for (const item of node.children) onNode(item)
+        if (node.index) {
+          onNode(node.index)
+        }
+        for (const item of node.children) {
+          onNode(item)
+        }
       }
     }
 
-    for (const item of full.children) onNode(item)
+    for (const item of full.children) {
+      onNode(item)
+    }
     return map
   }, [full])
   const pageTreeAction = useMemo<SearchItemType | undefined>(() => {
-    if (search.length === 0) return
+    if (search.length === 0) {
+      return
+    }
 
     const normalized = search.toLowerCase()
     for (const [k, page] of searchMap) {
-      if (!k.startsWith(normalized)) continue
+      if (!k.startsWith(normalized)) {
+        continue
+      }
 
       return {
         id: 'quick-action',
@@ -80,9 +90,9 @@ export default function CustomSearchDialog(props: SharedProps) {
 
   return (
     <SearchDialog
-      search={search}
-      onSearchChange={setSearch}
       isLoading={query.isLoading}
+      onSearchChange={setSearch}
+      search={search}
       {...props}
     >
       <SearchDialogOverlay />
@@ -103,7 +113,7 @@ export default function CustomSearchDialog(props: SharedProps) {
           }
         />
         <SearchDialogFooter className='flex flex-row flex-wrap items-center gap-2'>
-          <Popover open={open} onOpenChange={setOpen}>
+          <Popover onOpenChange={setOpen} open={open}>
             <PopoverTrigger
               className={buttonVariants({
                 size: 'sm',
@@ -115,24 +125,24 @@ export default function CustomSearchDialog(props: SharedProps) {
               {tags.find((item) => item.value === tag)?.name}
               <ChevronDown className='size-3.5 text-fd-muted-foreground' />
             </PopoverTrigger>
-            <PopoverContent className='flex flex-col gap-1 p-1' align='start'>
-              {tags.map((item, i) => {
+            <PopoverContent align='start' className='flex flex-col gap-1 p-1'>
+              {tags.map((item, _i) => {
                 const isSelected = item.value === tag
 
                 return (
                   <button
-                    key={i}
-                    type='button'
-                    onClick={() => {
-                      setTag(item.value)
-                      setOpen(false)
-                    }}
                     className={cn(
                       'rounded-lg px-2 py-1.5 text-start',
                       isSelected
                         ? 'bg-fd-primary/10 text-fd-primary'
                         : 'hover:bg-fd-accent hover:text-fd-accent-foreground'
                     )}
+                    key={item.value}
+                    onClick={() => {
+                      setTag(item.value)
+                      setOpen(false)
+                    }}
+                    type='button'
                   >
                     <p className='mb-0.5 font-medium'>{item.name}</p>
                     <p className='text-xs opacity-70'>{item.description}</p>

@@ -13,15 +13,17 @@ export async function GET(
 ) {
   const { slug } = await params
   const page = source.getPage(slug.slice(0, -1))
-  if (!page) notFound()
+  if (!page) {
+    notFound()
+  }
   const slugs = page.path.split('/')
   const tag = categories[slugs[0]] ?? slugs[0]
 
   return new ImageResponse(
     <MetadataImage
-      title={page.data.title}
       description={page.data.description}
       tag={tag}
+      title={page.data.title}
     />,
     await getImageResponseOptions()
   )

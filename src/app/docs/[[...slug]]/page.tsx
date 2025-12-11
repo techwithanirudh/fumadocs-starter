@@ -6,8 +6,7 @@ import { createGenerator } from 'fumadocs-typescript'
 import { AutoTypeTable } from 'fumadocs-typescript/ui'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
-import { PageLastUpdate } from 'fumadocs-ui/layouts/docs/page'
-import { DocsPage } from 'fumadocs-ui/page'
+import { DocsPage, PageLastUpdate } from 'fumadocs-ui/layouts/notebook/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactElement } from 'react'
@@ -32,62 +31,66 @@ export default async function Page(
   const params = await props.params
   const page = source.getPage(params.slug)
 
-  if (!page) return notFound()
+  if (!page) {
+    return notFound()
+  }
 
   const { body: Mdx, toc, lastModified } = await page.data.load()
 
   return (
     <DocsPage
-      toc={toc}
       tableOfContent={{
         style: 'clerk',
       }}
+      toc={toc}
     >
-      <div className='relative flex flex-col items-start gap-2 sm:flex-row sm:items-center'>
+      <div className='relative flex @sm:flex-row flex-col items-start @sm:items-center gap-2'>
         <h1 className='break-all font-semibold text-[1.75em]'>
           {page.data.title}
         </h1>
 
-        <div className='ml-auto flex hidden shrink-0 flex-row items-center items-center justify-end gap-2 sm:flex'>
+        <div className='ml-auto @sm:flex flex hidden shrink-0 flex-row items-center justify-end gap-2'>
           <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
           <ViewOptions
-            markdownUrl={`${page.url}.mdx`}
             githubUrl={`https://github.com/${owner}/${repo}/blob/main/content/docs/${page.path}`}
+            markdownUrl={`${page.url}.mdx`}
           />
         </div>
       </div>
       <p className='mb-2 text-fd-muted-foreground text-lg'>
         {page.data.description}
       </p>
-      <div className='flex items-center gap-2 pb-6 sm:hidden'>
+      <div className='flex @sm:hidden items-center gap-2 pb-6'>
         <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
         <ViewOptions
-          markdownUrl={`${page.url}.mdx`}
           githubUrl={`https://github.com/${owner}/${repo}/blob/main/content/docs/${page.path}`}
+          markdownUrl={`${page.url}.mdx`}
         />
       </div>
       <div className='prose flex-1 text-fd-foreground/90'>
         <Mdx
           components={getMDXComponents({
             ...Twoslash,
-            a: ({ href, ...props }) => {
+            a: ({ href, ...linkProps }) => {
               const found = source.getPageByHref(href ?? '', {
                 dir: PathUtils.dirname(page.path),
               })
 
-              if (!found) return <Link href={href} {...props} />
+              if (!found) {
+                return <Link href={href} {...linkProps} />
+              }
 
               return (
                 <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <Link
-                      href={
-                        found.hash
-                          ? `${found.page.url}#${found.hash}`
-                          : found.page.url
-                      }
-                      {...props}
-                    />
+                  <HoverCardTrigger
+                    href={
+                      found.hash
+                        ? `${found.page.url}#${found.hash}`
+                        : found.page.url
+                    }
+                    {...linkProps}
+                  >
+                    {linkProps.children}
                   </HoverCardTrigger>
                   <HoverCardContent className='text-sm'>
                     <p className='font-medium'>{found.page.data.title}</p>
@@ -99,12 +102,12 @@ export default async function Page(
               )
             },
             TypeTable,
-            AutoTypeTable: (props) => (
-              <AutoTypeTable generator={generator} {...props} />
+            // biome-ignore lint/correctness/noNestedComponentDefinitions: this is not a new component
+            AutoTypeTable: (autoTypeProps) => (
+              <AutoTypeTable generator={generator} {...autoTypeProps} />
             ),
-            DocsCategory: ({ url }) => {
-              return <DocsCategory url={url ?? page.url} />
-            },
+            // biome-ignore lint/correctness/noNestedComponentDefinitions: this is not a new component
+            DocsCategory: ({ url }) => <DocsCategory url={url ?? page.url} />,
           })}
         />
         {page.data.index ? <DocsCategory url={page.url} /> : null}
@@ -118,7 +121,7 @@ function DocsCategory({ url }: { url: string }) {
   return (
     <Cards>
       {getPageTreePeers(source.pageTree, url).map((peer) => (
-        <Card key={peer.url} title={peer.name} href={peer.url}>
+        <Card href={peer.url} key={peer.url} title={peer.name}>
           {peer.description}
         </Card>
       ))}
@@ -131,10 +134,11 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug = [] } = await props.params
   const page = source.getPage(slug)
-  if (!page)
+  if (!page) {
     return createMetadata({
       title: 'Not Found',
     })
+  }
 
   const description =
     page.data.description ?? 'The library for building documentation sites'

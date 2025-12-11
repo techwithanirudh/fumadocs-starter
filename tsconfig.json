@@ -25,7 +25,8 @@
         "name": "next"
       }
     ],
-    "ignoreDeprecations": "5.0"
+    "ignoreDeprecations": "5.0",
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",

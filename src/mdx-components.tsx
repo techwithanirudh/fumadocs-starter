@@ -34,7 +34,7 @@ export function getMDXComponents(components?: MDXComponents) {
 
 declare module 'mdx/types.js' {
   // Augment the MDX types to make it understand React.
-  // eslint-disable-next-line @typescript-eslint/no-namespace
+  // biome-ignore lint/style/noNamespace: required for MDX
   namespace JSX {
     type Element = React.JSX.Element
     type ElementClass = React.JSX.ElementClass

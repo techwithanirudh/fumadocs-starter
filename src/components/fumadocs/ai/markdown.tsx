@@ -17,21 +17,29 @@ import remarkGfm from 'remark-gfm'
 import remarkRehype from 'remark-rehype'
 import { visit } from 'unist-util-visit'
 
-export interface Processor {
+const WHITESPACE_LOOKAHEAD = /(?=\s)/
+
+export type Processor = {
   process: (content: string) => Promise<ReactNode>
 }
 
 export function rehypeWrapWords() {
   return (tree: Root) => {
     visit(tree, ['text', 'element'], (node, index, parent) => {
-      if (node.type === 'element' && node.tagName === 'pre') return 'skip'
-      if (node.type !== 'text' || !parent || index === undefined) return
+      if (node.type === 'element' && node.tagName === 'pre') {
+        return 'skip'
+      }
+      if (node.type !== 'text' || !parent || index === undefined) {
+        return
+      }
 
-      const words = node.value.split(/(?=\s)/)
+      const words = node.value.split(WHITESPACE_LOOKAHEAD)
 
       // Create new span nodes for each word and whitespace
       const newNodes: ElementContent[] = words.flatMap((word) => {
-        if (word.length === 0) return []
+        if (word.length === 0) {
+          return []
+        }
 
         return {
           type: 'element',
@@ -84,7 +92,9 @@ function Pre(props: ComponentProps<'pre'>) {
   const code = Children.only(props.children) as ReactElement
   const codeProps = code.props as ComponentProps<'code'>
   const content = codeProps.children
-  if (typeof content !== 'string') return null
+  if (typeof content !== 'string') {
+    return null
+  }
 
   let lang =
     codeProps.className
@@ -92,9 +102,11 @@ function Pre(props: ComponentProps<'pre'>) {
       .find((v) => v.startsWith('language-'))
       ?.slice('language-'.length) ?? 'text'
 
-  if (lang === 'mdx') lang = 'md'
+  if (lang === 'mdx') {
+    lang = 'md'
+  }
 
-  return <DynamicCodeBlock lang={lang} code={content.trimEnd()} />
+  return <DynamicCodeBlock code={content.trimEnd()} lang={lang} />
 }
 
 const processor = createProcessor()

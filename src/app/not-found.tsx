@@ -10,8 +10,8 @@ export default function NotFound() {
         <h2 className='mt-2 text-muted-foreground sm:mt-0'>
           This page could not be found.{' '}
           <Link
-            href='/'
             className='text-primary underline underline-offset-4 hover:text-primary/80'
+            href='/'
           >
             Go back home
           </Link>
