@@ -6,15 +6,15 @@ icon: Bot
 
 ## Introduction
 
-Large language models waste tokens crawling HTML, JS, and site chrome. By shipping a few simple endpoints, you can provide a more efficient way for LLMs to access your documentation.
+Large language models waste tokens crawling HTML, JS, and site chrome. These endpoints expose clean, text-only snapshots of your docs so agents can ingest them efficiently without scraping.
 
 1. **`/llms.txt`**: a concise sitemap with titles, URLs, and summaries
-2. **`/llms-full.txt`**: a full Markdown dump of every document
-3. **`/llms.mdx/*`**: the raw MDX/Markdown content of a requested page
+2. **`/llms-full.txt`**: a Markdown dump of every document except the API reference
+3. **`/llms.mdx/*`**: the raw MDX/Markdown content of a requested page with `text/markdown`
 
 ## `/llms.txt`
 
-- Lists each section and page in your documentation
+- Lists each section and page in your documentation (grouped by top-level category names)
 - Includes optional one-line descriptions from frontmatter
 - No boilerplate or styling, just the outline
 
@@ -35,7 +35,7 @@ This file is generated at the root of your deployed site, enabling agents to dis
 
 ## `/llms-full.txt`
 
-- Concatenates the raw MDX/Markdown of every page
+- Concatenates the raw MDX/Markdown of every page **except** `content/docs/api-reference/**/*` to keep the payload reasonable
 - Preserves headings, paragraphs, code samples, and frontmatter
 - Lets an LLM ingest your entire documentation corpus in a single fetch
 
@@ -50,12 +50,13 @@ Get upcoming museum operating hours.
 ...full MDX content...
 ```
 
-This file is generated at build time by globbing `content/docs/**/*.mdx` and joining files in sidebar order.
+The route (`src/app/llms-full.txt/route.ts`) streams the latest content on request—no extra build step is required.
 
 ## `/llms.mdx/*`
 
 - Provides the raw MDX/Markdown content of a requested page
 - Preserves headings, paragraphs, code samples, and frontmatter
+- Returns `404` for unknown slugs and sets `Content-Type: text/markdown`
 
 Example: `/llms.mdx/quickstart`
 
@@ -71,3 +72,5 @@ Start building awesome documentation in under 5 minutes
 
 A minimum version of Node.js 22 is required...
 ```
+
+All three endpoints read directly from the same `source` used by the site, so updates to `content/docs` automatically flow into the LLM feeds without additional configuration.

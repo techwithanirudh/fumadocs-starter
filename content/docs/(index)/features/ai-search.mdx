@@ -6,24 +6,31 @@ icon: Search
 
 ## Introduction
 
-This template comes with built-in AI-powered search capabilities. Although this feature is enabled by default, you'll need to configure an API key for full functionality.
+This starter ships with an AI assistant that runs on your content. It streams answers from OpenAI's `gpt-5-mini` model through AI SDK.
 
-## Setting Up the API Key
+## Configuration
 
-To activate AI search, add your OpenAI API key to the `.env` file at the root of your project. If you don't already have one, you can generate a key by signing up at the [OpenAI platform](https://platform.openai.com/signup).
+Add your OpenAI key to `.env`:
 
 ```bash
 OPENAI_API_KEY=sk-your_api_key_here
+NEXT_PUBLIC_BASE_URL=http://localhost:3000 # optional, defaults locally
 ```
 
-> **Note:** The API key must start with `sk-` as validated by the environment schema.
+> The key must start with `sk-` (validated in `src/env.ts`). `NEXT_PUBLIC_BASE_URL` is only needed when you deploy to a non-default host.
 
-## Application Configuration
+## Using the UI
 
-The logic for AI search is pre-configured in the `src/components/fumadocs/ai` directory. You can explore or modify the implementation there to suit your needs.
+- Click the "Ask AI" button in the bottom-right corner or press `Cmd/Ctrl + /` to open the panel; press `Esc` to close.
+- Press `Enter` to send a prompt; use `Shift + Enter` for a new line.
+- Regenerate the last answer with the refresh button when the assistant has finished responding.
+- Sources and tool activity are displayed above each message so you can verify what the model used.
 
-## How Queries Are Handled
+## Customize the assistant
 
-AI Search uses the OpenAI API to process user queries. Instead of Retrieval-Augmented Generation (RAG), it relies on Web Search for external information.
+- **Model or provider:** Edit `src/app/api/chat/route.ts` to change the model or provider options.
+- **Prompts:** Adjust the system directives in `src/app/api/chat/utils/prompts`.
+- **Tools or search scope:** Extend or modify `searchDocs`/`getPageContent` in `src/app/api/chat/utils/tools` and update tags in `src/lib/constants`.
+- **UI:** Tweak the panel, shortcuts, and message rendering under `src/components/fumadocs/ai`.
 
-> Tip: You can replace the default OpenAI integration with a custom setup (such as [Inkeep](https://www.inkeep.com/)) for a more efficient Retrieval-Augmented Generation (RAG) implementation tailored to your content and infrastructure.
+Because the assistant is backed by your indexed MDX, adding or editing docs is all that's required to give it fresh context.

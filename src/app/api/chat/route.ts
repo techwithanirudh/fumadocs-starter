@@ -11,6 +11,7 @@ import {
 } from 'ai'
 import { env } from '@/env'
 import type { MyUIMessage } from './types'
+import { getLLMsTxt } from './utils/llms'
 import { systemPrompt } from './utils/prompts'
 import { getPageContent } from './utils/tools/get-page-content'
 import { createSearchDocsTool } from './utils/tools/search-docs'
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
       execute: ({ writer }) => {
         const result = streamText({
           model: openai('gpt-5-mini'),
-          system: systemPrompt(),
+          system: systemPrompt(getLLMsTxt()),
           providerOptions: {
             openai: {
               reasoningEffort: 'minimal',
