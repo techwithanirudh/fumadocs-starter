@@ -32,7 +32,6 @@ async function createNextConfig(): Promise<NextConfig> {
       '@takumi-rs/image-response',
     ],
     images: {
-      unoptimized: true,
       remotePatterns: [
         {
           protocol: 'https',
