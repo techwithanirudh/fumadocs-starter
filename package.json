@@ -102,7 +102,8 @@
     "tailwindcss": "^4.1.17",
     "tinyglobby": "^0.2.15",
     "ts-morph": "^27.0.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "ultracite": "6.3.10"
   },
   "peerDependencies": {
     "ajv": "^8.17.1"
