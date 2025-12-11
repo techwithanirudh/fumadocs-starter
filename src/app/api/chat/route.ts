@@ -1,3 +1,4 @@
+import { openai } from '@ai-sdk/openai'
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -9,11 +10,10 @@ import {
   streamText,
 } from 'ai'
 import { env } from '@/env'
-import { systemPrompt } from '@/lib/ai/prompts'
-import { provider } from '@/lib/ai/providers'
-import { getPageContent } from '@/lib/ai/tools/get-page-content'
-import { createSearchDocsTool } from '@/lib/ai/tools/search-docs'
 import type { MyUIMessage } from './types'
+import { systemPrompt } from './utils/prompts'
+import { getPageContent } from './utils/tools/get-page-content'
+import { createSearchDocsTool } from './utils/tools/search-docs'
 
 export async function POST(request: Request) {
   try {
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       originalMessages: messages,
       execute: ({ writer }) => {
         const result = streamText({
-          model: provider.languageModel('chat-model'),
+          model: openai('gpt-5-mini'),
           system: systemPrompt(),
           providerOptions: {
             openai: {

@@ -1,10 +1,10 @@
 import { corePrompt } from './core'
 import { examplesPrompt } from './examples'
-import { llmsPrompt } from './llms'
+import { directivesPrompt } from './directives'
 import { toolsPrompt } from './tools'
 
 export const systemPrompt = () =>
-  [corePrompt, toolsPrompt, llmsPrompt, examplesPrompt]
+  [corePrompt, directivesPrompt, toolsPrompt, examplesPrompt]
     .filter(Boolean)
     .join('\n\n')
     .trim()
