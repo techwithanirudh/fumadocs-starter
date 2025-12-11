@@ -1,6 +1,6 @@
 import { corePrompt } from './core'
-import { examplesPrompt } from './examples'
 import { directivesPrompt } from './directives'
+import { examplesPrompt } from './examples'
 import { toolsPrompt } from './tools'
 
 export const systemPrompt = () =>
