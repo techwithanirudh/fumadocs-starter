@@ -2,15 +2,17 @@ import Link from 'fumadocs-core/link'
 import { findSiblings } from 'fumadocs-core/page-tree'
 import { PathUtils } from 'fumadocs-core/source'
 import * as Twoslash from 'fumadocs-twoslash/ui'
-import { createGenerator } from 'fumadocs-typescript'
-import { AutoTypeTable } from 'fumadocs-typescript/ui'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
-import { DocsPage, PageLastUpdate } from 'fumadocs-ui/layouts/notebook/page'
+import {
+  DocsPage,
+  MarkdownCopyButton,
+  PageLastUpdate,
+  ViewOptionsPopover,
+} from 'fumadocs-ui/layouts/notebook/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactElement } from 'react'
-import { LLMCopyButton, ViewOptions } from '@/components/fumadocs/page-actions'
 import {
   HoverCard,
   HoverCardContent,
@@ -20,8 +22,6 @@ import { owner, repo } from '@/lib/github'
 import { createMetadata, getPageImage } from '@/lib/metadata'
 import { source } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
-
-const generator = createGenerator()
 
 export const revalidate = false
 
@@ -42,6 +42,7 @@ export default async function Page(
       footer={{
         className: 'xl:pb-6',
       }}
+      full={!!(page.data._openapi)}
       tableOfContent={{
         style: 'clerk',
       }}
@@ -53,8 +54,8 @@ export default async function Page(
         </h1>
 
         <div className='ml-auto @sm:flex flex hidden shrink-0 flex-row items-center justify-end gap-2'>
-          <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
-          <ViewOptions
+          <MarkdownCopyButton markdownUrl={`${page.url}.mdx`} />
+          <ViewOptionsPopover
             githubUrl={`https://github.com/${owner}/${repo}/blob/main/content/docs/${page.path}`}
             markdownUrl={`${page.url}.mdx`}
           />
@@ -64,8 +65,8 @@ export default async function Page(
         {page.data.description}
       </p>
       <div className='flex @sm:hidden items-center gap-2 pb-6'>
-        <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
-        <ViewOptions
+        <MarkdownCopyButton markdownUrl={`${page.url}.mdx`} />
+        <ViewOptionsPopover
           githubUrl={`https://github.com/${owner}/${repo}/blob/main/content/docs/${page.path}`}
           markdownUrl={`${page.url}.mdx`}
         />
@@ -105,10 +106,6 @@ export default async function Page(
               )
             },
             TypeTable,
-            // biome-ignore lint/correctness/noNestedComponentDefinitions: this is not a new component
-            AutoTypeTable: (autoTypeProps) => (
-              <AutoTypeTable generator={generator} {...autoTypeProps} />
-            ),
             // biome-ignore lint/correctness/noNestedComponentDefinitions: this is not a new component
             DocsCategory: ({ url }) => <DocsCategory url={url ?? page.url} />,
           })}

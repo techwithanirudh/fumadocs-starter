@@ -96,11 +96,12 @@ export const docs = defineDocs({
                     case 'Card':
                     case 'Custom':
                       return true
+                    default:
+                      return 'children-only'
                   }
-                  return 'children-only'
+                default:
+                  return true
               }
-
-              return true
             },
           },
         },

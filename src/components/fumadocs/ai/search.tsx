@@ -287,12 +287,13 @@ function Message({
       </p>
       <div className='flex flex-col gap-2'>
         <MessageMetadata inProgress={isInProgress} parts={parts} />
-        {parts.map((part, idx) => {
+        {parts.map((part) => {
           if (part.type !== 'text') {
             return null
           }
+          const textKey = `${message.id}-text-${JSON.stringify(part)}`
           return (
-            <div className='prose text-sm' key={`${message.id}-text-${idx}`}>
+            <div className='prose text-sm' key={textKey}>
               <Markdown text={part.text} />
             </div>
           )
