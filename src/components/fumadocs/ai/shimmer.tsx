@@ -11,8 +11,8 @@ import {
 import { cn } from '@/lib/cn'
 
 export interface TextShimmerProps {
-  children: string
   as?: ElementType
+  children: string
   className?: string
   duration?: number
   spread?: number

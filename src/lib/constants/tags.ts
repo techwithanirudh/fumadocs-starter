@@ -1,6 +1,6 @@
 export interface Tag {
-  name: string
   description?: string
+  name: string
   value: string | undefined
 }
 

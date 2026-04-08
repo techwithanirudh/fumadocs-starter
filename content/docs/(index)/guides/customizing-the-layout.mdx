@@ -54,7 +54,7 @@ import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <DocsLayout {...baseOptions()} tree={source.pageTree}>
+    <DocsLayout {...baseOptions()} tree={source.getPageTree()}>
       {children}
     </DocsLayout>
   );
@@ -80,7 +80,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <DocsLayout
       {...baseOptions()}
       tabMode="navbar" // [!code ++]
-      tree={source.pageTree}
+      tree={source.getPageTree()}
     >
       {children}
     </DocsLayout>
@@ -110,7 +110,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       {...base}
       tabMode="navbar" // [!code ++]
       nav={{ ...nav, mode: 'top' }} // [!code ++]
-      tree={source.pageTree}
+      tree={source.getPageTree()}
     >
       {children}
     </DocsLayout>

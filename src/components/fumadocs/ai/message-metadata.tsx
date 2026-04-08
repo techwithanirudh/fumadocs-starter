@@ -17,8 +17,8 @@ import {
 import { Spinner } from '@/components/ui/spinner'
 
 interface MessageMetadataProps {
-  parts: MyUIMessage['parts']
   inProgress: boolean
+  parts: MyUIMessage['parts']
 }
 
 export const MessageMetadata = ({

@@ -4,9 +4,9 @@ import type { ReactNode } from 'react'
 import { title as siteName } from '@/lib/layout.shared'
 
 export interface GenerateProps {
-  title: ReactNode
   description?: ReactNode
   tag?: string
+  title: ReactNode
 }
 
 const font = readFile('./src/app/og/[...slug]/fonts/Inter-Regular.ttf').then(

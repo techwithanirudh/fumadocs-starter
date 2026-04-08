@@ -45,14 +45,6 @@ async function createNextConfig(): Promise<NextConfig> {
         },
       ],
     },
-    async rewrites() {
-      return [
-        {
-          source: '/docs/:path*.mdx',
-          destination: '/llms.mdx/:path*',
-        },
-      ]
-    },
   }
 
   return nextConfig

@@ -1,21 +1,21 @@
-import {
-  applyMdxPreset,
-  defineConfig,
-  defineDocs,
-  frontmatterSchema,
-  metaSchema,
-} from 'fumadocs-mdx/config'
+import { metaSchema, pageSchema } from 'fumadocs-core/source/schema'
+import { applyMdxPreset, defineConfig, defineDocs } from 'fumadocs-mdx/config'
 import jsonSchema from 'fumadocs-mdx/plugins/json-schema'
 import lastModified from 'fumadocs-mdx/plugins/last-modified'
 import type { RemarkAutoTypeTableOptions } from 'fumadocs-typescript'
 import type { ElementContent } from 'hast'
+import type { Root } from 'mdast'
 import type { ShikiTransformer } from 'shiki'
+import type { Transformer } from 'unified'
+import { visit } from 'unist-util-visit'
 import { z } from 'zod'
-import { shikiConfig } from './src/lib/shiki'
+import { defaultShikiOptions } from './src/lib/shiki'
+
+const isLint = process.env.LINT === '1'
 
 export const docs = defineDocs({
   docs: {
-    schema: frontmatterSchema.extend({
+    schema: pageSchema.extend({
       preview: z.string().optional(),
       index: z.boolean().default(false),
       /**
@@ -26,14 +26,12 @@ export const docs = defineDocs({
     postprocess: {
       includeProcessedMarkdown: true,
       extractLinkReferences: true,
+      valueToExport: ['elementIds'],
     },
     async: true,
     async mdxOptions(environment) {
       const { rehypeCodeDefaultOptions } = await import(
         'fumadocs-core/mdx-plugins/rehype-code'
-      )
-      const { remarkStructureDefaultOptions } = await import(
-        'fumadocs-core/mdx-plugins/remark-structure'
       )
       const { remarkSteps } = await import(
         'fumadocs-core/mdx-plugins/remark-steps'
@@ -57,41 +55,68 @@ export const docs = defineDocs({
         generator: createGenerator({
           cache: createFileSystemGeneratorCache('.next/fumadocs-typescript'),
         }),
-        shiki: shikiConfig,
+        shiki: defaultShikiOptions,
       }
       return applyMdxPreset({
-        remarkStructureOptions: {
-          types: [...remarkStructureDefaultOptions.types, 'code'],
-        },
-        rehypeCodeOptions: {
-          langs: ['ts', 'js', 'html', 'tsx', 'mdx'],
-          inline: 'tailing-curly-colon',
-          themes: {
-            light: 'catppuccin-latte',
-            dark: 'catppuccin-mocha',
-          },
-          transformers: [
-            ...(rehypeCodeDefaultOptions.transformers ?? []),
-            transformerTwoslash({
-              typesCache: createFileSystemTypesCache(),
-            }),
-            transformerEscape(),
-          ],
-        },
+        rehypeCodeOptions: isLint
+          ? false
+          : {
+              langs: ['ts', 'js', 'html', 'tsx', 'mdx'],
+              inline: 'tailing-curly-colon',
+              themes: {
+                light: 'catppuccin-latte',
+                dark: 'catppuccin-mocha',
+              },
+              transformers: [
+                ...(rehypeCodeDefaultOptions.transformers ?? []),
+                transformerTwoslash({
+                  typesCache: createFileSystemTypesCache(),
+                  twoslashOptions: {
+                    compilerOptions: {
+                      types: ['@types/node'],
+                    },
+                  },
+                }),
+                transformerEscape(),
+              ],
+            },
         remarkCodeTabOptions: {
           parseMdx: true,
+        },
+        remarkStructureOptions: {
+          stringify: {
+            filterElement(node) {
+              switch (node.type) {
+                case 'mdxJsxFlowElement':
+                case 'mdxJsxTextElement':
+                  switch (node.name) {
+                    case 'File':
+                    case 'TypeTable':
+                    case 'Callout':
+                    case 'Card':
+                    case 'Custom':
+                      return true
+                  }
+                  return 'children-only'
+              }
+
+              return true
+            },
+          },
         },
         remarkNpmOptions: {
           persist: {
             id: 'package-manager',
           },
         },
-        remarkPlugins: [
-          remarkSteps,
-          remarkMath,
-          [remarkAutoTypeTable, typeTableOptions],
-          remarkTypeScriptToJavaScript,
-        ],
+        remarkPlugins: isLint
+          ? [remarkElementIds]
+          : [
+              remarkSteps,
+              remarkMath,
+              [remarkAutoTypeTable, typeTableOptions],
+              remarkTypeScriptToJavaScript,
+            ],
         rehypePlugins: (v) => [rehypeKatex, ...v],
       })(environment)
     },
@@ -120,6 +145,27 @@ function transformerEscape(): ShikiTransformer {
       replace(hast)
       return hast
     },
+  }
+}
+
+function remarkElementIds(): Transformer<Root, Root> {
+  return (tree, file) => {
+    file.data ??= {}
+    file.data.elementIds ??= []
+
+    visit(tree, 'mdxJsxFlowElement', (element) => {
+      if (!(element.name && element.attributes)) {
+        return
+      }
+
+      const idAttr = element.attributes.find(
+        (attr) => attr.type === 'mdxJsxAttribute' && attr.name === 'id'
+      )
+
+      if (idAttr && typeof idAttr.value === 'string') {
+        ;(file.data.elementIds as string[]).push(idAttr.value)
+      }
+    })
   }
 }
 

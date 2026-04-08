@@ -36,4 +36,4 @@ function CollapsibleContent({
 CollapsibleContent.displayName =
   CollapsiblePrimitive.CollapsibleContent.displayName
 
-export { Collapsible, CollapsibleTrigger, CollapsibleContent }
+export { Collapsible, CollapsibleContent, CollapsibleTrigger }

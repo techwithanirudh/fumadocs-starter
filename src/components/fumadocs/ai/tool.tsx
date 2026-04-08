@@ -33,11 +33,11 @@ export const Tool = ({ className, ...props }: ToolProps) => (
 )
 
 export interface ToolHeaderProps {
+  className?: string
+  icon?: ReactNode
+  state: ToolUIPart['state']
   title?: string
   type: ToolUIPart['type']
-  state: ToolUIPart['state']
-  icon?: ReactNode
-  className?: string
 }
 
 const getStatusBadge = (status: ToolUIPart['state']) => {

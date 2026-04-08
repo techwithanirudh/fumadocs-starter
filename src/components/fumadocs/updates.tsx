@@ -11,9 +11,9 @@ export interface UpdatesProps {
 
 export interface UpdateProps {
   children: ReactNode
-  label: string
-  id?: string
   className?: string
+  id?: string
+  label: string
 }
 
 export function Updates({ children, className }: UpdatesProps) {
