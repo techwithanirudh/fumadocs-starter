@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
 
 function Footer() {
   return (
-    <footer className='mt-auto border-t bg-fd-card p-4 text-fd-secondary-foreground'>
+    <footer className='mt-auto border-t bg-fd-card p-4 text-fd-secondary-foreground *:mx-auto *:max-w-(--fd-layout-width)'>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between'>
         <div>
           <p className='mb-1 font-semibold text-sm'>Docs</p>

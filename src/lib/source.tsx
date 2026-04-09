@@ -4,17 +4,27 @@ import {
   type InferPageType,
   type LoaderPlugin,
   loader,
+  multiple,
 } from 'fumadocs-core/source'
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
-import { openapiPlugin } from 'fumadocs-openapi/server'
+import { openapiPlugin, openapiSource } from 'fumadocs-openapi/server'
+import { openapi } from '@/lib/openapi'
 
 const CODE_TAG_NAME = /^<\w+ \/>$/
 
-export const source = loader({
-  baseUrl: '/docs',
-  plugins: [pageTreeCodeTitles(), lucideIconsPlugin(), openapiPlugin()],
-  source: docs.toFumadocsSource(),
-})
+export const source = loader(
+  multiple({
+    docs: docs.toFumadocsSource(),
+    openapi: await openapiSource(openapi, {
+      groupBy: 'tag',
+      baseDir: 'api-reference',
+    }),
+  }),
+  {
+    baseUrl: '/docs',
+    plugins: [pageTreeCodeTitles(), lucideIconsPlugin(), openapiPlugin()],
+  }
+)
 
 function pageTreeCodeTitles(): LoaderPlugin {
   return {
@@ -26,7 +36,11 @@ function pageTreeCodeTitles(): LoaderPlugin {
         ) {
           return {
             ...node,
-            name: <code className='text-[0.8125rem]'>{node.name}</code>,
+            name: (
+              <code className='text-[0.8125rem]' key='0'>
+                {node.name}
+              </code>
+            ),
           }
         }
         return node

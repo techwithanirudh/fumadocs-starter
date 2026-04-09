@@ -44,6 +44,9 @@ async function checkLinks() {
 async function getHeadings({
   data,
 }: InferPageType<AnySource>): Promise<string[]> {
+  if ('type' in data && data.type === 'openapi') {
+    return []
+  }
   const { _exports, toc } = await data.load()
   const headings = toc.map((item) => item.url.slice(1))
   const elementIds = _exports?.elementIds

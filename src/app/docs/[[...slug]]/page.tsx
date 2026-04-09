@@ -5,7 +5,10 @@ import * as Twoslash from 'fumadocs-twoslash/ui'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
 import {
+  DocsBody,
+  DocsDescription,
   DocsPage,
+  DocsTitle,
   MarkdownCopyButton,
   PageLastUpdate,
   ViewOptionsPopover,
@@ -13,6 +16,7 @@ import {
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactElement } from 'react'
+import { APIPage } from '@/components/api-page'
 import {
   HoverCard,
   HoverCardContent,
@@ -35,6 +39,23 @@ export default async function Page(
     return notFound()
   }
 
+  if (page.data.type === 'openapi') {
+    return (
+      <DocsPage
+        footer={{ className: 'xl:pb-6' }}
+        full
+        tableOfContent={{ style: 'clerk' }}
+        toc={page.data.toc}
+      >
+        <DocsTitle>{page.data.title}</DocsTitle>
+        <DocsDescription>{page.data.description}</DocsDescription>
+        <DocsBody>
+          <APIPage {...page.data.getAPIPageProps()} />
+        </DocsBody>
+      </DocsPage>
+    )
+  }
+
   const { body: Mdx, toc, lastModified } = await page.data.load()
 
   return (
@@ -42,7 +63,6 @@ export default async function Page(
       footer={{
         className: 'xl:pb-6',
       }}
-      full={!!(page.data._openapi)}
       tableOfContent={{
         style: 'clerk',
       }}

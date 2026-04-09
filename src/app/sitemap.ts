@@ -7,6 +7,9 @@ export const revalidate = false
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const items = await Promise.all(
     source.getPages().map(async (page) => {
+      if (page.data.type === 'openapi') {
+        return
+      }
       const { lastModified } = await page.data.load()
 
       return {

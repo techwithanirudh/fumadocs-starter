@@ -3,6 +3,9 @@ import { owner, repo } from '@/lib/github'
 import type { Page } from '@/lib/source'
 
 export async function getLLMText(page: Page) {
+  if ('type' in page.data && page.data.type === 'openapi') {
+    return ''
+  }
   const slugs = page.path.split('/')
   const category = categories[slugs[0]] ?? slugs[0]
 

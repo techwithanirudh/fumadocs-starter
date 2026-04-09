@@ -1,5 +1,4 @@
-import type { Metadata } from 'next'
-import { env } from '@/env'
+import type { Metadata } from 'next/types'
 import { title } from '@/lib/layout.shared'
 import type { Page } from './source'
 
@@ -21,6 +20,17 @@ export function createMetadata(override: Metadata): Metadata {
       description: override.description ?? undefined,
       images: '/banner.png',
       ...override.twitter,
+    },
+    alternates: {
+      types: {
+        'application/rss+xml': [
+          {
+            title,
+            url: '/rss.xml',
+          },
+        ],
+      },
+      ...override.alternates,
     },
   }
 }
