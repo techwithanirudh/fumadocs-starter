@@ -1,4 +1,5 @@
 import type { Metadata } from 'next/types'
+import { env } from '@/env'
 import { title } from '@/lib/layout.shared'
 import type { Page } from './source'
 
