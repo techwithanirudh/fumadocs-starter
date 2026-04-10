@@ -1,108 +1,96 @@
 import { tool, type UIMessageStreamWriter } from 'ai'
-import { initAdvancedSearch } from 'fumadocs-core/search/server'
+import { Document, type DocumentData } from 'flexsearch'
 import { z } from 'zod'
-import { categories } from '@/lib/constants'
 import { source } from '@/lib/source'
 
-const server = initAdvancedSearch({
-  language: 'english',
-  indexes: async () => {
-    const pages = source.getPages()
-    const indexes = await Promise.all(
-      pages.map(async (page) => {
-        const { structuredData } = await page.data.load()
-        return {
-          id: page.url,
-          title: page.data.title,
-          description: page.data.description,
-          structuredData: structuredData ?? undefined,
+interface DocEntry extends DocumentData {
+  content: string
+  description: string
+  title: string
+  url: string
+}
+
+type FlexResult = Array<{ id: string; doc: DocEntry }>
+
+const CONTENT_LIMIT = 2000
+
+async function buildIndex() {
+  const index = new Document<DocEntry>({
+    document: {
+      id: 'url',
+      index: ['title', 'description', 'content'],
+      store: true,
+    },
+  })
+
+  const pages = source.getPages().filter((p) => p.data.type !== 'openapi')
+
+  // load in chunks to avoid overwhelming the server
+  for (let i = 0; i < pages.length; i += 50) {
+    await Promise.all(
+      pages.slice(i, i + 50).map(async (page) => {
+        index.add({
           url: page.url,
-          tag: page.path.split('/')[0],
-        }
+          title: page.data.title ?? '',
+          description: page.data.description ?? '',
+          content: await (
+            page.data as { getText: (mode: string) => Promise<string> }
+          ).getText('processed'),
+        })
       })
     )
-    return indexes
-  },
-})
+  }
 
-const Tag = z.union([
-  z.literal('all'),
-  ...Object.keys(categories).map((key) => z.literal(key)),
-])
+  return index
+}
+
+const searchIndex = buildIndex()
 
 export const createSearchDocsTool = (writer: UIMessageStreamWriter) =>
   tool({
-    description: 'Search the documentation using the internal search server.',
+    description: 'Search the documentation content and return relevant pages.',
     inputSchema: z.object({
       query: z.string().describe('The query to search for.'),
-      tag: Tag.default('all').describe(
-        'Optional tag filter, e.g. a top-level section.'
-      ),
-      locale: z
-        .string()
-        .optional()
-        .describe('Optional locale for i18n setups.'),
       limit: z
         .number()
         .int()
         .min(1)
         .max(50)
         .default(10)
-        .describe(
-          'Maximum number of results to return (default: 10, max: 50).'
-        ),
+        .describe('Maximum number of results (default: 10, max: 50).'),
     }),
-    execute: async ({ query, tag: tagParam, locale, limit }) => {
-      const tag = tagParam === 'all' ? undefined : tagParam
-      const results = await server.search(query, {
-        tag,
-        locale,
-      })
+    execute: async ({ query, limit }) => {
+      const index = await searchIndex
+      const raw = (await index.searchAsync(query, {
+        limit,
+        merge: true,
+        enrich: true,
+      })) as unknown as FlexResult
 
       const seen = new Set<string>()
-      const deduped = results.filter((result) => {
-        if (!result.url || seen.has(result.url)) {
-          return false
-        }
-        seen.add(result.url)
-        return true
-      })
+      const results = raw.filter(({ id }) => !seen.has(id) && seen.add(id))
 
-      const trimmed = deduped.slice(0, limit).map((doc) => {
-        const pageInfo = source.getPageByHref(doc.url)
-        const page = pageInfo?.page
-
-        return {
-          ...doc,
-          pageTitle: page?.data.title,
-          pageDescription: page?.data.description,
-        }
-      })
-
-      trimmed.forEach((doc, index) => {
-        const title = doc.pageTitle ?? doc.url
-        writer.write({
-          type: 'source-url',
-          sourceId: `search-doc-${index}-${doc.url}`,
-          url: doc.url,
-          title,
-        })
-      })
-
-      if (trimmed.length === 0) {
+      if (results.length === 0) {
         return `No documentation found for query "${query}".`
       }
 
-      const summary = trimmed
-        .map((doc, index) => {
-          const title = doc.pageTitle ?? doc.url
-          const description = doc.pageDescription
-            ? ` — ${doc.pageDescription}`
-            : ''
-          return `${index + 1}. ${title} (${doc.url})${description}`
+      results.forEach(({ id, doc }, index) => {
+        writer.write({
+          type: 'source-url',
+          sourceId: `search-doc-${index}-${id}`,
+          url: id,
+          title: doc.title,
+        })
+      })
+
+      return results
+        .map(({ doc }) => {
+          const content =
+            doc.content.length > CONTENT_LIMIT
+              ? `${doc.content.slice(0, CONTENT_LIMIT)}...`
+              : doc.content
+          return `**${doc.title}**\nURL: ${doc.url}\n${doc.description}\n\n${content}\n\n---`
         })
         .join('\n')
-
-      return `Found ${trimmed.length} documentation pages for "${query}":\n${summary}`
     },
   })

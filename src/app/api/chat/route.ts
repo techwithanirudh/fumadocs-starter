@@ -8,6 +8,7 @@ import {
   smoothStream,
   stepCountIs,
   streamText,
+  type UIMessage,
 } from 'ai'
 import { env } from '@/env'
 import type { MyUIMessage } from './types'
@@ -16,13 +17,21 @@ import { systemPrompt } from './utils/prompts'
 import { getPageContent } from './utils/tools/get-page-content'
 import { createSearchDocsTool } from './utils/tools/search-docs'
 
+export const maxDuration = 800
+
+export type ChatUIMessage = UIMessage<
+  never,
+  {
+    client: {
+      location: string
+    }
+  }
+> &
+  MyUIMessage
+
 export async function POST(request: Request) {
   try {
-    const {
-      messages,
-    }: {
-      messages: MyUIMessage[]
-    } = await request.json()
+    const { messages }: { messages: ChatUIMessage[] } = await request.json()
 
     const handleStreamError = (error: unknown) => {
       if (env.NODE_ENV !== 'production') {
@@ -45,15 +54,27 @@ export async function POST(request: Request) {
     const stream = createUIMessageStream({
       originalMessages: messages,
       execute: async ({ writer }) => {
-        const modelMessages = await convertToModelMessages(messages, {
-          ignoreIncompleteToolCalls: true,
-        })
+        const modelMessages = await convertToModelMessages<ChatUIMessage>(
+          messages,
+          {
+            ignoreIncompleteToolCalls: true,
+            convertDataPart(part) {
+              if (part.type === 'data-client') {
+                return {
+                  type: 'text',
+                  text: `[Client Context: ${JSON.stringify(part.data)}]`,
+                }
+              }
+            },
+          }
+        )
+
         const result = streamText({
-          model: openai('gpt-5-mini'),
+          model: openai('gpt-5.4-mini'),
           system: systemPrompt({ llms: getLLMsTxt() }),
           providerOptions: {
             openai: {
-              reasoningEffort: 'minimal',
+              reasoningEffort: 'low',
               reasoningSummary: 'auto',
               textVerbosity: 'medium',
               serviceTier: 'priority',
@@ -96,8 +117,6 @@ export async function POST(request: Request) {
       })
     }
 
-    return new Response('Failed to process chat request.', {
-      status: 500,
-    })
+    return new Response('Failed to process chat request.', { status: 500 })
   }
 }

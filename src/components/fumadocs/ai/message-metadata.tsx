@@ -6,7 +6,7 @@ import {
   SearchIcon,
   WrenchIcon,
 } from 'lucide-react'
-import type { MyUIMessage } from '@/app/api/chat/types'
+import type { ChatUIMessage } from '@/app/api/chat/route'
 import { Shimmer } from '@/components/fumadocs/ai/shimmer'
 import {
   Source,
@@ -18,14 +18,13 @@ import { Spinner } from '@/components/ui/spinner'
 
 interface MessageMetadataProps {
   inProgress: boolean
-  parts: MyUIMessage['parts']
+  parts: ChatUIMessage['parts']
 }
 
 export const MessageMetadata = ({
   parts,
   inProgress,
 }: MessageMetadataProps) => {
-  // Pull out last part that is either text or tool call
   const lastPart = parts
     .filter((part) => part.type === 'text' || isToolUIPart(part))
     .at(-1)

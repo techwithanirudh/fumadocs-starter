@@ -1,5 +1,5 @@
 'use client'
-import { type UIMessage, type UseChatHelpers, useChat } from '@ai-sdk/react'
+import { type UseChatHelpers, useChat } from '@ai-sdk/react'
 import { Presence } from '@radix-ui/react-presence'
 import { DefaultChatTransport } from 'ai'
 import { buttonVariants } from 'fumadocs-ui/components/ui/button'
@@ -23,7 +23,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import type { MyUIMessage } from '@/app/api/chat/types'
+import type { ChatUIMessage } from '@/app/api/chat/route'
 import { cn } from '@/lib/cn'
 import { Markdown } from './markdown'
 import { MessageMetadata } from './message-metadata'
@@ -31,18 +31,24 @@ import { MessageMetadata } from './message-metadata'
 const Context = createContext<{
   open: boolean
   setOpen: (open: boolean) => void
-  chat: UseChatHelpers<UIMessage>
+  chat: UseChatHelpers<ChatUIMessage>
 } | null>(null)
 
 function useChatContext() {
   return use(Context)!.chat
 }
 
-function Header() {
+export function AISearchPanelHeader({
+  className,
+  ...props
+}: ComponentProps<'div'>) {
   const { setOpen, chat } = use(Context)!
 
   return (
-    <div className='sticky top-0 flex items-start gap-2'>
+    <div
+      className={cn('sticky top-0 flex items-start gap-2', className)}
+      {...props}
+    >
       <div className='flex flex-1 items-center justify-between rounded-xl bg-fd-card px-3 py-2 text-fd-card-foreground'>
         <p className='font-medium text-sm'>Ask AI</p>
         <div className='flex items-center gap-1.5'>
@@ -80,7 +86,7 @@ function Header() {
   )
 }
 
-function SearchAIActions() {
+export function AISearchInputActions() {
   const { messages, status, regenerate } = useChatContext()
   const isLoading = status === 'streaming'
 
@@ -108,19 +114,39 @@ function SearchAIActions() {
 }
 
 const StorageKeyInput = '__ai_search_input'
-function SearchAIInput(props: ComponentProps<'form'>) {
+
+export function AISearchInput(props: ComponentProps<'form'>) {
   const { status, sendMessage, stop } = useChatContext()
   const [input, setInput] = useState(
     () => localStorage.getItem(StorageKeyInput) ?? ''
   )
   const isLoading = status === 'streaming' || status === 'submitted'
-  const onStart = async (e?: SyntheticEvent) => {
-    e?.preventDefault()
-    await sendMessage({ text: input })
-    setInput('')
-  }
 
-  localStorage.setItem(StorageKeyInput, input)
+  const onStart = (e?: SyntheticEvent) => {
+    e?.preventDefault()
+    const message = input.trim()
+    if (message.length === 0) {
+      return
+    }
+
+    sendMessage({
+      role: 'user',
+      parts: [
+        {
+          type: 'data-client',
+          data: {
+            location: location.href,
+          },
+        },
+        {
+          type: 'text',
+          text: message,
+        },
+      ],
+    })
+    setInput('')
+    localStorage.removeItem(StorageKeyInput)
+  }
 
   useEffect(() => {
     if (isLoading) {
@@ -140,6 +166,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
         disabled={status === 'streaming' || status === 'submitted'}
         onChange={(e) => {
           setInput(e.target.value)
+          localStorage.setItem(StorageKeyInput, e.target.value)
         }}
         onKeyDown={(event) => {
           if (!event.shiftKey && event.key === 'Enter') {
@@ -270,10 +297,14 @@ function Message({
   isInProgress,
   ...props
 }: {
-  message: MyUIMessage
+  message: ChatUIMessage
   isInProgress: boolean
 } & ComponentProps<'div'>) {
-  const parts = (message.parts ?? []) as MyUIMessage['parts']
+  const parts = message.parts ?? []
+  const markdown = parts
+    .filter((p) => p.type === 'text')
+    .map((p) => p.text)
+    .join('')
 
   return (
     <div {...props}>
@@ -287,17 +318,11 @@ function Message({
       </p>
       <div className='flex flex-col gap-2'>
         <MessageMetadata inProgress={isInProgress} parts={parts} />
-        {parts.map((part) => {
-          if (part.type !== 'text') {
-            return null
-          }
-          const textKey = `${message.id}-text-${JSON.stringify(part)}`
-          return (
-            <div className='prose text-sm' key={textKey}>
-              <Markdown text={part.text} />
-            </div>
-          )
-        })}
+        {markdown && (
+          <div className='prose text-sm'>
+            <Markdown text={markdown} />
+          </div>
+        )}
       </div>
     </div>
   )
@@ -305,7 +330,7 @@ function Message({
 
 export function AISearch({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
-  const chat = useChat({
+  const chat = useChat<ChatUIMessage>({
     id: 'search',
     transport: new DefaultChatTransport({
       api: '/api/chat',
@@ -340,9 +365,8 @@ export function AISearchTrigger() {
   )
 }
 
-export function AISearchPanel() {
+export function useHotKey() {
   const { open, setOpen } = use(Context)!
-  const chat = useChatContext()
 
   const onKeyPress = useEffectEvent((e: KeyboardEvent) => {
     if (e.key === 'Escape' && open) {
@@ -360,6 +384,12 @@ export function AISearchPanel() {
     window.addEventListener('keydown', onKeyPress)
     return () => window.removeEventListener('keydown', onKeyPress)
   }, [])
+}
+
+export function AISearchPanel() {
+  const { open, setOpen } = use(Context)!
+  const chat = useChatContext()
+  useHotKey()
 
   return (
     <>
@@ -401,7 +431,7 @@ export function AISearchPanel() {
           )}
         >
           <div className='flex size-full flex-col p-2 xl:p-4'>
-            <Header />
+            <AISearchPanelHeader />
             <List
               className='flex-1 overscroll-contain px-3 py-4'
               style={{
@@ -410,25 +440,42 @@ export function AISearchPanel() {
               }}
             >
               <div className='flex flex-col gap-4'>
-                {chat.messages
-                  .filter((msg) => msg.role !== 'system')
-                  .map((item, idx) => (
-                    <Message
-                      isInProgress={
-                        chat.messages.length - 1 === idx &&
-                        (chat.status === 'streaming' ||
-                          chat.status === 'submitted')
-                      }
-                      key={item.id}
-                      message={item}
-                    />
-                  ))}
+                {chat.messages.length === 0 ? (
+                  <div className='flex size-full flex-col items-center justify-center gap-2 text-center text-fd-muted-foreground/80 text-sm'>
+                    <MessageCircleIcon fill='currentColor' stroke='none' />
+                    <p>Start a new chat below.</p>
+                  </div>
+                ) : (
+                  <>
+                    {chat.error && (
+                      <div className='rounded-lg border bg-fd-secondary p-2 text-fd-secondary-foreground'>
+                        <p className='mb-1 text-fd-muted-foreground text-xs'>
+                          Request Failed: {chat.error.name}
+                        </p>
+                        <p className='text-sm'>{chat.error.message}</p>
+                      </div>
+                    )}
+                    {chat.messages
+                      .filter((msg) => msg.role !== 'system')
+                      .map((item, idx) => (
+                        <Message
+                          isInProgress={
+                            chat.messages.length - 1 === idx &&
+                            (chat.status === 'streaming' ||
+                              chat.status === 'submitted')
+                          }
+                          key={item.id}
+                          message={item}
+                        />
+                      ))}
+                  </>
+                )}
               </div>
             </List>
             <div className='rounded-xl border bg-fd-card text-fd-card-foreground has-focus-visible:ring-2 has-focus-visible:ring-fd-ring'>
-              <SearchAIInput />
+              <AISearchInput />
               <div className='flex items-center gap-1.5 p-2'>
-                <SearchAIActions />
+                <AISearchInputActions />
               </div>
             </div>
           </div>

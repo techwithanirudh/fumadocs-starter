@@ -3,19 +3,17 @@ export const toolsPrompt = `
 You have access to these tools. Use them exactly as shown below.
 
 ### 1) searchDocs
-Purpose: Search the internal documentation using the search server.
+Purpose: Search the documentation by full-text query. Returns page titles, URLs, and content.
 
 Usage:
-- Use this first to find relevant pages, then fetch them using \`getPageContent\`
+- Use this to find relevant pages, then fetch them using \`getPageContent\` if you need more depth.
 
 Inputs:
 - query: the search phrase (required)
-- tag: section filter (optional, e.g. "all", "(index)", "api-reference", "changelog")
-- locale: language filter (optional)
-- limit: maximum number of results to return (optional, default: 10, max: 50)
+- limit: maximum number of results (optional, default: 10, max: 50)
 
 Example:
-searchDocs(query: "Fumadocs themes and layouts", locale: "en", limit: 10)
+searchDocs(query: "Fumadocs themes and layouts", limit: 10)
 
 ### 2) getPageContent
 Purpose: Fetch the content of a specific internal doc page.
