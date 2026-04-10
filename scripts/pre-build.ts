@@ -1,3 +1,5 @@
+export {}
+
 async function main() {
   // Add pre-build tasks here if needed
 }

@@ -11,7 +11,7 @@ export const getPageContent = tool({
     const slugs = path.split('/')
     const page = source.getPage(slugs)
 
-    if (!page) {
+    if (!page || page.data.type === 'openapi') {
       return {
         success: false,
         data: 'Page not found',

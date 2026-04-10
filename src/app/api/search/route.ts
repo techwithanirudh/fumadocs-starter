@@ -6,12 +6,15 @@ export const { GET } = createSearchAPI('advanced', {
   indexes: async () => {
     const pages = source.getPages()
 
-    const indexes = await Promise.all(
+    const results = await Promise.all(
       pages.map(async (page) => {
+        if (page.data.type === 'openapi') {
+          return null
+        }
         const { structuredData } = await page.data.load()
 
         return {
-          title: page.data.title,
+          title: page.data.title ?? '',
           description: page.data.description,
           url: page.url,
           id: page.url,
@@ -21,6 +24,6 @@ export const { GET } = createSearchAPI('advanced', {
       })
     )
 
-    return indexes
+    return results.filter((r) => r !== null)
   },
 })

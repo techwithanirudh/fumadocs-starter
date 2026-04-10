@@ -16,26 +16,26 @@ export async function getRSS() {
 
   const pages = await Promise.all(
     source.getPages().map(async (page) => {
-      const { lastModified } = await page.data.load()
-      return {
-        page,
-        lastModified,
+      if (page.data.type === 'openapi') {
+        return null
       }
+      const { lastModified } = await page.data.load()
+      return { page, lastModified }
     })
   )
 
-  for (const { page, lastModified } of pages) {
+  for (const entry of pages) {
+    if (!entry) {
+      continue
+    }
+    const { page, lastModified } = entry
     feed.addItem({
       id: page.url,
-      title: page.data.title,
+      title: page.data.title ?? '',
       description: page.data.description,
       link: url(page.url),
       date: lastModified ? new Date(lastModified) : new Date(),
-      author: [
-        {
-          name: title,
-        },
-      ],
+      author: [{ name: title }],
     })
   }
 
